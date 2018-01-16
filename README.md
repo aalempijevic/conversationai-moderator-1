@@ -1,5 +1,9 @@
 # OSMod
 
+## New York Times internal Moderator Client
+
+This repo contains a copy of [OSMod](https://github.com/conversationai/conversationai-moderator) for internal development of the Moderator Client app only. The backend-api package here is not in use.
+
 ## Scripts
 
 ### Install

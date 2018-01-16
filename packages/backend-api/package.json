@@ -15,7 +15,7 @@
     "watch": "npm run compile && npm run compile:watch | npm run server",
     "compile": "rm -rf dist && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration",
     "compile:watch": "../../node_modules/.bin/tsc --watch --sourceMap --outDir dist --declaration",
-    "build": "npm run compile",
+    "build-disabled": "npm run compile",
     "server": "nodemon --delay 5 --debug=5858 --legacy-watch --watch 'dist/**/*.js' --ignore 'test' ./server.js"
   },
   "license": "Apache-2.0",

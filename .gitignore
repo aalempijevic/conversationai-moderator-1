@@ -18,3 +18,4 @@ source-context.json
 source-contexts.json
 *.rdb
 package-lock.json
+.drone.sec.yml.private

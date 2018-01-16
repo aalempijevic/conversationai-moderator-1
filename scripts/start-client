@@ -1,0 +1,12 @@
+#!/bin/bash
+
+PORT=8080
+
+if [ -z ${API_URL+x} ]; then
+    API_URL="http://localhost:8080"
+fi
+
+echo "Running client on port $PORT, using API_URL $API_URL"
+
+cd packages/frontend-web
+PORT=$PORT API_URL=$API_URL npm run start
