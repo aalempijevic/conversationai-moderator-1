@@ -176,12 +176,6 @@ export class Comments extends React.Component<ICommentsProps, ICommentsState> {
               'New',
               unmoderatedCount,
             ),
-            makeTab(
-              router,
-              `/categories/${category ? category.id : 'all'}/moderated`,
-              'Moderated',
-              moderatedCount,
-            ),
           ];
 
     return (
