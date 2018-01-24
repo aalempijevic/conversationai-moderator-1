@@ -27,6 +27,7 @@ import {
   ICommentModel,
   ICommentScoreModel,
   ICommentSummaryScoreModel,
+  IFlagModel,
   ITaggingSensitivityModel,
   ITagModel,
   IUserModel,
@@ -323,6 +324,8 @@ export interface ICommentDetailProps {
   confirmCommentSummaryScore?(id: string, tagId: string, userId?: string): void;
   rejectCommentSummaryScore?(id: string, tagId: string, userId?: string): void;
   getTagIdsAboveThresholdByCommentId?(commentId: string): Set<string>;
+  flags?: List<IFlagModel>;
+  loadFlags?(commentId: string): void;
 }
 
 export interface ICommentDetailState {
@@ -515,6 +518,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
       currentUser,
       onUpdateComment,
       getTagIdsAboveThresholdByCommentId,
+      flags,
     } = this.props;
 
     const {
@@ -661,6 +665,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
                 <SingleComment
                   authorCounts={authorCountById(comment.authorSourceId)}
                   comment={comment}
+                  flags={flags}
                   allScores={allScores}
                   allScoresAboveThreshold={allScoresAboveThreshold}
                   reducedScoresAboveThreshold={reducedScoresAboveThreshold}
@@ -1091,7 +1096,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
 
   @autobind
   async onCommentTagClick(commentScore: ICommentScoreModel) {
-    console.log(this.props.comment.id, commentScore.id);
     if (this.props.onRemoveCommentScore) {
       await this.props.onRemoveCommentScore(commentScore);
     }

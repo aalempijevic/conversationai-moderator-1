@@ -22,6 +22,7 @@ import {
   IAuthorCountsModel,
   ICommentModel,
   ICommentScoreModel,
+  IFlagModel,
   ITaggingSensitivityModel,
 } from '../../../../../models';
 import { IThunkAction } from '../../../../stores';
@@ -40,6 +41,7 @@ import { getArticle } from '../../store';
 const COMMENT_DATA_PREFIX = ['scenes', 'commentsIndex', 'commentDetail', 'comment'];
 const COMMENT_DATA = [...COMMENT_DATA_PREFIX, 'item'];
 const LOADING_STATUS = [...COMMENT_DATA_PREFIX, 'isFetching'];
+const FLAGS_DATA = ['scenes', 'commentsIndex', 'commentDetail', 'flags', 'items'];
 const COMMENT_SCORES_DATA_PREFIX = ['scenes', 'commentsIndex', 'commentDetail', 'scores'];
 const COMMENT_SCORES_DATA = [...COMMENT_SCORES_DATA_PREFIX, 'items'];
 const COMMENT_PAGING_PREFIX = ['scenes', 'commentsIndex', 'commentDetail', 'paging'];
@@ -60,6 +62,10 @@ const loadCommentScoresStart =
   createAction<void>('comment-detail/LOAD_COMMENT_SCORE_START');
 const loadCommentScoresComplete =
   createAction<object>('comment-detail/LOAD_COMMENT_SCORE_COMPLETE');
+const loadFlagsStart =
+  createAction<void>('comment-detail/LOAD_FLAGS_START');
+const loadFlagsComplete =
+  createAction<object>('comment-detail/LOAD_FLAGS_COMPLETE');
 export const clearCommentPagingOptions =
   createAction<void>('comment-detail/CLEAR_COMMENT_PAGING_OPTIONS');
 const internalStoreCommentPagingOptions =
@@ -97,6 +103,14 @@ export function loadScores(id: string): IThunkAction<Promise<void>> {
   );
 }
 
+export function loadFlags(id: string): IThunkAction<Promise<void>> {
+  return makeAJAXAction(
+    () => listRelationshipModels('comments', id, 'flags', {page: {offset: 0, limit: -1}}),
+    loadFlagsStart,
+    loadFlagsComplete,
+  );
+}
+
 const {
   reducer: commentReducer,
   updateRecord: updateCommentRecord,
@@ -109,12 +123,19 @@ export const updateComment = updateCommentRecord;
 
 const {
   reducer: commentScoresReducer,
-  addRecord,
+  addRecord: addCommentScoreRecord,
   updateRecord: updateCommentScoreRecord,
-  removeRecord,
+  removeRecord: removeCommentScoreRecord,
 } = makeRecordListReducer<ICommentScoreModel>(
   loadCommentScoresStart.toString(),
   loadCommentScoresComplete.toString(),
+);
+
+const {
+  reducer: flagsReducer,
+} = makeRecordListReducer<IFlagModel>(
+  loadFlagsStart.toString(),
+  loadFlagsComplete.toString(),
 );
 
 export interface ICommentPagingState {
@@ -282,15 +303,16 @@ export const authorCountsReducer = handleActions<
 export const reducer: any = combineReducers({
   comment: commentReducer,
   scores: commentScoresReducer,
+  flags: flagsReducer,
   paging: commentPagingReducer,
   authorCounts: authorCountsReducer,
 });
 
 /* Set or delete items in the comment detail store created by makeRecordListReducer */
 
-export const addCommentScore = addRecord;
+export const addCommentScore = addCommentScoreRecord;
 export const updateCommentScore = updateCommentScoreRecord;
-export const removeCommentScore = removeRecord;
+export const removeCommentScore = removeCommentScoreRecord;
 
 export function getComment(state: any): ICommentModel {
   return state.getIn(COMMENT_DATA);
@@ -298,6 +320,10 @@ export function getComment(state: any): ICommentModel {
 
 export function getScores(state: any): List<ICommentScoreModel> {
   return state.getIn(COMMENT_SCORES_DATA);
+}
+
+export function getFlags(state: any): List<IFlagModel> {
+  return state.getIn(FLAGS_DATA);
 }
 
 export function getIsLoading(state: any): boolean {
