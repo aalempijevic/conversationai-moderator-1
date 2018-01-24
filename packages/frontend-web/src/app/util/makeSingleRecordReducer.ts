@@ -24,6 +24,7 @@ import {
   CommentModel,
   CommentScoreModel,
   CommentSummaryScoreModel,
+  FlagModel,
   RuleModel,
   TagModel,
   UserModel,
@@ -44,6 +45,7 @@ export function findModel(name: string): (Model: any) => any {
   if (name === 'tagging_sensitivities') { return RuleModel; }
   if (name === 'comment_scores') { return CommentScoreModel; }
   if (name === 'comment_summary_scores') { return CommentSummaryScoreModel; }
+  if (name === 'flags') { return FlagModel; }
 
   throw new Error(`Could not find model: ${name}`);
 }

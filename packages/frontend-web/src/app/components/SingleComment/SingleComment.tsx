@@ -23,6 +23,7 @@ import {
   ICommentModel,
   ICommentScoreModel,
   ICommentSummaryScoreModel,
+  IFlagModel,
   ITagModel,
   IUserModel,
 } from '../../../models';
@@ -72,6 +73,7 @@ import {
 } from '../Link';
 import { AnnotatedCommentText } from './components/AnnotatedCommentText';
 import { CommentTags } from './components/CommentTags';
+import { Flags } from './components/Flags';
 
 const ICON_SIZE = 20;
 const AVATAR_SIZE = 60;
@@ -482,6 +484,7 @@ export interface ISingleCommentProps {
   summaryScoresBelowThreshold?: List<ICommentSummaryScoreModel>;
   onUpdateCommentText?(comment: ICommentModel): void;
   commentEditingEnabled?: boolean;
+  flags?: List<IFlagModel>;
 }
 
 export interface ISingleCommentState {
@@ -634,6 +637,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
       summaryScoresBelowThreshold,
       onUpdateCommentText,
       commentEditingEnabled,
+      flags,
     } = this.props;
 
     const {
@@ -883,6 +887,13 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
               />
             )}
           </div>
+          {flags && (
+            <div {...css(COMMENT_STYLES.meta)}>
+              <div {...css(COMMENT_STYLES.metaType)}>
+                <Flags flags={flags} />
+              </div>
+            </div>
+          )}
           {summaryScoresAboveThreshold && (
             <div {...css(COMMENT_STYLES.tags)}>
               {summaryScoresAboveThreshold.map((s) => {

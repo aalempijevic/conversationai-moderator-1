@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2018 New York Times Company.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,15 +14,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export * from './article';
-export * from './category';
-export * from './comment';
-export * from './commentDated';
-export * from './commentScore';
-export * from './commentSummaryScore';
-export * from './flag';
-export * from './preselect';
-export * from './rule';
-export * from './tag';
-export * from './taggingSensitivity';
-export * from './user';
+export { Flags } from './Flags';

@@ -64,6 +64,7 @@ import {
   getAuthorCountsById,
   getComment,
   getCurrentCommentIndex,
+  getFlags,
   getIsLoading,
   getNextCommentId,
   getPagingIsFromBatch,
@@ -77,6 +78,7 @@ import {
   getTaggingSensitivitiesInCategory,
   getTaggingSensitivityForTag,
   loadComment,
+  loadFlags,
   loadScores,
   removeCommentScore,
   updateComment,
@@ -119,11 +121,13 @@ type ICommentDetailStateProps = Pick<
   'isFromBatch' |
   'authorCountById' |
   'getUserById' |
-  'currentUser'
+  'currentUser' |
+  'flags'
 >;
 
 type ICommentDetailDispatchProps = Pick<
   ICommentDetailProps,
+  'loadFlags' |
   'loadScores' |
   'onUpdateComment' |
   'onUpdateCommentScore' |
@@ -160,6 +164,8 @@ const mapStateToProps = createStructuredSelector({
   allTags: getTags,
 
   availableTags: getTaggableTags,
+
+  flags: (state: IAppState) => getFlags(state),
 
   allScores: (state: IAppState) => getScores(state),
 
@@ -249,6 +255,10 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch: IAppDispatch): ICommentDetailDispatchProps {
   return {
+    loadFlags: (commentId: string) => (
+      dispatch(loadFlags(commentId))
+    ),
+
     loadScores: (commentId: string) => (
       dispatch(loadScores(commentId))
     ),
@@ -357,10 +367,9 @@ const HookedCommentDetail = provideHooks<IRedialLocals>({
       dispatch(loadArticle(articleId));
     }
 
-    // const parsedCommentId = parseInt(commentId, 10);
-
     return Promise.all([
       dispatch(loadComment(commentId)),
+      dispatch(loadFlags(commentId)),
       dispatch(loadScores(commentId)),
       dispatch(loadTags()),
       dispatch(loadTaggingSensitivities()),
