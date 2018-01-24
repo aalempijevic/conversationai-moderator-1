@@ -23,6 +23,8 @@ spec:
         env:
         - name: API_URL
           value: "{{.api_url}}"
+        - name: COMMENTS_EDITABLE_FLAG
+          value: "{{.comments_editable_flag}}"
         - name: NODE_ENV
           value: "{{.node_env}}"
         - name: GOOGLE_CLIENT_ID

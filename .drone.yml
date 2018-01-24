@@ -83,10 +83,11 @@ deploy:
       cpu: 80
 
       api_url: "https://comments-api.dev.nyt.net"
+      comments_editable_flag: false
       node_env: "local"
 
       # The client yells if this isn't set, but it's not used for anything.
-      # OAuth flow is handled in the API. 
+      # OAuth flow is handled in the API.
       google_client_id: "placeholder"
       google_client_secret: "placeholder"
 
@@ -126,10 +127,11 @@ deploy:
       cpu: 80
 
       api_url: "https://comments-api.prd.nyt.net"
+      comments_editable_flag: false
       node_env: "local"
 
       # The client yells if this isn't set, but it's not used for anything.
-      # OAuth flow is handled in the API. 
+      # OAuth flow is handled in the API.
       google_client_id: "placeholder"
       google_client_secret: "placeholder"
 
