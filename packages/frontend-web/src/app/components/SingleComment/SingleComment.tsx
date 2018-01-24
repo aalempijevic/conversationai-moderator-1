@@ -670,7 +670,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
               <div {...css(PROFILE_STYLES.name)}>
                 {!inEditMode ? (
                   <Link
-                    to={`/search?searchByAuthor=true&term=${author.name}`}
+                    to={`/search?searchByAuthor=true&term=${comment.authorSourceId}`}
                     key="authorName"
                     {...css(PROFILE_STYLES.authorName)}
                   >

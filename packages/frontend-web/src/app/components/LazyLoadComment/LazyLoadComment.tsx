@@ -270,8 +270,8 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
                 <Avatar size={AVATAR_SIZE} target={comment.author} />
               </span>
             )}
-            { comment.author.name && (
-              <Link to={`/search?searchByAuthor=true&term=${comment.author.name}`} {...css({ color: DARK_COLOR })}>{comment.author.name}&nbsp;</Link>
+            { comment.author.name && comment.authorSourceId && (
+              <Link to={`/search?searchByAuthor=true&term=${comment.authorSourceId}`} {...css({ color: DARK_COLOR })}>{comment.author.name}&nbsp;</Link>
             )}
             {comment.author.location && (
               <span>from {comment.author.location}&nbsp;</span>
