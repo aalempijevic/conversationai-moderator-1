@@ -49,6 +49,9 @@ export function fakeCommentModel(overrides: Partial<ICommentAttributes> = {}): I
     articleId: article.get('id') && undefined,
     article,
     updatedAt: faker.date.recent().toISOString(),
+    isReporterReply: faker.random.boolean(),
+    authorTitle: faker.name.findName(),
+    authorURL: faker.internet.url(),
     ...overrides,
   });
 }

@@ -26,6 +26,7 @@ import {
   RejectIcon,
   RoboIcon,
   ThumbUpIcon,
+  NYTIcon,
 } from '../../../../../../components/Icons';
 import {
   LIGHT_COLOR,
@@ -64,50 +65,65 @@ const STYLES = stylesheet({
 const navigationTabs = [
   {
     label: 'Approved',
+    key: 'approved',
     linkPath: 'approved',
     icon: ApproveIcon,
     count: 0,
   },
   {
     label: 'Rejected',
+    key: 'rejected',
     linkPath: 'rejected',
     icon: RejectIcon,
     count: 0,
   },
   {
     label: 'Highlighted',
+    key: 'highlighted',
     linkPath: 'highlighted',
     icon: HighlightIcon,
     count: 0,
   },
   {
     label: 'Deferred',
+    key: 'deferred',
     linkPath: 'deferred',
     icon: DeferIcon,
     count: 0,
   },
   {
     label: 'Flagged',
+    key: 'flagged',
     linkPath: 'flagged',
     icon: FlagIcon,
     count: 51,
   },
   {
     label: 'Recommended',
+    key: 'recommended',
     linkPath: 'recommended',
     icon: ThumbUpIcon,
     count: 0,
   },
   {
     label: 'Batched',
+    key: 'batched',
     linkPath: 'batched',
     icon: BatchIcon,
     count: 0,
   },
   {
     label: 'Automated',
+    key: 'automated',
     linkPath: 'automated',
     icon: RoboIcon,
+    count: 0,
+  },
+  {
+    label: 'Reporter Replies',
+    key: 'reporterReply',
+    linkPath: 'reporterReply',
+    icon: NYTIcon,
     count: 0,
   },
 ];
@@ -131,7 +147,7 @@ export class ModeratedStatusTabs
     return (
       <div {...css(STYLES.tabs)}>
         { navigationTabs.map((tab) => {
-          const commentsForTag = moderatedComments && moderatedComments.get(tab.label.toLowerCase());
+          const commentsForTag = moderatedComments && moderatedComments.get(tab.key);
 
           const isRouteActive = router.isActive(`${urlPrefix}/${tab.linkPath}`);
 

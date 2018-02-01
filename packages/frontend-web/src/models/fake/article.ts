@@ -36,6 +36,7 @@ export function fakeArticleModel(overrides: Partial<IArticleAttributes> = {}): I
     flaggedCount: faker.random.number(),
     batchedCount: faker.random.number(),
     recommendedCount: faker.random.number(),
+    reporterReplyCount: faker.random.number(),
     ...overrides,
   } as IArticleAttributes);
 }

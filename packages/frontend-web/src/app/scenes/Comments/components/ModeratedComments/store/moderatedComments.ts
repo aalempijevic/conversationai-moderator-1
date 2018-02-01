@@ -303,5 +303,6 @@ export function getModeratedComments(state: IAppStateRecord, params: any): Map<s
     recommended: List<string>(),
     batched: List<string>(),
     automated: List<string>(),
+    reporterReplies: List<string>(),
   });
 }

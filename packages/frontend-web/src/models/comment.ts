@@ -60,6 +60,9 @@ export interface ICommentAttributes {
   replies?: Array<ICommentModel>;
   maxSummaryScore?: number;
   maxSummaryScoreTagId?: string;
+  isReporterReply: boolean;
+  authorTitle: string;
+  authorURL: string;
 }
 
 export interface ICommentModel extends TypedRecord<ICommentModel>, ICommentAttributes {}
@@ -92,6 +95,9 @@ const CommentModelRecord = Record({
   flags: null,
   maxSummaryScore: null,
   maxSummaryScoreTagId: null,
+  isReporterReply: null,
+  authorTitle: null,
+  authorURL: null
 });
 
 export const AuthorModelRecord = Record({

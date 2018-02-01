@@ -247,6 +247,8 @@ export class DashboardArticles
         return article.batchedCount;
       case 'automated':
         return article.automatedCount;
+      case 'reporterReply':
+        return article.reporterReplyCount;
       default:
         return formatDate(article.sourceCreatedAt, DATE_FORMAT_LONG);
     }

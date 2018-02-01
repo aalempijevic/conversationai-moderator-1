@@ -33,6 +33,7 @@ import {
 } from '../ConfirmationCircle';
 import {
   MoreVerticalIcon,
+  NYTIcon,
 } from '../Icons';
 
 import {
@@ -40,6 +41,7 @@ import {
   BODY_TEXT_BOLD_TYPE,
   DARK_COLOR,
   MEDIUM_COLOR,
+  REPORTER_REPLY_STYLES,
 } from '../../styles';
 
 import {
@@ -238,6 +240,26 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
       output = [<span>{comment.text}</span>];
     }
 
+    // Conditional labels and styles to differentiate reporters from other commenters.
+    let authorLabel;
+    let authorAvatar = {};
+    if (comment.isReporterReply) {
+      authorLabel = comment.authorTitle;
+      authorAvatar = (
+        <span {...css({marginRight: '8px'}, REPORTER_REPLY_STYLES.avatarIcon)}>
+          <NYTIcon size={AVATAR_SIZE} />
+          <span>Reporter Reply</span>
+        </span>
+      );
+    } else {
+      authorLabel = `from ${comment.author.location}`;
+      authorAvatar = comment.author.avatar && (
+        <span {...css({marginRight: '8px'})}>
+          <Avatar size={AVATAR_SIZE} target={comment.author} />
+        </span>
+      );
+    }
+
     return(
       <div {...css(ROW_STYLES.comment, {flex: 1})}>
         {displayArticleTitle && (
@@ -265,16 +287,14 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
               </Link>
               )}
 
-            { comment.author.avatar && (
-              <span {...css({marginRight: '8px'})}>
-                <Avatar size={AVATAR_SIZE} target={comment.author} />
-              </span>
-            )}
+            { authorAvatar }
             { comment.author.name && comment.authorSourceId && (
               <Link to={`/search?searchByAuthor=true&term=${comment.authorSourceId}`} {...css({ color: DARK_COLOR })}>{comment.author.name}&nbsp;</Link>
             )}
-            {comment.author.location && (
-              <span>from {comment.author.location}&nbsp;</span>
+            { authorLabel && (
+              <span {...css({marginRight: '8px'})}>
+               {authorLabel}
+              </span>
             )}
             <span {...css({textDecoration: 'none'})}> &bull; {distanceInWordsToNow(new Date(comment.sourceCreatedAt))} ago&nbsp;</span>
             {comment.flaggedCount > 0 && (
