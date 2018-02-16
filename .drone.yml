@@ -82,7 +82,7 @@ deploy:
       replicas_max: 5
       cpu: 80
 
-      api_url: "https://comments-api.dev.nyt.net"
+      api_url: "https://comments-api-internal.dev.nyt.net"
       comments_editable_flag: false
       node_env: "local"
 
@@ -126,7 +126,7 @@ deploy:
       replicas_max: 10
       cpu: 80
 
-      api_url: "https://comments-api.prd.nyt.net"
+      api_url: "https://comments-api-internal.prd.nyt.net"
       comments_editable_flag: false
       node_env: "local"
 
