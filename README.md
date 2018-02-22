@@ -1,8 +1,8 @@
-# OSMod
+# New York Times internal Moderator client
 
-## New York Times internal Moderator Client
+This repo contains a copy of the [Conversation AI Moderator](https://github.com/conversationai/conversationai-moderator) project for internal development of the Moderator client only. The backend-api package here is not in use.
 
-This repo contains a copy of [OSMod](https://github.com/conversationai/conversationai-moderator) for internal development of the Moderator Client app only. The backend-api package here is not in use.
+Moderator was initially deployed in its open source form via a few shell apps that wrapped the published Conversation AI NPM packages. See [nytm/ugc-moderator-os-deploy](https://github.com/nytm/ugc-moderator-os-deploy).
 
 ## Scripts
 
