@@ -51,7 +51,7 @@ publish:
 deploy:
   # Dev
   gke-dev:
-    image: nytimes/drone-gke
+    image: nytimes/drone-gke:0.4
 
     # For debugging
     dry_run: false
@@ -97,7 +97,7 @@ deploy:
 
   # Prd
   gke-prd:
-    image: nytimes/drone-gke
+    image: nytimes/drone-gke:0.4
 
     # For debugging
     dry_run: false
