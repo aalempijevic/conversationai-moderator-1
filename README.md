@@ -4,6 +4,14 @@ This repo contains a copy of the [Conversation AI Moderator](https://github.com/
 
 Moderator was initially deployed in its open source form via a few shell apps that wrapped the published Conversation AI NPM packages. See [nytm/ugc-moderator-os-deploy](https://github.com/nytm/ugc-moderator-os-deploy).
 
+## Secrets
+Secrets should be encoded through the drone interface: `https://drone-general-prd.newsdev.net/nytm/ugc-moderator` and added to `.drone.sec`.
+
+If secrets are updated, use `/scripts/encrypt-secrets` to update secrets.yaml.enc, which can be committed back to this repo.
+
+If you need access to an unencrypted version of secrets in order to update/encrypt, use `./scripts/decrypt-secrets`.
+
+
 ## Scripts
 
 ### Install
@@ -20,6 +28,7 @@ Setup local MySQL:
 mysql -uroot os_moderator < packages/backend-core/seed/initial-database.sql 
 ./bin/osmod migrate
 ```
+
 
 ### OSMOD commands
 
