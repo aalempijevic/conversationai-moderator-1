@@ -97,7 +97,7 @@ const CommentModelRecord = Record({
   maxSummaryScoreTagId: null,
   isReporterReply: null,
   authorTitle: null,
-  authorURL: null
+  authorURL: null,
 });
 
 export const AuthorModelRecord = Record({

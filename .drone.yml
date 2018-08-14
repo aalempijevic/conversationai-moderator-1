@@ -1,139 +1,126 @@
 ---
-build:
-  install:
-    image: node:6.9.5
+pipeline:
+  build:
+    image: node:8.11.3
     commands:
       - npm install --silent
       - ./node_modules/lerna/bin/lerna.js bootstrap
-      - ./node_modules/lerna/bin/lerna.js run build
+      - ./node_modules/lerna/bin/lerna.js run build    
     when:
       event:
         - push
         - pull_request
         - tag
 
-publish:
-  # Dev
-  gcr:
+  #TODO: Add test step.
+
+  publish-dev:
+    image: plugins/gcr
     storage_driver: overlay
-
-    registry: gcr.io
-    repo: nyt-ugc-dev/ugc-moderator-client
-
+    repo: gcr.io/nyt-ugc-dev/ugc-moderator-client
     tag:
-      - $$COMMIT
+      - ${DRONE_COMMIT}
       - latest
-
-    token: >
-      $$GOOGLE_CREDENTIALS_DEV
-
+    secrets:
+      - source: google_credentials_dev
+        target: token
     when:
       event: push
       branch: master
 
-  # Prd
-  gcr:
+  publish-prd:
+    image: plugins/gcr
     storage_driver: overlay
-
-    registry: gcr.io
-    repo: nyt-ugc-prd/ugc-moderator-client
-
+    repo: gcr.io/nyt-ugc-prd/ugc-moderator-client
     tag:
-      - $$COMMIT
+      - ${DRONE_COMMIT}
       - latest
-
-    token: >
-      $$GOOGLE_CREDENTIALS_PRD
-
+    secrets:
+      - source: google_credentials_prd
+        target: token
     when:
       event: tag
 
-deploy:
-  # Dev
-  gke-dev:
-    image: nytimes/drone-gke:0.4
-
-    # For debugging
+  deploy-dev:
+    image: nytimes/drone-gke:0.8
     dry_run: false
     verbose: true
-
     zone: us-central1-b
     cluster: moderator-cluster
-
     namespace: moderator-client
-
     template: .kube.yml
     verbose: true
-    token: >
-      $$GOOGLE_CREDENTIALS_DEV
-
-    # These are made available in the .kube.yml template.
+    secrets:
+      - source: google_credentials_dev
+        target: token
     vars:
-      image: gcr.io/nyt-ugc-dev/ugc-moderator-client:$$COMMIT
+      image: "gcr.io/nyt-ugc-dev/ugc-moderator-client:${DRONE_COMMIT}"
       frontend_app: ugc-moderator-client
-
-      frontend_version: $$COMMIT
+      frontend_version: ${DRONE_COMMIT}
       frontend_port: 8080
       env: dev
-
-      # NOTE: recommend minimum of 2 to ensure uptime during a rolling deploy.
-      replicas: 1
-      replicas_min: 1
+      replicas: 2
+      replicas_min: 2
       replicas_max: 5
       cpu: 80
-
       api_url: "https://comments-api-internal.dev.nyt.net"
       comments_editable_flag: false
       node_env: "local"
-
       # The client yells if this isn't set, but it's not used for anything.
       # OAuth flow is handled in the API.
       google_client_id: "placeholder"
       google_client_secret: "placeholder"
-
     when:
-      event: push
       branch: master
+      event: push
 
-  # Prd
-  gke-prd:
-    image: nytimes/drone-gke:0.4
-
-    # For debugging
+  deploy-prd:
+    image: nytimes/drone-gke:0.8
     dry_run: false
     verbose: true
-
     zone: us-central1-b
     cluster: moderator-cluster
-
     namespace: moderator-client
-
     template: .kube.yml
     verbose: true
-    token: >
-      $$GOOGLE_CREDENTIALS_PRD
-
+    secrets:
+      - source: google_credentials_prd
+        target: token
     vars:
-      image: gcr.io/nyt-ugc-prd/ugc-moderator-client:$$COMMIT
+      image: "gcr.io/nyt-ugc-prd/ugc-moderator-client:${DRONE_COMMIT}"
       frontend_app: ugc-moderator-client
-
-      frontend_version: $$COMMIT
+      frontend_version: ${DRONE_COMMIT}
       frontend_port: 8080
       env: prd
-
       replicas: 2
       replicas_min: 2
-      replicas_max: 10
+      replicas_max: 5
       cpu: 80
-
       api_url: "https://comments-api-internal.prd.nyt.net"
       comments_editable_flag: false
       node_env: "local"
-
       # The client yells if this isn't set, but it's not used for anything.
       # OAuth flow is handled in the API.
       google_client_id: "placeholder"
       google_client_secret: "placeholder"
-
     when:
-      event: tag
+      event:
+        - tag
+
+  slack:
+    image: plugins/slack
+    channel: community-dev-release
+    username: Community Drone CI
+    secrets: [slack_webhook] # Plugin-specific global secret for notifications
+    when:
+      branch: master
+      event: push
+        
+  slack:
+    image: plugins/slack
+    channel: community-dev
+    username: Community Drone CI
+    secrets: [slack_webhook] # Plugin-specific global secret for notifications
+    when:
+      event:
+        - tag

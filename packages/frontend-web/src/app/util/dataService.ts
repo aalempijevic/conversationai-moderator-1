@@ -18,7 +18,7 @@ import {
   INewResource,
   IParams,
 } from '@conversationai/moderator-jsonapi/src/types';
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { fromJS, List, Map } from 'immutable';
 import { isNaN, pick } from 'lodash';
 import qs from 'qs';
@@ -76,10 +76,10 @@ function validateModelName(name: string): void {
 
 export function validateID(id: any, valueName: string): void {
   // Article ids are can be non-numeric to allow for flexibility with matching upstream publisher article ids
-  if (valueName == "articleId") {
+  if (valueName === 'articleId') {
     // A legal id contains only alphanumeric characters, hyphens or dashes
-    if (/^[a-z0-9_\-]+$/i.test(id) == false) {
-      throw new Error(`Invalid ${valueName} ${id}. Only alphanumeric characters, dashes and underscores are allowed in ${valueName}. Might be an attempted exploit.`)
+    if (/^[a-z0-9_\-]+$/i.test(id) === false) {
+      throw new Error(`Invalid ${valueName} ${id}. Only alphanumeric characters, dashes and underscores are allowed in ${valueName}. Might be an attempted exploit.`);
     }
 
   // All other ids must be integers
@@ -166,9 +166,9 @@ export function relationURL(type: IValidModelNames, id: string, relationship: st
   validateModelName(type);
 
   // We allow articleIds to be alphanumeric
-  const parsedArticleId = type == 'articles' ? id : parseInt(id, 10);
+  const parsedArticleId = type === 'articles' ? id : parseInt(id, 10);
 
-  return `${API_URL}${REST_URL}/${type}/${parsedArticleId}/relationships/${relationship}${serializeParams(params)}`
+  return `${API_URL}${REST_URL}/${type}/${parsedArticleId}/relationships/${relationship}${serializeParams(params)}`;
 }
 
 /**
@@ -750,9 +750,13 @@ export async function destroyRelationshipModels(
 ): Promise<void> {
   validateModelName(type);
 
-  await axios.delete(relationURL(type, id, relationship), {
-    data: relatedIds.map((relatedId) => ({ id: relatedId })),
-  } as Partial<IParams>);
+  await axios.delete(relationURL(type, id, relationship), getConfig());
+
+  function getConfig() {
+    return {
+      data: relatedIds.map((relatedId) => ({ id: relatedId })),
+    } as Partial<AxiosRequestConfig>;
+  }
 }
 
 /**

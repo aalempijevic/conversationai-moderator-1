@@ -34,6 +34,8 @@
     "request": "2.81.0",
     "sequelize": "3.30.4",
     "sequelize-cli": "2.7.0",
-    "yargs": "7.0.2"
+    "yargs": "7.0.2",
+    "@types/bluebird": "3.5.2",
+    "bluebird": "3.5.0"  
   }
 }

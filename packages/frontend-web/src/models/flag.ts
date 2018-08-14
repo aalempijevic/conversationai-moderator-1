@@ -24,6 +24,7 @@ export function FlagModel(keyValuePairs?: IFlagAttributes): IFlagModel {
     const parsedExtra = JSON.parse(extra);
     labels = parsedExtra && parsedExtra.completeTags || [];
   }
+  // tslint:disable-next-line:no-empty
   finally {}
 
   immutableKeyValuePairs = immutableKeyValuePairs.set('labels', labels);

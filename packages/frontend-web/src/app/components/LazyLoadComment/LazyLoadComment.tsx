@@ -287,7 +287,7 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
               </Link>
               )}
 
-            { authorAvatar }
+            {authorAvatar}
             { comment.author.name && comment.authorSourceId && (
               <Link to={`/search?searchByAuthor=true&term=${comment.authorSourceId}`} {...css({ color: DARK_COLOR })}>{comment.author.name}&nbsp;</Link>
             )}

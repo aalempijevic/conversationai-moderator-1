@@ -23,10 +23,10 @@ import {
   DeferIcon,
   FlagIcon,
   HighlightIcon,
+  NYTIcon,
   RejectIcon,
   RoboIcon,
   ThumbUpIcon,
-  NYTIcon,
 } from '../../../../../../components/Icons';
 import {
   LIGHT_COLOR,
