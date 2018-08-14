@@ -16,18 +16,17 @@ limitations under the License.
 
 import { List } from 'immutable';
 import { storiesOf } from '@kadira/storybook';
+
 import { FlagModelRecord, IFlagModel } from '../../../../../models';
 import { Flags } from '../Flags';
 
-
-const getFlag = function(id: string, labels: Array<string>) {
+const getFlag = (id: string, labels: Array<string>) => {
   return FlagModelRecord({
-    id: id,
+    id,
     commentId: 1,
-    labels: labels,
+    labels,
   }) as IFlagModel;
-}
-
+};
 
 storiesOf('Flags', {})
   .add('default list', () => {
@@ -37,6 +36,7 @@ storiesOf('Flags', {})
       getFlag('3', ['foo', 'bar']),
       getFlag('4', ['bar', 'baz']),
     ]);
+
     return (
       <Flags flags={flags} />
     );
