@@ -16,12 +16,14 @@ limitations under the License.
 
 const jwtDecode = require('jwt-decode');
 import axios from 'axios';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
+
 import { RESTRICT_TO_SESSION } from '../config';
 import { IAppDispatch, IAppStateRecord, IThunkAction } from '../stores';
-import { checkAuthorization, clearCSRF, getCSRF, getModel } from '../util';
+import { initialiseClientModel } from '../stores';
+import {checkAuthorization, clearCSRF, disconnectNotifier, getCSRF, getModel} from '../util';
 
-import { Action, createAction, handleActions } from 'redux-actions';
 import { IUserModel } from '../../models';
 
 const LOCAL_STORAGE_TOKEN_KEY = 'moderator/auth_token';
@@ -87,6 +89,7 @@ async function completeAuthentication(token: string, dispatch: IAppDispatch): Pr
   const data = decodeToken(token);
   const user = await loadUser(data['user']);
   await dispatch(completedAuthentication(user));
+  await initialiseClientModel(dispatch);
 }
 
 export function handleToken(token: string, csrf: string): IThunkAction<void> {
@@ -188,6 +191,7 @@ export const reducer = handleActions<
 
   [logout.toString()]: (state) => {
     saveToken(null);
+    disconnectNotifier();
 
     return state
       .set('isAuthenticating', false)
@@ -204,7 +208,10 @@ export function getIsAuthenticated(state: IAppStateRecord): boolean {
   return state.getIn(['auth', 'isAuthenticated']);
 }
 
-export function getUser(state: IAppStateRecord): IUserModel {
+// TODO: We really should be getting the user from the users list in the store
+//       Stored separately like this, we won't update it when the user's details change
+//       Also, it adds an extra round trip to the server on login.
+export function getCurrentUser(state: IAppStateRecord): IUserModel {
   return state.getIn(['auth', 'user']);
 }
 
@@ -213,5 +220,5 @@ export function isAdmin(user: IUserModel): boolean {
 }
 
 export function getIsAdmin(state: IAppStateRecord): boolean {
-  return isAdmin(getUser(state));
+  return isAdmin(getCurrentUser(state));
 }
