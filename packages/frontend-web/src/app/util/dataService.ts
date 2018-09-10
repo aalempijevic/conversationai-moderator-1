@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { fromJS, List, Map } from 'immutable';
 import { isNaN, pick } from 'lodash';
 import qs from 'qs';
@@ -23,6 +23,7 @@ import {
   INewResource,
   IParams,
 } from '@conversationai/moderator-jsonapi/src/types';
+
 import {
   ArticleModel,
   CategoryModel,
@@ -725,9 +726,13 @@ export async function destroyRelationshipModels(
 ): Promise<void> {
   validateModelName(type);
 
-  await axios.delete(relationURL(type, id, relationship), {
-    data: relatedIds.map((relatedId) => ({ id: relatedId })),
-  });
+  await axios.delete(relationURL(type, id, relationship), getConfig());
+
+  function getConfig() {
+    return {
+      data: relatedIds.map((relatedId) => ({ id: relatedId })),
+    } as Partial<AxiosRequestConfig>;
+  }
 }
 
 /**
