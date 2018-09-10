@@ -1,0 +1,124 @@
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+
+metadata:
+  name: {{.frontend_app}}-{{.env}}-deployment
+
+spec:
+  replicas: {{.replicas}}
+
+  template:
+    metadata:
+      labels:
+        app: {{.frontend_app}}
+        env: {{.env}}
+    spec:
+      containers:
+      - name: {{.frontend_app}}
+        image: gcr.io/nyt-ugc-dev/{{.frontend_app}}:{{.frontend_version}}
+        ports:
+          - containerPort: {{.frontend_port}}
+            protocol: TCP
+        env:
+        - name: API_URL
+          value: "{{.api_url}}"
+        - name: COMMENTS_EDITABLE_FLAG
+          value: "{{.comments_editable_flag}}"
+        - name: NODE_ENV
+          value: "{{.node_env}}"
+        - name: GOOGLE_CLIENT_ID
+          value: {{.google_client_id}}
+        - name: GOOGLE_CLIENT_SECRET
+          value: {{.google_client_secret}} # Placeholder, not a real secret.
+
+        # Probe documentation:
+        # https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: {{.frontend_port}}
+          initialDelaySeconds: 1
+          periodSeconds: 10
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 3
+
+        # livenessProbe failure tells Kubernetes to restart this container
+        livenessProbe:
+          # Success on socket connection to port
+          httpGet:
+            path: /healthz
+            port: {{.frontend_port}}
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 3
+
+        # Please see resources documentation for details:
+        # https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+        # https://kubernetes.io/docs/tasks/configure-pod-container/assign-cpu-resource/
+        # https://kubernetes.io/docs/tasks/configure-pod-container/assign-memory-resource/
+        # https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/
+        # https://medium.com/google-cloud/quality-of-service-class-qos-in-kubernetes-bb76a89eb2c6
+        resources:
+          requests:
+            # 10% of a core
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            # 20% of a core
+            cpu: 200m
+            memory: 256Mi
+
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+
+metadata:
+  name: {{.frontend_app}}-{{.env}}
+
+spec:
+  scaleTargetRef:
+    kind: Deployment
+    name: {{.frontend_app}}-{{.env}}-deployment
+  minReplicas: {{.replicas_min}}
+  maxReplicas: {{.replicas_max}}
+  targetCPUUtilizationPercentage: {{.cpu}}
+
+---
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: {{.frontend_app}}-{{.env}}-service
+
+spec:
+  type: NodePort
+
+  selector:
+    app: {{.frontend_app}}
+    env: {{.env}}
+
+  ports:
+    - name: http
+      port: 80
+      targetPort: {{.frontend_port}}
+      protocol: TCP
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+
+metadata:
+  name: {{.frontend_app}}-{{.env}}-ingress
+  annotations:
+    kubernetes.io/ingress.allow-http: "false"
+    kubernetes.io/ingress.global-static-ip-name: "ugc-moderator-client-{{.env}}-ingress"
+    ingress.gcp.kubernetes.io/pre-shared-cert: "nyt-ugc-{{.env}}-2017-cert"
+
+spec:
+  backend:
+    serviceName: {{.frontend_app}}-{{.env}}-service
+    servicePort: 80

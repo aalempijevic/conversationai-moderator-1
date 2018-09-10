@@ -1,0 +1,126 @@
+---
+pipeline:
+  build:
+    image: node:8.11.3
+    commands:
+      - npm install --silent
+      - ./node_modules/lerna/bin/lerna.js bootstrap
+      - ./node_modules/lerna/bin/lerna.js run build    
+    when:
+      event:
+        - push
+        - pull_request
+        - tag
+
+  #TODO: Add test step.
+
+  publish-dev:
+    image: plugins/gcr
+    storage_driver: overlay
+    repo: gcr.io/nyt-ugc-dev/ugc-moderator-client
+    tag:
+      - ${DRONE_COMMIT}
+      - latest
+    secrets:
+      - source: google_credentials_dev
+        target: token
+    when:
+      event: push
+      branch: master
+
+  publish-prd:
+    image: plugins/gcr
+    storage_driver: overlay
+    repo: gcr.io/nyt-ugc-prd/ugc-moderator-client
+    tag:
+      - ${DRONE_COMMIT}
+      - latest
+    secrets:
+      - source: google_credentials_prd
+        target: token
+    when:
+      event: tag
+
+  deploy-dev:
+    image: nytimes/drone-gke:0.8
+    dry_run: false
+    verbose: true
+    zone: us-central1-b
+    cluster: moderator-cluster
+    namespace: moderator-client
+    template: .kube.yml
+    verbose: true
+    secrets:
+      - source: google_credentials_dev
+        target: token
+    vars:
+      image: "gcr.io/nyt-ugc-dev/ugc-moderator-client:${DRONE_COMMIT}"
+      frontend_app: ugc-moderator-client
+      frontend_version: ${DRONE_COMMIT}
+      frontend_port: 8080
+      env: dev
+      replicas: 2
+      replicas_min: 2
+      replicas_max: 5
+      cpu: 80
+      api_url: "https://comments-api-internal.dev.nyt.net"
+      comments_editable_flag: false
+      node_env: "local"
+      # The client yells if this isn't set, but it's not used for anything.
+      # OAuth flow is handled in the API.
+      google_client_id: "placeholder"
+      google_client_secret: "placeholder"
+    when:
+      branch: master
+      event: push
+
+  deploy-prd:
+    image: nytimes/drone-gke:0.8
+    dry_run: false
+    verbose: true
+    zone: us-central1-b
+    cluster: moderator-cluster
+    namespace: moderator-client
+    template: .kube.yml
+    verbose: true
+    secrets:
+      - source: google_credentials_prd
+        target: token
+    vars:
+      image: "gcr.io/nyt-ugc-prd/ugc-moderator-client:${DRONE_COMMIT}"
+      frontend_app: ugc-moderator-client
+      frontend_version: ${DRONE_COMMIT}
+      frontend_port: 8080
+      env: prd
+      replicas: 2
+      replicas_min: 2
+      replicas_max: 5
+      cpu: 80
+      api_url: "https://comments-api-internal.prd.nyt.net"
+      comments_editable_flag: false
+      node_env: "local"
+      # The client yells if this isn't set, but it's not used for anything.
+      # OAuth flow is handled in the API.
+      google_client_id: "placeholder"
+      google_client_secret: "placeholder"
+    when:
+      event:
+        - tag
+
+  slack:
+    image: plugins/slack
+    channel: community-dev-release
+    username: Community Drone CI
+    secrets: [slack_webhook] # Plugin-specific global secret for notifications
+    when:
+      branch: master
+      event: push
+        
+  slack:
+    image: plugins/slack
+    channel: community-dev
+    username: Community Drone CI
+    secrets: [slack_webhook] # Plugin-specific global secret for notifications
+    when:
+      event:
+        - tag

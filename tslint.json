@@ -1,5 +1,8 @@
 {
   "extends": ["tslint-react"],
+  "exclude": [
+    "node_modules"
+  ],
   "rules": {
     "align": [true, "parameters", "statements"],
     "arrow-parens": true,

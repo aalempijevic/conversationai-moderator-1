@@ -17,3 +17,6 @@ lerna-debug.log
 source-context.json
 source-contexts.json
 *.rdb
+secrets.yaml
+env.list
+key.bin

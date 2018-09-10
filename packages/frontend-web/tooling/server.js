@@ -26,4 +26,9 @@ const {
 
 app.use('/', mountWebFrontend());
 
+// Healthz endpoint for readiness and liveness probes.
+app.get('/healthz', (req, res) => {
+  res.status(200).send('ok');
+});
+
 start(config.get('port'));

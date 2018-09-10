@@ -3151,7 +3151,7 @@ exports[`Storyshots CommentBody Basic 1`] = `
           }
         >
            • 
-          over 47 years
+          about 48 years
            ago 
         </span>
         <span
@@ -3442,7 +3442,7 @@ exports[`Storyshots CommentBody Hide Comment cAtion 1`] = `
           }
         >
            • 
-          over 47 years
+          about 48 years
            ago 
         </span>
         <span
@@ -3689,7 +3689,7 @@ exports[`Storyshots CommentBody Linked 1`] = `
             }
           >
              • 
-            over 47 years
+            about 48 years
              ago 
           </span>
           <span
@@ -14509,7 +14509,7 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                   }
                 >
                    • 
-                  over 47 years
+                  about 48 years
                    ago 
                 </span>
                 <span
@@ -14807,7 +14807,7 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                     }
                   >
                      • 
-                    over 47 years
+                    about 48 years
                      ago 
                   </span>
                   <span
@@ -15110,7 +15110,7 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                     }
                   >
                      • 
-                    over 47 years
+                    about 48 years
                      ago 
                   </span>
                   <span
@@ -15408,7 +15408,7 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                     }
                   >
                      • 
-                    over 47 years
+                    about 48 years
                      ago 
                   </span>
                   <span
@@ -15695,7 +15695,7 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                     }
                   >
                      • 
-                    over 47 years
+                    about 48 years
                      ago 
                   </span>
                 </div>

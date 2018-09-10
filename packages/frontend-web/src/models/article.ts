@@ -37,6 +37,7 @@ export interface IArticleAttributes {
   recommendedCount: number;
   batchedCount: number;
   automatedCount: number;
+  reporterReplyCount: number;
   assignedModerators: Array<IUserModel>;
   isAutoModerated: boolean;
 }
@@ -60,6 +61,8 @@ const ArticleModelRecord = Record({
   flaggedCount: null,
   batchedCount: null,
   recommendedCount: null,
+  automatedCount: null,
+  reporterReplyCount: null,
   assignedModerators: null,
   isAutoModerated: null,
 });

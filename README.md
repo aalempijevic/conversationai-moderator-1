@@ -1,6 +1,20 @@
 OSMod - The ConversationAI Moderator App
 ========================================
 
+New York Times internal version
+===============================
+
+This repo contains a copy of the [Conversation AI Moderator](https://github.com/conversationai/conversationai-moderator) project for internal development of the Moderator client only. The backend-api package here is not in use.
+
+Moderator was initially deployed in its open source form via a few shell apps that wrapped the published Conversation AI NPM packages. See [nytm/ugc-moderator-os-deploy](https://github.com/nytm/ugc-moderator-os-deploy).
+
+## Secrets
+Secrets should be encoded through the drone interface: `https://drone-general-prd.newsdev.net/nytm/ugc-moderator` and added to `.drone.sec`.
+
+If secrets are updated, use `/scripts/encrypt-secrets` to update secrets.yaml.enc, which can be committed back to this repo.
+
+If you need access to an unencrypted version of secrets in order to update/encrypt, use `./scripts/decrypt-secrets`.
+
 Deploying an OSMod instance
 ---------------------------
 
@@ -109,6 +123,7 @@ mysql -u $DATABASE_USER -p -h 127.0.0.1 $DATABASE_NAME < packages/backend-core/s
 ./bin/osmod migrate
 ```
 
+<<<<<<< HEAD
 To shut down the service and delete all your containers:
 
 ```bash
@@ -116,6 +131,10 @@ docker-compose -f deployments/local/docker-compose.yml down
 ```
 
 And to see what the container is doing:
+=======
+
+### OSMOD commands
+>>>>>>> nyt-master
 
 ```bash
 docker-compose -f deployments/local/docker-compose.yml logs

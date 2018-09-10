@@ -22,6 +22,7 @@ export const DIVIDER_COLOR = '#ededed';
 export const PALE_COLOR = '#f4f7f9';
 export const WHITE_COLOR = '#ffffff';
 export const GREY_COLOR = '#999999';
+export const LIGHT_GREY_COLOR = '#d3d3d3';
 
 // TEXT COLOR
 export const DARK_PRIMARY_TEXT_COLOR = 'rgba(0, 0, 0, 0.87)';
