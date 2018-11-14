@@ -885,6 +885,14 @@ export async function listAuthorCounts(
   return Map<string | number, IAuthorCountsModel>(response.data.data);
 }
 
+export async function listSystemUsers(type: string): Promise<List<IUserModel>> {
+  const response: any = await axios.get(serviceURL('simple', `/systemUsers/${type}`));
+  return List<IUserModel>(response.data.users.map((u: any) => {
+    u.id = u.id.toString();
+    return UserModel(u);
+  }));
+}
+
 let ws: WebSocket = null;
 let intervalTimer: NodeJS.Timer;
 
