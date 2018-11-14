@@ -169,6 +169,8 @@ const STYLES: any = stylesheet({
 
 export interface ISettingsProps extends WithRouterProps {
   users?: List<IUserModel>;
+  serviceUsers?: List<IUserModel>;
+  moderatorUsers?: List<IUserModel>;
   youtubeUsers?: List<IUserModel>;
   tags?: List<ITagModel>;
   rules?: List<IRuleModel>;
@@ -179,6 +181,8 @@ export interface ISettingsProps extends WithRouterProps {
   onCancel(): void;
   onSearchClick(): void;
   onAuthorSearchClick(): void;
+  reloadServiceUsers?(): Promise<void>;
+  reloadModeratorUsers?(): Promise<void>;
   reloadYoutubeUsers?(): Promise<void>;
   updatePreselects?(oldPreselects: List<IPreselectModel>, newPreselects: List<IPreselectModel>): void;
   updateRules?(oldRules: List<IRuleModel>, newRules: List<IRuleModel>): void;
@@ -196,6 +200,8 @@ export interface ISettingsProps extends WithRouterProps {
 
 export interface ISettingsState {
   users?: List<IUserModel>;
+  serviceUsers?: List<IUserModel>;
+  moderatorUsers?: List<IUserModel>;
   youtubeUsers?: List<IUserModel>;
   tags?: List<ITagModel>;
   rules?: List<IRuleModel>;
@@ -216,6 +222,8 @@ export interface ISettingsState {
 export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   state: ISettingsState = {
     users: this.props.users,
+    serviceUsers: this.props.serviceUsers,
+    moderatorUsers: this.props.moderatorUsers,
     youtubeUsers: this.props.youtubeUsers,
     tags: this.props.tags,
     rules: this.props.rules,
@@ -234,6 +242,8 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   };
 
   componentDidMount() {
+    this.props.reloadServiceUsers();
+    this.props.reloadModeratorUsers();
     this.props.reloadYoutubeUsers();
   }
 
@@ -241,6 +251,18 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     if (!this.props.users.equals(nextProps.users)) {
       this.setState({
         users: nextProps.users,
+      });
+    }
+    if (nextProps.serviceUsers &&
+      (!this.props.serviceUsers || !this.props.serviceUsers.equals(nextProps.serviceUsers))) {
+      this.setState({
+        serviceUsers: nextProps.serviceUsers,
+      });
+    }
+    if (nextProps.moderatorUsers &&
+      (!this.props.moderatorUsers || !this.props.moderatorUsers.equals(nextProps.moderatorUsers))) {
+      this.setState({
+        moderatorUsers: nextProps.moderatorUsers,
       });
     }
     if (nextProps.youtubeUsers &&
@@ -369,6 +391,12 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
         List([newValue]);
 
     this.setState({ preselects: updatedPreselects });
+  }
+
+  @autobind
+  handleAddServiceUser(event: React.FormEvent<any>) {
+    event.preventDefault();
+    console.log('got here');
   }
 
   @autobind
@@ -693,6 +721,108 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     );
   }
 
+  renderModeratorUsers() {
+    const {
+      moderatorUsers,
+    } = this.state;
+
+    if (!moderatorUsers || moderatorUsers.count() === 0) {
+      return (<p>None configured</p>);
+    }
+    return (
+      <div key="moderatorUsersSection">
+        <table>
+          <thead>
+          <tr>
+            <th key="1" {...css(SETTINGS_STYLES.userTableCell)}>
+              Name
+            </th>
+            <th key="3" {...css(SETTINGS_STYLES.userTableCell)}>
+              Type
+            </th>
+            <th key="4" {...css(SETTINGS_STYLES.userTableCell)}>
+              Endpoint
+            </th>
+            <th key="5" {...css(SETTINGS_STYLES.userTableCell)}>
+              Is Active
+            </th>
+            <th key="6" {...css(SETTINGS_STYLES.userTableCell)}/>
+          </tr>
+          </thead>
+          <tbody>
+          {moderatorUsers.map((u) => (
+            <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.name}
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.extra.endpointType}
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.extra.endpoint}
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.isActive ? 'Active' : ''}
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                <EditButton width={44} onClick={this.handleEditUser} label="Edit user" value={u.id}/>
+              </td>
+            </tr>
+          ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
+  renderServiceUsers() {
+    const {
+      serviceUsers,
+    } = this.state;
+
+    if (!serviceUsers || serviceUsers.count() === 0) {
+      return (<p>None configured</p>);
+    }
+    return (
+      <div key="serviceUsersSection">
+        <table>
+          <thead>
+          <tr>
+            <th key="1" {...css(SETTINGS_STYLES.userTableCell)}>
+              Name
+            </th>
+            <th key="2" {...css(SETTINGS_STYLES.userTableCell)}>
+              Email
+            </th>
+            <th key="3" {...css(SETTINGS_STYLES.userTableCell)}>
+              Auth token
+            </th>
+            <th key="6" {...css(SETTINGS_STYLES.userTableCell)}/>
+          </tr>
+          </thead>
+          <tbody>
+          {serviceUsers.map((u) => (
+            <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.name}
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.email}
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                sdf
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.isActive ? 'Active' : ''}
+              </td>
+            </tr>
+          ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
   renderYoutubeUsers() {
     const {
       youtubeUsers,
@@ -828,8 +958,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
                     onTagChange={this.handleTagChange}
                   />
                 ))}
-                <AddButton width={44} onClick={this.handleAddTag} label="Add a tag"
-                           buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
+                <AddButton width={44} onClick={this.handleAddTag} label="Add a tag" buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
               </div>
             </div>
 
@@ -858,8 +987,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
                     tags={tagsList}
                   />
                 ))}
-                <AddButton width={44} onClick={this.handleAddAutomatedRule} label="Add an automated rule"
-                           buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
+                <AddButton width={44} onClick={this.handleAddAutomatedRule} label="Add an automated rule" buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
               </div>
             </div>
 
@@ -885,8 +1013,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
                     tags={tagsWithAllNoSummary}
                   />
                 ))}
-                <AddButton width={44} onClick={this.handleAddTaggingSensitivity} label="Add a tagging sensitivity rule"
-                           buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
+                <AddButton width={44} onClick={this.handleAddTaggingSensitivity} label="Add a tagging sensitivity rule" buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
               </div>
             </div>
 
@@ -914,8 +1041,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
                     tags={tagsWithAll}
                   />
                 ))}
-                <AddButton width={44} onClick={this.handleAddPreselect} label="Add a preselect"
-                           buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
+                <AddButton width={44} onClick={this.handleAddPreselect} label="Add a preselect" buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
               </div>
             </div>
 
@@ -924,6 +1050,23 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               <Button key="save" buttonStyles={STYLES.save} label="Save" onClick={this.onSavePress}/>
             </div>
           </form>
+          <div key="serviceUsersHeader" {...css(STYLES.heading)}>
+            <h2 {...css(STYLES.headingText)}>
+              System accounts
+            </h2>
+          </div>
+          <div key="serviceUsers" {...css(STYLES.section)}>
+            <h3>OSMod Service accounts</h3>
+            <p>These accounts are used to access the OSMod API.</p>
+            {this.renderServiceUsers()}
+            <AddButton width={44} onClick={this.handleAddServiceUser} label="Add a service account" buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
+          </div>
+          <div key="moderatorUsers" {...css(STYLES.section)}>
+            <h3>Moderator accounts</h3>
+            <p>These accounts are responsible for sending comments to the Perspective API scorer.</p>
+            {this.renderModeratorUsers()}
+            <AddButton width={44} onClick={this.handleAddServiceUser} label="Add a scorer" buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
+          </div>
           <div>
             <div key="pluginsHeader" {...css(STYLES.heading)}>
               <h2 {...css(STYLES.headingText)}>
