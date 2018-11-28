@@ -896,6 +896,10 @@ export async function listSystemUsers(type: string): Promise<List<IUserModel>> {
 let ws: WebSocket = null;
 let intervalTimer: NodeJS.Timer;
 
+export const STATUS_DOWN = 'down';
+export const STATUS_UP = 'up';
+export const STATUS_RESET = 'reset';
+
 export interface ISystemSummary {
   tags: List<ITagModel>;
   taggingSensitivities: List<ITaggingSensitivityModel>;
@@ -980,7 +984,7 @@ let gotUser = false;
 let socketUp = false;
 
 export function connectNotifier(
-  websocketStateHandler: (isActive: boolean) => void,
+  websocketStateHandler: (status: string) => void,
   systemNotificationHandler: (data: ISystemSummary) => void,
   globalNotificationHandler: (data: IGlobalSummary) => void,
   userNotificationHandler: (data: IUserSummary) => void) {
@@ -994,10 +998,16 @@ export function connectNotifier(
       ws.onopen = () => {
         console.log('opened websocket');
 
-        ws.onclose = () => {
-          console.log('websocket closed');
+        ws.onclose = (e: CloseEvent) => {
+          console.log('websocket closed', e.code);
           socketUp = false;
-          websocketStateHandler(false);
+          if (!gotSystem && !gotGlobal && !gotUser) {
+            // Never got a message.  Server is rejecting our advances.  Log out and try logging in again.
+            websocketStateHandler(STATUS_RESET);
+          }
+          else {
+            websocketStateHandler(STATUS_DOWN);
+          }
           ws = null;
         };
       };
@@ -1019,7 +1029,7 @@ export function connectNotifier(
         }
 
         if (gotSystem && gotGlobal && gotUser && !socketUp) {
-          websocketStateHandler(true);
+          websocketStateHandler(STATUS_UP);
           socketUp = true;
         }
       };
