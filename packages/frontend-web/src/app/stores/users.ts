@@ -104,7 +104,6 @@ const reducer = handleActions<IUsersStateRecord, List<IUserModel> | ILoadSystemU
     if (payload.type === USER_GROUP_SERVICE ||
       payload.type === USER_GROUP_MODERATOR ||
       payload.type === USER_GROUP_YOUTUBE) {
-      console.log(payload.users.get(0));
       state = state.set(payload.type, payload.users);
     }
     return state;
