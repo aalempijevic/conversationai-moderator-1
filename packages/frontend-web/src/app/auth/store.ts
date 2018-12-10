@@ -65,14 +65,12 @@ export function getToken(): string | undefined {
   return storage()[LOCAL_STORAGE_TOKEN_KEY];
 }
 
-function saveToken(token: string): string {
+function saveToken(token: string | null) {
   if (token) {
     storage()[LOCAL_STORAGE_TOKEN_KEY] = token;
   } else {
     delete storage()[LOCAL_STORAGE_TOKEN_KEY];
   }
-
-  return token;
 }
 
 async function completeAuthentication(token: string, dispatch: IAppDispatch): Promise<void> {

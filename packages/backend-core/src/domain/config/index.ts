@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2018 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,10 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export * from './articles';
-export * from './auth';
-export * from './categories';
-export * from './comments';
-export * from './commentScores';
-export * from './config';
-export * from './models';
+import { config } from '@conversationai/moderator-config';
+
+export async function isOAuthConfigured() {
+  return true;
+}
+
+export async function getOAuthConfiguration() {
+  return {id: config.get('google_client_id'), secret: config.get('google_client_secret')};
+}

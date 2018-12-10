@@ -18,7 +18,7 @@ import * as express from 'express';
 import {google} from 'googleapis';
 import * as qs from 'qs';
 
-import { saveYouTubeUserToken } from '@conversationai/moderator-backend-core';
+import { getOAuthConfiguration, saveYouTubeUserToken } from '@conversationai/moderator-backend-core';
 import { config } from '@conversationai/moderator-config';
 
 import { generateServerCSRF, getClientCSRF } from './utils';
@@ -39,12 +39,13 @@ export function createYouTubeRouter(): express.Router {
     '/connect',
     async (req, res, next) => {
       const serverCSRF = await generateServerCSRF(req, res, next);
+      const oauthConfig = await getOAuthConfiguration();
 
       if (res.headersSent) {
         return;
       }
 
-      const oauth2Client = new google.auth.OAuth2(config.get('google_client_id'), config.get('google_client_secret'), `${apiPrefix}/youtube/callback`);
+      const oauth2Client = new google.auth.OAuth2(oauthConfig.id, oauthConfig.secret, `${apiPrefix}/youtube/callback`);
       const authUrl = oauth2Client.generateAuthUrl({
         access_type: 'offline',
         scope:  ['profile', 'email', 'https://www.googleapis.com/auth/youtube.force-ssl'],
@@ -60,6 +61,7 @@ export function createYouTubeRouter(): express.Router {
     '/callback',
     async (req, res) => {
       const {clientCSRF, errorMessage} = await getClientCSRF(req);
+      const oauthConfig = await getOAuthConfiguration();
 
       const params: any = {
         csrf: clientCSRF,
@@ -72,7 +74,7 @@ export function createYouTubeRouter(): express.Router {
         params['errorMessage'] = errorMessage;
       }
 
-      const oauth2Client = new google.auth.OAuth2(config.get('google_client_id'), config.get('google_client_secret'), `${apiPrefix}/youtube/callback`, );
+      const oauth2Client = new google.auth.OAuth2(oauthConfig.id, oauthConfig.secret, `${apiPrefix}/youtube/callback`, );
       const tokenRsp = await oauth2Client.getToken(req.query.code);
       const token = tokenRsp.tokens;
       oauth2Client.setCredentials(token);

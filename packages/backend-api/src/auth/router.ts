@@ -22,6 +22,7 @@ import { createToken, isFirstUserInitialised, IUserInstance } from '@conversatio
 import { config } from '@conversationai/moderator-config';
 
 import { generateServerCSRF, getClientCSRF } from './utils';
+import {isOAuthConfigured, isPerspectiveApiInitialised} from '@conversationai/moderator-backend-core/src';
 
 export function createAuthRouter(): express.Router {
   const router = express.Router({
@@ -29,19 +30,21 @@ export function createAuthRouter(): express.Router {
     mergeParams: true,
   });
 
-  // Test endpoint, you should not be able to see the result of this without
-  // a vaid JWT Authorization header:
-  //
-  // Authorization: JWT (token string)
-
   router.get(
     '/auth/healthcheck',
     async (_1, res, _2) => {
-      if (await isFirstUserInitialised()) {
-        res.send('ok');
-        return;
+      if (!await isOAuthConfigured()) {
+        res.status(218).send('oauth_config');
       }
-      res.status(218).send('Still initialising');
+      else if (!await isFirstUserInitialised()) {
+        res.status(218).send('first_user');
+      }
+      else if (!await isPerspectiveApiInitialised()) {
+        res.status(218).send('perspective_api');
+      }
+      else {
+        res.send('ok');
+      }
     },
   );
 
@@ -144,12 +147,10 @@ export function createAuthRouter(): express.Router {
   ): void {
     let redirectHost;
 
-    if (
-      (config.get('redirect_oauth_to') === 'frontend_url') ||
-      !referrer
-    ) {
+    if (!referrer) {
       redirectHost = config.get('frontend_url');
-    } else {
+    }
+    else {
       redirectHost = referrer;
     }
 

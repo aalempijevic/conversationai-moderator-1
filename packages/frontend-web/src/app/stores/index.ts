@@ -19,7 +19,7 @@ import { Action, createAction, handleActions } from 'redux-actions';
 import { combineReducers } from 'redux-immutable';
 import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
-import { logout } from '../auth';
+import { logout } from '../auth/store';
 import { connectNotifier, STATUS_RESET, STATUS_UP } from '../util';
 import { IArticleModeratorsStateRecord, reducer as articleModeratorsReducer } from './articleModerators';
 import { articlesUpdated, IArticlesState, reducer as articleReducer } from './articles';

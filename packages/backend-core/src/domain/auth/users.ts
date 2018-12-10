@@ -22,6 +22,7 @@ import {
   UserSocialAuth,
 } from '../../models';
 import { IUserSocialAuthAttributes, IUserSocialAuthInstance } from '../../models/';
+import {USER_GROUP_MODERATOR} from '../../../../frontend-web/src/app/stores/users';
 
 /**
  * Indicates whether a user is valid to be authenticated
@@ -91,6 +92,11 @@ export async function ensureFirstUser({name, email}: {name: string, email: strin
   }
 
   return user;
+}
+
+export async function isPerspectiveApiInitialised() {
+  const count = await User.count({where: {group: USER_GROUP_MODERATOR, isActive: true}});
+  return count > 0;
 }
 
 export async function saveYouTubeUserToken({name, email}: {name: string, email: string}, token: any) {

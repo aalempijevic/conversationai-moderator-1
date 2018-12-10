@@ -749,6 +749,18 @@ export async function checkAuthorization(): Promise<void> {
   );
 }
 
+/**
+ * Ping the backend to see if the auth succeeds.
+ */
+export async function checkServerStatus(): Promise<string> {
+  const data = await axios.get(
+    `${API_URL}/auth/healthcheck`,
+  );
+  console.log(data);
+  return data.data;
+}
+
+
 async function makeCommentAction(path: string, ids: Array<string>, userId: string): Promise<void> {
   if (ids.length <= 0) { return; }
   // get userid/ or have that passed in?
