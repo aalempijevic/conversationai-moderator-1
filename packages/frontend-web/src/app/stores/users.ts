@@ -21,7 +21,7 @@ import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
 import { IUserModel } from '../../models';
 import { getMyUserId } from '../auth';
-import { listSystemUsers } from '../util';
+import { listSystemUsers } from '../platform/dataService';
 import { IAppStateRecord } from './index';
 
 const STATE_ROOT = ['global', 'users'];
