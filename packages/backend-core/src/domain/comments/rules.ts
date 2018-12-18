@@ -20,6 +20,13 @@ import {
   max,
   uniq,
 } from 'lodash';
+
+import {
+  MODERATION_RULE_ACTION_ACCEPT,
+  MODERATION_RULE_ACTION_DEFER,
+  MODERATION_RULE_ACTION_HIGHLIGHT,
+  MODERATION_RULE_ACTION_REJECT,
+} from '../../models';
 import {
   CommentSummaryScore,
   ICommentInstance,
@@ -107,10 +114,10 @@ export async function resolveComment(
   const categoryRules = matchingRules.filter((r) => article && r.get('categoryId') === article.get('categoryId'));
 
   function isThereConsensus(testRules: Array<IModerationRuleInstance>): boolean {
-    const actions = testRules.map((r) => r.get('action').toLowerCase());
+    const actions = testRules.map((r) => r.get('action'));
 
     // Replace highlight with accept.
-    const replacedActions = actions.map((a) => a === 'highlight' ? 'accept' : a);
+    const replacedActions = actions.map((a) => a === MODERATION_RULE_ACTION_HIGHLIGHT ? MODERATION_RULE_ACTION_ACCEPT : a);
 
     return uniq(replacedActions).length === 1;
   }
@@ -123,7 +130,7 @@ export async function resolveComment(
   if ((globalRules.length > 0) && (categoryRules.length <= 0)) {
     consensus = isThereConsensus(globalRules);
     appliedRule = globalRules[globalRules.length - 1];
-    wasHighlighted = globalRules.some((r) => r.get('action').toLowerCase() === 'highlight');
+    wasHighlighted = globalRules.some((r) => r.get('action') === MODERATION_RULE_ACTION_HIGHLIGHT);
   }
 
   else if (
@@ -135,7 +142,7 @@ export async function resolveComment(
   ) {
     consensus = isThereConsensus(categoryRules);
     appliedRule = categoryRules[categoryRules.length - 1];
-    wasHighlighted = categoryRules.some((r) => r.get('action').toLowerCase() === 'highlight');
+    wasHighlighted = categoryRules.some((r) => r.get('action') === MODERATION_RULE_ACTION_HIGHLIGHT);
   }
 
   // Nothing applies
@@ -154,11 +161,11 @@ export async function resolveComment(
     };
   }
 
-  const appliedAction = appliedRule.get('action').toLowerCase();
-  const replacedAction = appliedAction === 'highlight' ? 'accept' : appliedAction;
+  const appliedAction = appliedRule.get('action');
+  const replacedAction = appliedAction === MODERATION_RULE_ACTION_HIGHLIGHT ? MODERATION_RULE_ACTION_ACCEPT : appliedAction;
 
   // If all actions are equal, we have consensus and we can approve or reject
-  if (replacedAction === 'accept') {
+  if (replacedAction === MODERATION_RULE_ACTION_ACCEPT) {
     // Only highlight accepted comments
     const extra = wasHighlighted ? getHighlightStateData() : {};
 
@@ -169,7 +176,7 @@ export async function resolveComment(
       resolution: 'Accept',
       resolver: appliedRule,
     };
-  } else if (replacedAction === 'reject') {
+  } else if (replacedAction === MODERATION_RULE_ACTION_REJECT) {
     // Reject a comment if all actions equal "reject" and "highlight" hasn't been set
     await reject(comment, appliedRule, false);
     await comment.set('isAutoResolved', true).save();
@@ -178,7 +185,7 @@ export async function resolveComment(
       resolution: 'Reject',
       resolver: appliedRule,
     };
-  } else if (replacedAction === 'defer') {
+  } else if (replacedAction === MODERATION_RULE_ACTION_DEFER) {
     // Defer a comment
     await defer(comment, appliedRule, false);
     await comment.set('isAutoResolved', true).save();
