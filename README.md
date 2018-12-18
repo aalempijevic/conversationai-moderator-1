@@ -82,7 +82,7 @@ Install all node dependencies and run initial typescript compile.
 Setup local MySQL:
 
 ```bash
-mysql -u root -p << EOF
+sudo -E mysql << EOF
 CREATE DATABASE $DATABASE_NAME;
 CREATE USER '$DATABASE_USER' IDENTIFIED BY '$DATABASE_PASSWORD';
 GRANT ALL on $DATABASE_NAME.* to $DATABASE_USER;
@@ -256,17 +256,24 @@ is also used to publish updates to all these packages at once.
 To run the tests, you'll need to tweak your enviornment:
 
 ```bash
-# Some tests need admin privileges to clean out the database
+# The tests clean out the database, so be sure to update DATABASE_NAME
 export DATABASE_NAME=os_moderator_test
-export DATABASE_USER=root
+
+# Also tests won't run unless you set NODE_ENV to test
+export NODE_ENV=test
+
+# The database user will need to clean out and recreate the database
+sudo -E mysql << EOF
+GRANT SUPER on *.* to $DATABASE_USER;
+EOF
 
 # Run all the tests
-NODE_ENV=test bin/test
+bin/test
 
 # or you can run individual tests:
 cd packages/backend-core
-NODE_ENV=test npm run test
-NODE_ENV=test ../../node_modules/.bin/mocha 'dist/test/domain/comments/*.spec.js' --recursive --timeout 10000
+npm run test
+../../node_modules/.bin/mocha 'dist/test/domain/comments/*.spec.js' --recursive --timeout 10000
 ```
 
 The `bin/test` script uses lerna to first compile all the typescript to javascript,

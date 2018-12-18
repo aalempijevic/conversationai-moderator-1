@@ -30,8 +30,8 @@ import {
   IUserInstance,
   User,
 } from '../../models';
-import {denormalizeCommentCountsForArticle} from '../articles';
-import {denormalizeCountsForComment} from '../comments';
+import { denormalizeCommentCountsForArticle } from '../articles';
+import { denormalizeCountsForComment } from '../comments';
 import { recordDecision } from './pipeline';
 
 export type IResolution = 'Accept' | 'Reject' | 'Defer';

@@ -19,11 +19,14 @@ import { sequelize } from '../sequelize';
 import { updateHappened } from './last_update';
 
 export const MODERATION_RULE_ACTION_ACCEPT = 'Accept';
+export const MODERATION_RULE_ACTION_REJECT = 'Reject';
+export const MODERATION_RULE_ACTION_DEFER = 'Defer';
+export const MODERATION_RULE_ACTION_HIGHLIGHT = 'Highlight';
 export const MODERATION_RULE_ACTION_TYPES = [
   MODERATION_RULE_ACTION_ACCEPT,
-  'Reject',
-  'Defer',
-  'Highlight',
+  MODERATION_RULE_ACTION_REJECT,
+  MODERATION_RULE_ACTION_DEFER,
+  MODERATION_RULE_ACTION_HIGHLIGHT,
 ];
 
 export interface IModerationRuleAttributes {

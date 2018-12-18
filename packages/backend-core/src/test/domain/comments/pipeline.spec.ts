@@ -40,6 +40,7 @@ import {
   CommentScoreRequest,
   CommentSummaryScore,
   Decision,
+  MODERATION_RULE_ACTION_REJECT,
   Tag,
 } from '../../../models';
 import { ITagInstance } from '../../../models';
@@ -421,7 +422,7 @@ describe('Comments Domain Pipeline Tests', () => {
       });
 
       await createModerationRule({
-        action: 'Reject',
+        action: MODERATION_RULE_ACTION_REJECT,
         tagId: tag.id,
         lowerThreshold: 0.0,
         upperThreshold: 1.0,
@@ -458,7 +459,7 @@ describe('Comments Domain Pipeline Tests', () => {
       });
 
       const rule = await createModerationRule({
-        action: 'Reject',
+        action: MODERATION_RULE_ACTION_REJECT,
         tagId: tag.id,
         lowerThreshold: 0.0,
         upperThreshold: 1.0,
@@ -689,7 +690,7 @@ describe('Comments Domain Pipeline Tests', () => {
       const user = await createUser();
       const tag = await createTag();
       const rule = await createModerationRule({
-        action: 'Reject',
+        action: MODERATION_RULE_ACTION_REJECT,
         tagId: tag.id,
         lowerThreshold: 0.0,
         upperThreshold: 1.0,
