@@ -21,8 +21,13 @@ import * as passport from 'passport';
 import { config } from '@conversationai/moderator-config';
 
 import { createApiRouter } from './api/router';
+import { getOAuthConfiguration } from './auth/config';
 import { getGoogleStrategy, getJwtStrategy } from './auth/providers';
-import { createAuthRouter, createHealthcheckRouter } from './auth/router';
+import {
+  createAuthConfigRouter,
+  createAuthRouter,
+  createHealthcheckRouter,
+} from './auth/router';
 import { createYouTubeRouter } from './auth/youtube';
 
 export async function mountAPI(testMode?: boolean): Promise<express.Express> {
@@ -37,9 +42,13 @@ export async function mountAPI(testMode?: boolean): Promise<express.Express> {
   // Initialize auth strategies and Passport
   // (Authenticator doesn't have a well-defined type...)
   let jwtAuthenticator: any;
+  const oauthConfig = await getOAuthConfiguration();
+
   if (!testMode) {
     passport.use(await getJwtStrategy());
-    passport.use(await getGoogleStrategy());
+    if (oauthConfig) {
+      passport.use(getGoogleStrategy(oauthConfig));
+    }
     app.use(passport.initialize());
     jwtAuthenticator = passport.authenticate('jwt', { session: false });
   }
@@ -61,10 +70,19 @@ export async function mountAPI(testMode?: boolean): Promise<express.Express> {
     next();
   });
 
-  app.use('/', createHealthcheckRouter());
-  app.use('/', createAuthRouter());
-  app.use('/', createYouTubeRouter(jwtAuthenticator));
-  app.use('/', createApiRouter(jwtAuthenticator));
+  app.use('/', createHealthcheckRouter(oauthConfig != null));
+
+  if (oauthConfig == null && !testMode) {
+    console.log('*** Starting in bootstrap mode ***');
+    app.use('/', createAuthConfigRouter());
+  }
+  else {
+    app.use('/', createAuthRouter());
+    if (oauthConfig != null) {
+      app.use('/', createYouTubeRouter(oauthConfig, jwtAuthenticator));
+    }
+    app.use('/', createApiRouter(jwtAuthenticator));
+  }
 
   return app;
 }

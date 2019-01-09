@@ -21,6 +21,7 @@ import * as qs from 'qs';
 import { IUserInstance } from '@conversationai/moderator-backend-core';
 import { config } from '@conversationai/moderator-config';
 
+import { checkOAuthConfiguration, getOAuthConfiguration, IGoogleOAuthConfiguration } from './config';
 import { createToken } from './tokens';
 import { isFirstUserInitialised } from './users';
 import { generateServerCSRF, getClientCSRF } from './utils';
@@ -51,7 +52,7 @@ function redirectToFrontend(
   res.redirect(`${redirectHost}?${queryString}`);
 }
 
-export function createHealthcheckRouter(): express.Router {
+export function createHealthcheckRouter(isOAuthReady: boolean): express.Router {
   const router = express.Router({
     caseSensitive: true,
     mergeParams: true,
@@ -60,11 +61,45 @@ export function createHealthcheckRouter(): express.Router {
   router.get(
     '/auth/healthcheck',
     async (_1, res, _2) => {
-      if (await isFirstUserInitialised()) {
-        res.send('ok');
+      if (!isOAuthReady) {
+        res.status(218).send('init_oauth');
         return;
       }
-      res.status(218).send('init_first_user');
+      if (!await isFirstUserInitialised()) {
+        res.status(218).send('init_first_user');
+        return;
+      }
+      res.send('ok');
+    },
+  );
+
+  return router;
+}
+
+export function createAuthConfigRouter(): express.Router {
+  const router = express.Router({
+    caseSensitive: true,
+    mergeParams: true,
+  });
+
+  router.get(
+    '/auth/config',
+    async (_req, res) => {
+      const data = await getOAuthConfiguration();
+      const id = (data && data.id) ? data.id : '';
+      const secret = (data && data.secret) ? 'X'.repeat(config.length - 5) + config.secret.substr(-5) : '';
+      res.json({ google_oauth_config: {
+        id: id,
+        secret: secret,
+      }});
+    },
+  );
+
+  router.post(
+    '/auth/config',
+    async (req, res) => {
+      checkOAuthConfiguration(req.body.data as IGoogleOAuthConfiguration);
+      res.send('ok');
     },
   );
 
