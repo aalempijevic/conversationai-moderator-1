@@ -24,8 +24,10 @@ import {
   ITaggingSensitivityModel,
   ITagModel,
 } from '../../../models';
+import { updateGoogleOAuth } from '../../platform/dataService';
 import { IAppDispatch, IAppState, IAppStateRecord } from '../../stores';
 import { getCategories } from '../../stores/categories';
+import { getConfig, loadConfig } from '../../stores/config';
 import { getPreselects } from '../../stores/preselects';
 import { getRules } from '../../stores/rules';
 import { getTaggingSensitivities } from '../../stores/taggingSensitivities';
@@ -36,10 +38,9 @@ import {
   loadSystemUsers,
   USER_GROUP_MODERATOR,
   USER_GROUP_SERVICE,
-  USER_GROUP_YOUTUBE
+  USER_GROUP_YOUTUBE,
 } from '../../stores/users';
 import { ISettingsProps, Settings as PureSettings } from './Settings';
-
 import {
   addUser,
   modifyUser,
@@ -65,6 +66,7 @@ export type ISettingsStateProps = Pick<
   'rules' |
   'preselects' |
   'taggingSensitivities' |
+  'config' |
   'onCancel'
 >;
 
@@ -73,12 +75,14 @@ export type ISettingsDispatchProps = Pick<
   'reloadServiceUsers' |
   'reloadModeratorUsers' |
   'reloadYoutubeUsers' |
+  'loadConfig' |
   'updatePreselects' |
   'updateRules' |
   'updateTaggingSensitivities' |
   'updateTags' |
   'addUser' |
-  'modifyUser'
+  'modifyUser' |
+  'updateOAuthConfig'
 >;
 
 const mapStateToProps = createStructuredSelector({
@@ -91,6 +95,7 @@ const mapStateToProps = createStructuredSelector({
   rules: getRules,
   preselects: getPreselects,
   taggingSensitivities: getTaggingSensitivities,
+  config: getConfig,
   onCancel: (_: IAppState, { router }: { router: InjectedRouter }) => router.goBack,
   onSearchClick: (_: IAppState, { router }: { router: InjectedRouter }) => () => router.push('/search'),
   onAuthorSearchClick: (_: IAppState, { router }: { router: InjectedRouter }) => () => router.push('/search?searchByAuthor=true'),
@@ -101,12 +106,14 @@ function mapDispatchToProps(dispatch: IAppDispatch): ISettingsDispatchProps {
     reloadServiceUsers: () => loadSystemUsers(dispatch, USER_GROUP_SERVICE),
     reloadModeratorUsers: () => loadSystemUsers(dispatch, USER_GROUP_MODERATOR),
     reloadYoutubeUsers: () => loadSystemUsers(dispatch, USER_GROUP_YOUTUBE),
+    loadConfig: () => loadConfig(dispatch),
     updatePreselects: (oldPreselects, newPreselects) => dispatch(updatePreselects(oldPreselects, newPreselects)),
     updateRules: (oldRules, newRules) => dispatch(updateRules(oldRules, newRules)),
     updateTaggingSensitivities: (oldTaggingSensitivities, newTaggingSensitivities) => dispatch(updateTaggingSensitivities(oldTaggingSensitivities, newTaggingSensitivities)),
     updateTags: (oldTags, newTags) => dispatch(updateTags(oldTags, newTags)),
     addUser: addUser,
     modifyUser: modifyUser,
+    updateOAuthConfig: updateGoogleOAuth,
   };
 }
 

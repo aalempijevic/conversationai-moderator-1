@@ -19,6 +19,7 @@ import { pick } from 'lodash';
 
 import { User, USER_GROUP_SERVICE } from '@conversationai/moderator-backend-core';
 import { createToken } from '@conversationai/moderator-backend-core';
+import { getOAuthConfiguration } from '@conversationai/moderator-backend-core';
 
 const userFields = ['id', 'name', 'email', 'group', 'isActive', 'extra'];
 
@@ -50,6 +51,18 @@ export function createSimpleRESTService(): express.Router {
 
     res.json({ users: userdata });
 
+    next();
+  });
+
+  router.get('/config/get', async (_, res, next) => {
+    const config = await getOAuthConfiguration();
+    const id = config ? config.id : '';
+    res.json({ google_oauth_client_id: id });
+    next();
+  });
+
+  router.post('/config/google_oauth', async(_req, _res, next) => {
+    // const id = req.post
     next();
   });
 

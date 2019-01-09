@@ -29,6 +29,7 @@ import { ICategoryModeratorsStateRecord , reducer as categoryModeratorsReducer }
 import { IColumnSortStateRecord, reducer as columnSortsReducer } from './columnSorts';
 import { IState as ICommentsState, reducer as commentsReducer } from './comments';
 import { ICommentSummaryScoresStateRecord, reducer as commentSummaryScoresReducer } from './commentSummaryScores';
+import { IConfigStateRecord, reducer as configReducer } from './config';
 import { IFocusStateRecord, reducer as focusReducer } from './focus';
 import { IModeratorsStateRecord, reducer as moderatorsReducer } from './moderators';
 import { IPreselectsStateRecord, preselectsUpdated, reducer as preselectsReducer } from './preselects';
@@ -55,6 +56,7 @@ export interface IAppState {
   articles: IArticlesState;
   comments: ICommentsState;
   commentSummaryScores: ICommentSummaryScoresStateRecord;
+  config: IConfigStateRecord;
   users: IUsersState;
   moderators: IModeratorsStateRecord;
   articleModerators: IArticleModeratorsStateRecord;
@@ -108,6 +110,7 @@ export const reducer: any = combineReducers<IAppStateRecord>({
   articles: articleReducer,
   comments: commentsReducer,
   commentSummaryScores: commentSummaryScoresReducer,
+  config: configReducer,
   users: usersReducer,
   moderators: moderatorsReducer,
   articleModerators: articleModeratorsReducer,

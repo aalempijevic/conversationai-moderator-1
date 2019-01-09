@@ -27,12 +27,16 @@ import FileCopyIcon from '@material-ui/icons/FileCopy';
 
 import {
   CategoryModel,
-  ICategoryModel, IPreselectModel,
-  IRuleModel, ITaggingSensitivityModel,
-  ITagModel, IUserModel,
+  ICategoryModel,
+  IPreselectModel,
+  IRuleModel,
+  ITaggingSensitivityModel,
+  ITagModel,
+  IUserModel,
   PreselectModel,
   RuleModel,
-  TaggingSensitivityModel, TagModel,
+  TaggingSensitivityModel,
+  TagModel,
 } from '../../../models';
 import { IConfirmationAction } from '../../../types';
 import {
@@ -43,14 +47,21 @@ import {
   Scrim,
 } from '../../components';
 import { API_URL } from '../../config';
+import { IConfigData, IOAuthConfiguration } from '../../platform/dataService';
 import { getToken } from '../../platform/localStore';
 import { IAppDispatch } from '../../stores';
+import {
+  USER_GROUP_GENERAL,
+  USER_GROUP_SERVICE,
+  USER_GROUP_YOUTUBE,
+} from '../../stores/users';
 import { partial, setCSRF } from '../../util';
 import { css, stylesheet } from '../../utilx';
 import { AddButton, EditButton } from './components/AddButton';
 import { AddUsers } from './components/AddUsers';
 import { EditUsers } from './components/EditUsers';
 import { LabelSettings } from './components/LabelSettings';
+import { OAuthConfig } from './components/OAuthConfig';
 import { RuleRow } from './components/RuleRow';
 
 import {
@@ -68,11 +79,6 @@ import {
 } from '../../styles';
 
 import { SETTINGS_STYLES } from './settingsStyles';
-import {
-  USER_GROUP_GENERAL,
-  USER_GROUP_SERVICE,
-  USER_GROUP_YOUTUBE,
-} from '../../stores/users';
 
 function validateColor(color: string): boolean {
   const div = document.createElement('div') as HTMLDivElement;
@@ -187,6 +193,7 @@ export interface ISettingsProps extends WithRouterProps {
   taggingSensitivities?:  List<ITaggingSensitivityModel>;
   preselects?: List<IPreselectModel>;
   categories: List<ICategoryModel>;
+  config: IConfigData;
   dispatch: IAppDispatch;
   onCancel(): void;
   onSearchClick(): void;
@@ -194,6 +201,7 @@ export interface ISettingsProps extends WithRouterProps {
   reloadServiceUsers?(): Promise<void>;
   reloadModeratorUsers?(): Promise<void>;
   reloadYoutubeUsers?(): Promise<void>;
+  loadConfig?(): Promise<void>;
   updatePreselects?(oldPreselects: List<IPreselectModel>, newPreselects: List<IPreselectModel>): void;
   updateRules?(oldRules: List<IRuleModel>, newRules: List<IRuleModel>): void;
   updateTaggingSensitivities?(oldTaggingSensitivities: List<ITaggingSensitivityModel>, newTaggingSensitivities: List<ITaggingSensitivityModel>): void;
@@ -206,6 +214,7 @@ export interface ISettingsProps extends WithRouterProps {
     newTaggingSensitivities: List<ITaggingSensitivityModel>,
     newTags: List<ITagModel>,
   ): Error;
+  updateOAuthConfig?(config: IOAuthConfiguration): Promise<void>;
 }
 
 export interface ISettingsState {
@@ -221,6 +230,7 @@ export interface ISettingsState {
   isAddUserScrimVisible?: boolean;
   addUserType?: string;
   isEditUserScrimVisible?: boolean;
+  isOAuthScrimVisible?: boolean;
   selectedUser?: IUserModel;
   homeIsFocused?: boolean;
   submitStatus?: string;
@@ -239,6 +249,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     isStatusScrimVisible: false,
     isAddUserScrimVisible: false,
     isEditUserScrimVisible: false,
+    isOAuthScrimVisible: false,
     selectedUser: null,
     homeIsFocused: false,
   };
@@ -247,6 +258,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     this.props.reloadServiceUsers();
     this.props.reloadModeratorUsers();
     this.props.reloadYoutubeUsers();
+    this.props.loadConfig();
   }
 
   componentWillReceiveProps(_: Readonly<ISettingsProps>) {
@@ -561,6 +573,14 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   @autobind
+  showOAuthConfig(event: React.FormEvent<any>) {
+    event.preventDefault();
+    this.setState({
+      isOAuthScrimVisible: true,
+    });
+  }
+
+  @autobind
   onCancelPress(e: React.FormEvent<any>) {
     e.preventDefault();
     this.props.onCancel();
@@ -585,12 +605,13 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     this.setState({
       isAddUserScrimVisible: false,
       isEditUserScrimVisible: false,
+      isOAuthScrimVisible: false,
     });
   }
 
   @autobind
   async saveAddedUser(user: IUserModel) {
-    await this.setState({
+    this.setState({
       isAddUserScrimVisible: false,
       isStatusScrimVisible: true,
       submitStatus: 'Saving changes...',
@@ -598,15 +619,15 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
 
     try {
       await this.props.addUser(user);
+      this.setState({
+        submitStatus: 'Waiting for refresh...',
+      });
       if (user.group === USER_GROUP_SERVICE) {
         await this.props.reloadServiceUsers();
       }
       else if (user.group === USER_GROUP_YOUTUBE) {
         await this.props.reloadYoutubeUsers();
       }
-      this.setState({
-        submitStatus: 'Waiting for refresh...',
-      });
     }
     catch (e) {
       this.setState({
@@ -617,7 +638,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
 
   @autobind
   async saveEditedUser(user: IUserModel) {
-    await this.setState({
+    this.setState({
       isEditUserScrimVisible: false,
       isStatusScrimVisible: true,
       submitStatus: 'Saving changes...',
@@ -625,16 +646,37 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
 
     try {
       await this.props.modifyUser(user);
+      this.setState({
+        submitStatus: 'Waiting for refresh...',
+      });
       if (user.group === USER_GROUP_SERVICE) {
         await this.props.reloadServiceUsers();
       }
       else if (user.group === USER_GROUP_YOUTUBE) {
         await this.props.reloadYoutubeUsers();
       }
+    }
+    catch (e) {
+      this.setState({
+        submitStatus: `There was an error saving your changes. Please reload and try again. Error: ${e.message}`,
+      });
+    }
+  }
 
+  @autobind
+  async saveOAuthConfig(config: IOAuthConfiguration) {
+    this.setState({
+      isOAuthScrimVisible: false,
+      isStatusScrimVisible: true,
+      submitStatus: 'Saving changes...',
+    });
+
+    try {
+      await this.props.updateOAuthConfig(config);
       this.setState({
         submitStatus: 'Waiting for refresh...',
       });
+      await this.props.loadConfig();
     }
     catch (e) {
       this.setState({
@@ -1098,6 +1140,34 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     );
   }
 
+  renderOAuthScrim() {
+    return (
+      <Scrim
+        key="oauthScrim"
+        scrimStyles={SCRIM_STYLE.scrim}
+        isVisible={this.state.isOAuthScrimVisible}
+      >
+        <FocusTrap
+          focusTrapOptions={{
+            clickOutsideDeactivates: true,
+          }}
+        >
+          <div
+            key="oauthConfigContainer"
+            tabIndex={0}
+            {...css(SCRIM_STYLE.popup, {position: 'relative', paddingRight: 0, width: 700})}
+          >
+            <OAuthConfig
+              clientId={this.props.config.google_oauth_client_id}
+              onClickClose={this.closeScrims}
+              onClickDone={this.saveOAuthConfig}
+            />
+          </div>
+        </FocusTrap>
+      </Scrim>
+    );
+  }
+
   render() {
     const {
       categories,
@@ -1221,10 +1291,32 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               <p>&nbsp;</p>
             </div>
           </div>
+          <div key="apiKeysHeader" {...css(STYLES.heading)}>
+            <h2 {...css(STYLES.headingText)}>
+              API Keys
+            </h2>
+          </div>
+          <div key="oauthConfig" {...css(STYLES.section)}>
+            <h3>Google OAuth account</h3>
+            <table {...css(SETTINGS_STYLES.configTable)}>
+              <tbody>
+              <tr>
+                <th>Client ID:</th>
+                <td>{this.props.config.google_oauth_client_id}</td>
+              </tr>
+              <tr>
+                <th>Client Secret:</th>
+                <td>***************</td>
+              </tr>
+              </tbody>
+            </table>
+            <EditButton width={44} onClick={this.showOAuthConfig} label="Update"/>
+          </div>
         </div>
         {this.renderStatusScrim()}
         {this.renderAddUserScrim()}
         {this.renderEditUserScrim()}
+        {this.renderOAuthScrim()}
       </div>
     );
   }

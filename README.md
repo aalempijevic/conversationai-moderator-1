@@ -15,9 +15,6 @@ must be set in the enviromnent before anything will work.
 * `DATABASE_NAME`: The MySQL database name, e.g., 'os_moderator'.
 * `DATABASE_USER`: The MySQL database user, e.g., 'os_moderator'.
 * `DATABASE_PASSWORD`: The MySQL database password.
-* `GOOGLE_CLIENT_ID`: Google OAuth API client id.
-* `GOOGLE_CLIENT_SECRET`:  Google OAuth API secret.
-* `MODERATOR_FLAVOR`: What flavor of the moderator to run.
 
 To get values for the `GOOGLE_CLIENT_*` parameters, create an OAuth2.0 Client ID
 entry for your app in the [Google API console](https://console.developers.google.com/apis/credentials).

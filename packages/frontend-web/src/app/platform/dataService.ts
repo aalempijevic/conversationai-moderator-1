@@ -883,3 +883,19 @@ export async function listSystemUsers(type: string): Promise<List<IUserModel>> {
     return UserModel(u);
   }));
 }
+
+export interface IConfigData { google_oauth_client_id: string; }
+
+export async function fetchConfig(): Promise<IConfigData> {
+  const response: any = await axios.get(serviceURL('simple', `/config/get`));
+  return response.data as IConfigData;
+}
+
+export interface IOAuthConfiguration {
+  id: string;
+  secret: string;
+}
+
+export async function updateGoogleOAuth(config: IOAuthConfiguration): Promise<void> {
+  await axios.post(serviceURL('simple', `/config/google_oauth`), config);
+}

@@ -114,4 +114,10 @@ export const SETTINGS_STYLES = {
     textAlign: 'left',
     padding: '5px 30px',
   },
+
+  configTable: {
+    borderSpacing: '20px 5px',
+    marginBottom: '20px',
+    textAlign: 'left',
+  },
 };
