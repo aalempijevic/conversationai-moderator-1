@@ -19,6 +19,7 @@ import { ensureFirstUser, findOrCreateUserSocialAuth, isFirstUserInitialised } f
 const Strategy = require('passport-google-oauth20').Strategy;
 
 import { IUserInstance, User } from '../../../models';
+import { getOAuthConfiguration } from '../../config';
 
 class AuthError extends Error {
 
@@ -111,28 +112,35 @@ if (config.get('httpsLinksOnly')) {
   apiPrefix = apiPrefix.replace('http://', 'https://');
 }
 
-export const googleStrategy = new Strategy(
-  {
-    clientID: config.get('google_client_id'),
-    clientSecret: config.get('google_client_secret'),
-    callbackURL: `${apiPrefix}/auth/callback/google`,
-  },
-  async (accessToken: string, refreshToken: string, profile: IGoogleProfile, callback: (err: any, user?: IUserInstance | false, info?: any) => any) => {
-    try {
-      const user = await verifyGoogleToken(accessToken, refreshToken, profile);
+export async function getGoogleStrategy() {
+  const oauthConfig = await getOAuthConfiguration();
+  if (!oauthConfig) {
+    return null;
+  }
 
-      // Sync avatar
-      if (profile.photos && profile.photos[0] && profile.photos[0].value) {
-        await user.update({ avatarURL: profile.photos[0].value });
-      }
+  return new Strategy(
+    {
+      clientID: oauthConfig!.id,
+      clientSecret: oauthConfig!.secret,
+      callbackURL: `${apiPrefix}/auth/callback/google`,
+    },
+    async (accessToken: string, refreshToken: string, profile: IGoogleProfile, callback: (err: any, user?: IUserInstance | false, info?: any) => any) => {
+      try {
+        const user = await verifyGoogleToken(accessToken, refreshToken, profile);
 
-      callback(null, user);
-    } catch (e) {
-      if (e instanceof AuthError) {
-        callback(null, false, { reason: e.message });
-      } else {
-        callback(e);
+        // Sync avatar
+        if (profile.photos && profile.photos[0] && profile.photos[0].value) {
+          await user.update({ avatarURL: profile.photos[0].value });
+        }
+
+        callback(null, user);
+      } catch (e) {
+        if (e instanceof AuthError) {
+          callback(null, false, { reason: e.message });
+        } else {
+          callback(e);
+        }
       }
-    }
-  },
-);
+    },
+  );
+}

@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2018 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,10 +14,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export * from './articles';
-export * from './auth';
-export * from './categories';
-export * from './comments';
-export * from './commentScores';
-export * from './config';
-export * from './models';
+import { CONFIGURATION_GOOGLE_OAUTH, getConfigItem, setConfigItem } from '../../models';
+
+export interface IGoogleOAuthConfiguration {
+  id: string;
+  secret: string;
+}
+
+export async function getOAuthConfiguration() {
+  return await getConfigItem(CONFIGURATION_GOOGLE_OAUTH) as IGoogleOAuthConfiguration | null;
+}
+
+export async function setOAuthConfiguration(config: IGoogleOAuthConfiguration) {
+  return await setConfigItem(CONFIGURATION_GOOGLE_OAUTH, config);
+}

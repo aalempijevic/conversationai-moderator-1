@@ -18,7 +18,7 @@ import * as express from 'express';
 import * as expressWs from 'express-ws';
 import * as passport from 'passport';
 
-import { getJwtStrategy, googleStrategy } from '@conversationai/moderator-backend-core';
+import { getGoogleStrategy, getJwtStrategy  } from '@conversationai/moderator-backend-core';
 import { config } from '@conversationai/moderator-config';
 
 import { createAssistantRouter } from './api/assistant';
@@ -40,7 +40,11 @@ export async function mountAPI(testMode?: boolean): Promise<express.Express> {
   // Initialize auth strategies and Passport
   if (!testMode) {
     passport.use(await getJwtStrategy());
-    passport.use(googleStrategy);
+
+    const googleStrategy = await getGoogleStrategy();
+    if (googleStrategy) {
+      passport.use(googleStrategy);
+    }
 
     app.use(passport.initialize());
   }
