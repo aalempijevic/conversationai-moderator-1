@@ -16,11 +16,10 @@ limitations under the License.
 
 // TODO: Passport seems to be a dead project.  Keep an eye on what is happening
 //     And consider replacing it with passport-next or something else.
-
+import { IUserInstance, User } from '@conversationai/moderator-backend-core';
 import { config } from '@conversationai/moderator-config';
 
-import { IUserInstance, User } from '@conversationai/moderator-backend-core';
-
+import { IGoogleOAuthConfiguration } from '../config';
 import { ensureFirstUser, findOrCreateUserSocialAuth, isFirstUserInitialised } from '../users';
 
 const Strategy = require('passport-google-oauth20').Strategy;
@@ -110,15 +109,18 @@ export async function verifyGoogleToken(accessToken: string, refreshToken: strin
   return user;
 }
 
-export async function getGoogleStrategy() {
+export function getGoogleStrategy(
+  oauthConfig: IGoogleOAuthConfiguration,
+) {
   return new Strategy(
     {
-      clientID: config.get('google_client_id'),
-      clientSecret: config.get('google_client_secret'),
+      clientID: oauthConfig.id,
+      clientSecret: oauthConfig.secret,
       callbackURL: `${config.get('api_url')}/auth/callback/google`,
       userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo',
     },
-    async (accessToken: string, refreshToken: string, profile: IGoogleProfile, callback: (err: any, user?: IUserInstance | false, info?: any) => any) => {
+    async (accessToken: string, refreshToken: string, profile: IGoogleProfile,
+           callback: (err: any, user?: IUserInstance | false, info?: any) => any) => {
       try {
         const user = await verifyGoogleToken(accessToken, refreshToken, profile);
 
