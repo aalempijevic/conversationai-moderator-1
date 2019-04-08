@@ -23,31 +23,26 @@ import { WithRouterProps } from 'react-router';
 
 import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
 import {
-  Header,
-  HomeIcon,
-  Link,
-  NavigationTab,
+  HeaderBar,
   Scrim,
 } from '../../components';
 import { updateArticleModerators } from '../../platform/dataService';
 import { IAppDispatch } from '../../stores';
-import { IGlobalCounts } from '../../stores/categories';
+import { ISummaryCounts } from '../../stores/categories';
 import {
   clearReturnSavedCommentRow,
 } from '../../util';
-import { identity } from '../../util';
 import { css, stylesheet } from '../../utilx';
 import { AssignModerators } from '../Root/components/AssignModerators';
 import { ArticlePreview } from './components/ArticlePreview';
 
 import {
   ARTICLE_HEADER,
-  GUTTER_DEFAULT_SPACING,
   HEADER_HEIGHT,
-  MEDIUM_COLOR,
   SCRIM_STYLE,
   WHITE_COLOR,
 } from '../../styles';
+import {SubheaderBar} from './components/SubheaderBar';
 
 const ASSIGN_MODERATORS_POPUP_ID = 'assign-moderators';
 
@@ -57,73 +52,24 @@ const STYLES = stylesheet({
     flexDirection: 'column',
     height: '100%',
   },
-  homeButton: {
-    marginLeft: `${GUTTER_DEFAULT_SPACING}px`,
-    marginRight: `${GUTTER_DEFAULT_SPACING}px`,
-    borderBottom: `2px solid transparent`,
-    ':focus': {
-      outline: 0,
-    },
-  },
-  articleTitle: {
-    borderBottom: `2px solid transparent`,
-    ':focus': {
-      outline: 0,
-      borderBottom: `2px solid ${WHITE_COLOR}`,
-    },
-  },
-  articleLinkActive: {
-    borderBottom: `2px solid ${MEDIUM_COLOR}`,
-    ':focus': {
-      outline: 0,
-      borderBottom: `2px solid ${WHITE_COLOR}`,
-    },
-  },
-  articleLink: {
-    borderBottom: `2px solid transparent`,
-    ':focus': {
-      outline: 0,
-      borderBottom: `2px solid ${WHITE_COLOR}`,
-    },
-  },
 });
-
-function makeTab(router: any, url: string, label: string, count: number) {
-  const style = router.isActive(url) ? { backgroundColor: MEDIUM_COLOR } : {};
-  return (
-    <Link
-      to={url}
-      {...css(
-        ARTICLE_HEADER.link,
-        router.isActive(url) ? STYLES.articleLinkActive : STYLES.articleLink,
-      )}
-      key={label}
-    >
-      <NavigationTab
-        label={label}
-        count={count}
-        style={{...ARTICLE_HEADER.tab, ...style}}
-      />
-    </Link>
-  );
-}
 
 export interface ICommentsProps extends WithRouterProps {
   dispatch?: IAppDispatch;
   article?: IArticleModel;
   category?: ICategoryModel;
   moderators?: List<IUserModel>;
-  globalCounts: IGlobalCounts;
+  globalCounts: ISummaryCounts;
+  logout(): void;
 }
 
 export interface ICommentsState {
   isArticleDetail: boolean;
   isCommentDetail: boolean;
   hideCommentHeader: boolean;
-  counts?: IGlobalCounts;
+  counts?: ISummaryCounts;
   isPreviewModalVisible?: boolean;
   isModeratorModalVisible?: boolean;
-  homeIsFocused?: boolean;
   moderatorIds?: Set<ModelId>;
 }
 
@@ -131,7 +77,6 @@ export class Comments extends React.Component<ICommentsProps, ICommentsState> {
   state: ICommentsState = {
     isPreviewModalVisible: false,
     isModeratorModalVisible: false,
-    homeIsFocused: false,
     isArticleDetail: false,
     isCommentDetail: false,
     hideCommentHeader: false,
@@ -165,22 +110,13 @@ export class Comments extends React.Component<ICommentsProps, ICommentsState> {
     };
   }
 
-  @autobind
-  onFocusHomeIcon() {
-    this.setState({ homeIsFocused: true });
-  }
-
-  @autobind
-  onBlurHomeIcon() {
-    this.setState({ homeIsFocused: false });
-  }
-
   render() {
     const {
       article,
       category,
+      globalCounts,
+      logout,
       moderators,
-      router,
       children,
     } = this.props;
 
@@ -190,32 +126,7 @@ export class Comments extends React.Component<ICommentsProps, ICommentsState> {
       hideCommentHeader,
       isPreviewModalVisible,
       isModeratorModalVisible,
-      homeIsFocused,
-      counts: {
-        unmoderatedCount,
-        moderatedCount,
-      },
     } = this.state;
-
-    const links = isArticleDetail
-        ? [
-            makeTab(router, `/articles/${article.id}/new`, 'New', unmoderatedCount),
-            makeTab(router, `/articles/${article.id}/moderated`, 'Moderated', moderatedCount),
-          ]
-        : [
-            makeTab(
-              router,
-              `/categories/${category ? category.id : 'all'}/new`,
-              'New',
-              unmoderatedCount,
-            ),
-            makeTab(
-              router,
-              `/categories/${category ? category.id : 'all'}/moderated`,
-              'Moderated',
-              moderatedCount,
-            ),
-          ];
 
     return (
       <div {...css({height: '100%'})}>
@@ -275,45 +186,20 @@ export class Comments extends React.Component<ICommentsProps, ICommentsState> {
 
         <div {...css(STYLES.main)}>
           { !hideCommentHeader && (
-            <Header onSearchClick={this.onSearchClick} onAuthorSearchClick={this.onAuthorSearchClick}>
-              <div {...css(ARTICLE_HEADER.header)}>
-                <div {...css(ARTICLE_HEADER.meta)}>
-                  <Link
-                    {...css(ARTICLE_HEADER.link, STYLES.homeButton)}
-                    key="Home"
-                    onFocus={this.onFocusHomeIcon}
-                    onBlur={this.onBlurHomeIcon}
-                    to="/"
-                    onClick={isCommentDetail ? identity : this.handleBackButtonClick}
-                    aria-label="Home"
-                  >
-                    <HomeIcon
-                      {...css({
-                        fill: WHITE_COLOR, borderBottom: '2px solid transparent' },
-                        homeIsFocused && { borderBottom: '2px solid white' })
-                      }
-                      size={24}
-                    />
-                  </Link>
-                  { isArticleDetail ? (
-                    <h1
-                      {...css(ARTICLE_HEADER.title, ARTICLE_HEADER.titleLink, STYLES.articleTitle)}
-                      tabIndex={0}
-                      onClick={this.onOpenClick}
-                    >
-                      {article.title}
-                    </h1>
-                  ) : (
-                    <h1 {...css(ARTICLE_HEADER.title)}>{category ? category.label : 'All Comments'}</h1>
-                  )}
-                </div>
-                <div {...css(ARTICLE_HEADER.tabs)}>
-                  {links}
-                </div>
-              </div>
-            </Header>
+            <HeaderBar
+              category={category}
+              article={article}
+              homeLink
+              logout={logout}
+            />
           )}
 
+          <SubheaderBar
+            global={globalCounts}
+            category={category}
+            article={article}
+            location={location.pathname}
+          />
           <div
             {...css({
               background: WHITE_COLOR,

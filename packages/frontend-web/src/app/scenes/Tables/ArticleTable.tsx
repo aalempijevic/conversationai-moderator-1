@@ -16,17 +16,14 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
-import { List, Set } from 'immutable';
+import { Map, Seq, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { InjectedRouter, Link, WithRouterProps } from 'react-router';
 
-import {
-  Popper,
-} from '@material-ui/core';
-
 import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
+import { ArticleControlIcon } from '../../components';
 import * as icons from '../../components/Icons';
 import { Scrim } from '../../components/Scrim';
 import {
@@ -35,20 +32,20 @@ import {
   updateCategoryModerators,
 } from '../../platform/dataService';
 import {
+  flexCenter,
   HEADER_HEIGHT,
   NICE_LIGHTEST_BLUE,
   NICE_MIDDLE_BLUE,
   SCRIM_STYLE,
 } from '../../styles';
+import { medium } from '../../stylesx';
 import { partial } from '../../util/partial';
 import { css, stylesheet } from '../../utilx';
 import { AssignModerators } from '../Root/components/AssignModerators';
 import { articlesLink, categoriesLink, dashboardLink } from '../routes';
-import { ArticleControlPopup } from './ArticleControlPopup';
-import { ControlFlag, MagicTimestamp, ModeratorsWidget, SimpleTitleCell, TitleCell } from './components';
+import { MagicTimestamp, ModeratorsWidget, SimpleTitleCell, TitleCell } from './components';
 import { FilterSidebar } from './FilterSidebar';
-import { ARTICLE_TABLE_STYLES, CELL_HEIGHT, COMMON_STYLES, ICON_STYLES } from './styles';
-import { big, flexCenter, medium } from './styles';
+import { ARTICLE_TABLE_STYLES, CELL_HEIGHT, COMMON_STYLES } from './styles';
 import {
   NOT_SET,
   SORT_APPROVED,
@@ -61,7 +58,6 @@ import {
   SORT_TITLE,
   SORT_UPDATED,
 } from './utils';
-
 import {
   executeFilter,
   executeSort,
@@ -90,72 +86,12 @@ const STYLES = stylesheet({
   },
 });
 
-interface IArticleControlIconProps {
-  article: IArticleModel;
-  open: boolean;
-
-  clearPopups(): void;
-  openControls(article: IArticleModel): void;
-  saveControls(isCommentingEnabled: boolean, isAutoModerated: boolean): void;
-}
-
-class ArticleControlIcon extends React.Component<IArticleControlIconProps> {
-  anchorElement: any;
-
-  @autobind
-  setOpen() {
-    const { article, open, clearPopups, openControls } = this.props;
-    if (open) {
-      clearPopups();
-    }
-    else {
-      openControls(article);
-    }
-  }
-
-  render() {
-    const { article, open, saveControls, clearPopups } = this.props;
-
-    return (
-      <div key="aci">
-        <div
-          key="icon"
-          {...css(open ? ICON_STYLES.iconBackgroundCircle : big)}
-          ref={(node) => { this.anchorElement = node; }}
-        >
-          <div onClick={this.setOpen} {...css(ICON_STYLES.iconCenter)}>
-            <ControlFlag isCommentingEnabled={article.isCommentingEnabled} isAutoModerated={article.isAutoModerated}/>
-          </div>
-        </div>
-        <Popper
-          key="popper"
-          open={open}
-          anchorEl={this.anchorElement}
-          placement="left"
-          modifiers={{
-            preventOverflow: {
-              enabled: true,
-              boundariesElement: 'viewport',
-            },
-          }}
-        >
-          <ArticleControlPopup
-            article={article}
-            saveControls={saveControls}
-            clearPopups={clearPopups}
-          />
-        </Popper>
-      </div>
-    );
-  }
-}
-
 export interface IIArticleTableProps extends WithRouterProps {
   myUserId: string;
   categories: Map<ModelId, ICategoryModel>;
   selectedCategory: ICategoryModel;
-  articles: List<IArticleModel>;
-  users: List<IUserModel>;
+  articles: Map<ModelId, IArticleModel>;
+  users: Map<ModelId, IUserModel>;
   routeParams: {[key: string]: string};
   router: InjectedRouter;
 }
@@ -174,8 +110,7 @@ export interface IIArticleTableState {
   sortString: string;
   sort: Array<string>;
   summary: IArticleModel;
-  usersMap: Map<string, IUserModel>;
-  processedArticles: Array<IArticleModel>;
+  processedArticles: Array<ModelId>;
 
   popupToShow?: string;
 
@@ -200,7 +135,7 @@ const clearPopupsState: Pick<IIArticleTableState,
   superModeratorIds: null,
 };
 
-function calculateSummaryCounts(processedArticles: Array<IArticleModel>) {
+function calculateSummaryCounts(articles: Seq.Indexed<IArticleModel>) {
   const columns = [
     'unmoderatedCount',
     'approvedCount',
@@ -211,16 +146,34 @@ function calculateSummaryCounts(processedArticles: Array<IArticleModel>) {
   ];
   const summary: any =  {};
   for (const i of columns) {
+    summary['count'] = 0;
     summary[i] = 0;
   }
 
-  for (const a of processedArticles) {
+  articles.reduce((s: any, a) =>  {
+    s['count'] ++;
     for (const i of columns) {
-      summary[i] += (a as any)[i];
+      s[i] += (a as any)[i];
     }
-  }
+    return s;
+  }, summary);
 
   return summary;
+}
+
+function filterArticles(
+  props: Readonly<IIArticleTableProps>,
+  filter: Array<IFilterItem>,
+) {
+  if (filter.length === 0) {
+    return props.articles.valueSeq();
+  }
+
+  return (props.articles.valueSeq().filter(executeFilter(filter,
+    {
+      myId: props.myUserId,
+      categories: props.categories,
+    })) as  Seq.Indexed<IArticleModel>); // Typescript doesn't match documentation
 }
 
 function processArticles(
@@ -228,33 +181,14 @@ function processArticles(
   filter: Array<IFilterItem>,
   sort: Array<string>) {
 
-  // Articles would be better as an array.  We could then store array of indices instead of a full array.
-  let processedArticles: Array<IArticleModel> = props.articles.toArray();
-
-  if (Object.keys(filter).length > 0) {
-    processedArticles = processedArticles.filter(executeFilter(filter,
-      {
-        myId: props.myUserId,
-        categories: props.categories,
-      }));
-  }
-
-  if (sort.length > 0) {
-    processedArticles = processedArticles.sort(executeSort(sort));
-  }
-  else {
-    processedArticles = processedArticles.sort(executeSort([`+${SORT_NEW}`]));
-  }
+  const filteredArticles = filterArticles(props, filter);
+  const summary = calculateSummaryCounts(filteredArticles);
+  const sortFn = (sort.length > 0) ? executeSort(sort) : executeSort([`+${SORT_NEW}`]);
+  const processedArticles = filteredArticles.toArray().sort(sortFn);
 
   // Use users map from store
-  const usersMap = new Map<string, IUserModel>();
-  props.users.map((u) => usersMap.set(u.id, u));
-
-  const count = processedArticles.length;
-  const summary = calculateSummaryCounts(processedArticles);
-
+  const count = summary['count'];
   summary['id'] = 'summary';
-
   summary['title'] = ` ${count} Title` + (count !== 1 ? 's' : '');
 
   if (props.selectedCategory) {
@@ -267,31 +201,20 @@ function processArticles(
   }
 
   return {
-    usersMap,
-    processedArticles,
+    processedArticles: processedArticles.map((a) => a.id),
     summary,
   };
 }
 
-function updateArticles(state: IIArticleTableState, props: IIArticleTableProps) {
-  const newArticles = [...state.processedArticles];
-
-  const indexMap: { [key: string]: number; } = {};
-  newArticles.map((a, i) => { indexMap[a.id] = i; });
-
-  for (const a of props.articles.toArray()) {
-    if (a.id in indexMap) {
-      newArticles[indexMap[a.id]] = a;
-    }
-  }
-
+function updateArticles(state: IIArticleTableState, props: IIArticleTableProps, filter: Array<IFilterItem>) {
+  const filteredArticles = filterArticles(props, filter);
+  const summary = calculateSummaryCounts(filteredArticles);
   const newSummary = {
     ...state.summary,
-    ...calculateSummaryCounts(newArticles),
+    ...summary,
   };
 
   return {
-    processedArticles: newArticles,
     summary: newSummary,
   };
 }
@@ -364,7 +287,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       Object.assign(newState, processArticles(props, filter, sort));
     }
     else {
-      Object.assign(newState, updateArticles(this.state, props));
+      Object.assign(newState, updateArticles(this.state, props, filter));
     }
 
     this.setState(newState);
@@ -424,7 +347,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
         filterString={this.state.filterString}
         filter={this.state.filter}
         myUserId={this.props.myUserId}
-        users={this.props.users}
+        users={this.props.users.valueSeq()}
         setFilter={setFilter}
         clearPopups={this.clearPopups}
       />
@@ -456,7 +379,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
   renderModerators(targetId: ModelId, moderatorIds: Array<ModelId>, superModeratorIds: Array<ModelId>, isCategory: boolean) {
     return (
       <ModeratorsWidget
-        users={this.state.usersMap}
+        users={this.props.users}
         moderatorIds={moderatorIds}
         superModeratorIds={superModeratorIds}
         openSetModerators={partial(this.openSetModerators, targetId, moderatorIds, superModeratorIds, isCategory)}
@@ -750,7 +673,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
             <table key="data" {...css(ARTICLE_TABLE_STYLES.dataTable)}>
               <tbody>
                 {this.renderRow(summary, true)}
-                {processedArticles.slice(0, numberToShow).map((article: IArticleModel) => this.renderRow(article, false))}
+                {processedArticles.slice(0, numberToShow).map((id: ModelId) => this.renderRow(this.props.articles.get(id), false))}
               </tbody>
             </table>
           </PerfectScrollbar>

@@ -17,7 +17,7 @@ limitations under the License.
 import * as copyToClipboard from 'copy-to-clipboard';
 import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
-import { Iterable, List } from 'immutable';
+import { Iterable, List, Seq } from 'immutable';
 import { generate } from 'randomstring';
 import React from 'react';
 import { WithRouterProps } from 'react-router';
@@ -42,9 +42,7 @@ import {
 } from '../../../models';
 import {
   Button,
-  Header,
-  HomeIcon,
-  Link,
+  HeaderBar,
   Scrim,
 } from '../../components';
 import { API_URL } from '../../config';
@@ -70,7 +68,6 @@ import {
   DARK_PRIMARY_TEXT_COLOR,
   DIVIDER_COLOR,
   GUTTER_DEFAULT_SPACING,
-  HEADER_HEIGHT,
   MEDIUM_COLOR,
   PALE_COLOR,
   SCRIM_STYLE,
@@ -95,7 +92,6 @@ const STYLES: any = stylesheet({
     color: DARK_PRIMARY_TEXT_COLOR,
     position: 'relative',
     height: '100%',
-    paddingTop: `${HEADER_HEIGHT}px`,
     boxSizing: 'border-box',
   },
   body: {
@@ -106,12 +102,6 @@ const STYLES: any = stylesheet({
   formContainer: {
     background: WHITE_COLOR,
     paddingBottom: `${GUTTER_DEFAULT_SPACING}px`,
-  },
-  header: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
   },
   heading: {
     backgroundColor: PALE_COLOR,
@@ -166,16 +156,6 @@ const STYLES: any = stylesheet({
       backgroundColor: DARK_COLOR,
     },
   },
-  homeButton: {
-    padding: `${GUTTER_DEFAULT_SPACING}px`,
-    ':focus': {
-      outline: 0,
-    },
-  },
-  homeIcon: {
-    fill: WHITE_COLOR,
-    borderBottom: '2px solid transparent',
-  },
   pluginLink: {
     display: 'inline-block',
     color: MEDIUM_COLOR,
@@ -183,7 +163,7 @@ const STYLES: any = stylesheet({
 });
 
 export interface ISettingsProps extends WithRouterProps {
-  users?: List<IUserModel>;
+  users?: Seq.Indexed<IUserModel>;
   serviceUsers?: List<IUserModel>;
   moderatorUsers?: List<IUserModel>;
   youtubeUsers?: List<IUserModel>;
@@ -194,8 +174,6 @@ export interface ISettingsProps extends WithRouterProps {
   categories: Iterable.Indexed<ICategoryModel>;
   dispatch: IAppDispatch;
   onCancel(): void;
-  onSearchClick(): void;
-  onAuthorSearchClick(): void;
   reloadServiceUsers?(): Promise<void>;
   reloadModeratorUsers?(): Promise<void>;
   reloadYoutubeUsers?(): Promise<void>;
@@ -211,6 +189,7 @@ export interface ISettingsProps extends WithRouterProps {
     newTaggingSensitivities: List<ITaggingSensitivityModel>,
     newTags: List<ITagModel>,
   ): Error;
+  logout (): void;
 }
 
 export interface ISettingsState {
@@ -577,11 +556,6 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       isStatusScrimVisible: true,
       submitStatus: 'Saving changes...',
     });
-  }
-
-  @autobind
-  onSearchClick() {
-    this.props.onSearchClick();
   }
 
   @autobind
@@ -1106,12 +1080,11 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   render() {
     const {
       categories,
-      onAuthorSearchClick,
+      logout,
     } = this.props;
 
     const {
       tags,
-      homeIsFocused,
     } = this.state;
 
     const summaryScoreTag = tags.find((tag) => tag.key === 'SUMMARY_SCORE');
@@ -1145,20 +1118,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
 
     return (
       <div {...css(STYLES.base)}>
-        <div {...css(STYLES.header)}>
-          <Header onSearchClick={this.onSearchClick} onAuthorSearchClick={onAuthorSearchClick}>
-            <Link
-              {...css(STYLES.homeButton)}
-              to="/"
-              key="Home"
-              onFocus={this.onHomeFocus}
-              onBlur={this.onHomeBlur}
-              aria-label="home"
-            >
-              <HomeIcon {...css(STYLES.homeIcon, homeIsFocused && { borderBottom: `2px solid ${WHITE_COLOR}` })} size={24} />
-            </Link>
-          </Header>
-        </div>
+        <HeaderBar logout={logout} homeLink title="Settings"/>
         <div {...css(STYLES.body)}>
           <h1 {...css(VISUALLY_HIDDEN)}>Open Source Moderator Settings</h1>
           {this.renderUsers()}

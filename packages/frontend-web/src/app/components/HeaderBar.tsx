@@ -17,16 +17,20 @@ limitations under the License.
 import React from 'react';
 import { Link } from 'react-router';
 
-import { Menu, Person, Search } from '@material-ui/icons';
+import { AssignmentInd, Home, Menu, Person, Search } from '@material-ui/icons';
 
-import { ICategoryModel } from '../../../models';
+import { IArticleModel, ICategoryModel } from '../../models';
+import { authorSearchLink, dashboardLink, searchLink } from '../scenes/routes';
+import { ISummaryCounts } from '../stores/categories';
 import {
   GUTTER_DEFAULT_SPACING,
-  HEADER_HEIGHT, HEADLINE_TYPE, LIGHT_PRIMARY_TEXT_COLOR, NICE_DARK_BLUE,
+  HEADER_HEIGHT,
+  HEADLINE_TYPE,
+  LIGHT_PRIMARY_TEXT_COLOR,
+  NICE_DARK_BLUE,
   NICE_MIDDLE_BLUE,
-} from '../../styles';
-import { css, stylesheet } from '../../utilx';
-import { searchLink } from '../routes';
+} from '../styles';
+import { css, stylesheet } from '../utilx';
 
 const STYLES = stylesheet({
   header: {
@@ -83,8 +87,11 @@ const STYLES = stylesheet({
 });
 
 export interface IHeaderBarProps {
+  title?: string;
   category?: ICategoryModel;
+  article?: IArticleModel;
   isMe?: boolean;
+  homeLink?: boolean;
   showSidebar?(): void;
   logout(): void;
 }
@@ -110,11 +117,18 @@ export class HeaderBar extends React.Component<IHeaderBarProps> {
 
     const {
       category,
+      article,
       showSidebar,
       logout,
+      homeLink,
+      title,
     } = this.props;
 
-    const categoryStr = category ? `Section: ${category.label}` : 'All Sections';
+    const categoryStr = title ? title :
+      article ? `Article: ${article.title}` :
+        category ? `Section: ${category.label}` :
+          'All Sections';
+
     // const categoryFilter = category ? `${FILTER_CATEGORY}=${category.id}` : null;
 
     // let allArticles = dashboardLink();
@@ -131,11 +145,13 @@ export class HeaderBar extends React.Component<IHeaderBarProps> {
           <span key="icon" {...css(STYLES.menuIcon)}><Menu  style={{ fontSize: 30 }} /></span>
         </div>
         }
+        {homeLink && renderHeaderItem(<Home/>, 'Dashboard', dashboardLink())}
         <span key="cat" {...css(STYLES.title)}>{categoryStr}</span>
         {/*{renderHeaderItem(<icons.ListIcon/>, 'All Articles', allArticles, !isMe)}*/}
         {/*{renderHeaderItem(<icons.ListIcon/>, 'My Articles', myArticles, isMe)}*/}
         <div key="spacer" style={{flexGrow: 1}}/>
         {renderHeaderItem(<Search/>, 'Search', searchLink())}
+        {renderHeaderItem(<AssignmentInd/>, 'By author', authorSearchLink())}
         <div key="logout" {...css(STYLES.headerItem)}>
           <div {...css(STYLES.headerLink)} aria-label="Logout" onClick={logout}>
             <div><Person/></div>
