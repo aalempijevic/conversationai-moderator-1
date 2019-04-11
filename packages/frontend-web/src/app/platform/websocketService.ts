@@ -125,11 +125,17 @@ function packArticleData(data: any): IAllArticlesData {
 function packArticleUpdate(data: any): IArticleUpdate {
   let categories;
   let articles;
+ 
+  
   if(data.categories) {
     categories = List<ICategoryModel>(data.categories.map((c: any) => {
       c.id = c.id.toString();
       return CategoryModel(c);
     }));
+  } else if(data.category) { // Backwards compatibility with single category
+      const cdata = data.category;
+      cdata.id = cdata.id.toString();
+      categories = List<ICategoryModel>([CategoryModel(cdata)]);
   }
 
   if(data.articles) {
@@ -138,6 +144,11 @@ function packArticleUpdate(data: any): IArticleUpdate {
       a.categoryId = a.categoryId && a.categoryId.toString();
       return ArticleModel(a);
     }));
+  } else if (data.article) { // Backwards compatibility with single article
+    const adata = data.article;
+    adata.id = adata.id.toString();
+    adata.categoryId = adata.categoryId && adata.categoryId.toString();
+    articles = List<IArticleModel>([ArticleModel(adata)]);
   }
 
   return {
