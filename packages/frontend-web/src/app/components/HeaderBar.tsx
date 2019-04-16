@@ -137,6 +137,10 @@ export class HeaderBar extends React.Component<IHeaderBarProps> {
     //   allArticles += `/${categoryFilter}`;
     //   myArticles += `+${categoryFilter}`;
     // }
+    let articleId = '';
+    if (article) {
+      articleId = article.id;
+    }
 
     return (
       <header key="header" role="banner" {...css(STYLES.header)}>
@@ -159,8 +163,8 @@ export class HeaderBar extends React.Component<IHeaderBarProps> {
         {/*{renderHeaderItem(<icons.ListIcon/>, 'All Articles', allArticles, !isMe)}*/}
         {/*{renderHeaderItem(<icons.ListIcon/>, 'My Articles', myArticles, isMe)}*/}
         <div key="spacer" style={{flexGrow: 1}}/>
-        {renderHeaderItem(<Search/>, 'Search', searchLink())}
-        {renderHeaderItem(<AssignmentInd/>, 'By author', authorSearchLink())}
+        {renderHeaderItem(<Search/>, 'Search', searchLink(articleId))}
+        {renderHeaderItem(<AssignmentInd/>, 'By author', authorSearchLink(articleId))}
         <div key="logout" {...css(STYLES.headerItem)}>
           <div {...css(STYLES.headerLink)} aria-label="Logout" onClick={logout}>
             <div><Person/></div>

@@ -32,10 +32,16 @@ export function settingsLink() {
 }
 
 export const searchBase = 'search';
-export function searchLink() {
+export function searchLink(article?: string) {
+  if (article) {
+    return `/${searchBase}?articleId=${article}`;
+  }
   return `/${searchBase}`;
 }
-export function authorSearchLink() {
+export function authorSearchLink(article?: string) {
+  if (article) {
+    return `${searchBase}?searchByAuthor=true&articleId=${article}`;
+  }
   return `${searchBase}?searchByAuthor=true`;
 }
 
