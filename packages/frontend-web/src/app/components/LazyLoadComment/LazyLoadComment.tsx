@@ -283,6 +283,15 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
             <span {...css({textDecoration: 'none'})}> &bull; {distanceInWordsToNow(new Date(comment.sourceCreatedAt))} ago&nbsp;</span>
             <FlagsSummary comment={comment}/>
             {actionsAreVisible && (
+              <a
+                {...css(ROW_STYLES.detailsButton)}
+                href={`${comment.article.url}#commentsContainer&permid=${comment.replyId?comment.replyId+":"+comment.id:comment.id}`}
+                target="_blank"
+              >
+                View Comment
+              </a>
+            )}
+            {actionsAreVisible && (
               <Link
                 {...css(ROW_STYLES.detailsButton)}
                 to={commentLinkTarget}
