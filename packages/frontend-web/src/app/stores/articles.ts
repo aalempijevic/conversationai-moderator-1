@@ -20,7 +20,6 @@ import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
 import { IArticleModel, ModelId, ArticleModel } from '../../models';
 import { IAppStateRecord } from './index';
-import { requestArticle } from '../platform/websocketService';
 
 const STATE_ROOT = ['global', 'articles'];
 const INDEX = [...STATE_ROOT, 'index'];
