@@ -20,6 +20,7 @@ import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
 import { IArticleModel, ModelId, ArticleModel } from '../../models';
 import { IAppStateRecord } from './index';
+import { requestArticle } from '../platform/websocketService';
 
 const STATE_ROOT = ['global', 'articles'];
 const INDEX = [...STATE_ROOT, 'index'];
@@ -34,7 +35,7 @@ export function getArticles(state: IAppStateRecord): Map<ModelId, IArticleModel>
 export function getArticle(state: IAppStateRecord, articleId: ModelId): IArticleModel {
   const article = getArticles(state).get(articleId);
   if (!article) {
-    // requestArticle(articleId);
+    requestArticle(articleId);
     // Temporarily respond with an empty article while we fetch the actual data over the socket
     return ArticleModel({
       id: articleId,
