@@ -491,11 +491,12 @@ export interface IModeratedComments {
 export async function getModeratedCommentIdsForArticle(
   articleId: string,
   sort: Array<string>,
+  tag: string,
 ): Promise<IModeratedComments> {
   validateID(articleId, `articleId`);
 
   const { data }: any = await axios.get(
-    serviceURL('moderatedCounts', `/articles/${articleId}`, { sort }),
+    serviceURL('moderatedCounts', `/articles/${articleId}`, { sort, tag }),
   );
 
   return data.data;
@@ -504,6 +505,7 @@ export async function getModeratedCommentIdsForArticle(
 export async function getModeratedCommentIdsForCategory(
   categoryId: string | 'all',
   sort: Array<string>,
+  tag: string,
 ): Promise<IModeratedComments> {
   const parsedCategoryId = categoryId !== 'all' ? parseInt(categoryId, 10) : categoryId;
   if (categoryId !== 'all') {
@@ -511,7 +513,7 @@ export async function getModeratedCommentIdsForCategory(
   }
 
   const { data }: any = await axios.get(
-    serviceURL('moderatedCounts', `/categories/${parsedCategoryId}`, { sort }),
+    serviceURL('moderatedCounts', `/categories/${parsedCategoryId}`, { sort, tag }),
   );
 
   return data.data;
