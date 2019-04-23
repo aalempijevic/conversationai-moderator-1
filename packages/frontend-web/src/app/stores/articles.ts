@@ -34,7 +34,7 @@ export function getArticles(state: IAppStateRecord): Map<ModelId, IArticleModel>
 
 export function getArticle(state: IAppStateRecord, articleId: ModelId): IArticleModel {
   const article = getArticles(state).get(articleId);
-  if (!article) {
+  if (!article && typeof articleId !== "undefined") {
     requestArticle(articleId);
     // Temporarily respond with an empty article while we fetch the actual data over the socket
     return ArticleModel({
