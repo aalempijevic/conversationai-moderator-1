@@ -21,7 +21,8 @@
     "compile:lib": "rm -rf dist-commonjs && ../../node_modules/.bin/tsc --sourceMap --outDir dist-commonjs --declaration --module commonjs && npm run compile:lib:cleanup",
     "compile:lib:cleanup": "find dist-commonjs -type f -exec sed -i -e 's/_1\\.default(/_1(/g' {} \\; && find dist-commonjs -type f -exec sed -i -e 's/_1\\.default\\./_1\\./g' {} \\;",
     "compile:lib:watch": "../../node_modules/.bin/tsc --sourceMap --outDir dist-commonjs --declaration --module commonjs --watch",
-    "compile:watch": "../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration --importHelpers --watch --preserveWatchOutput"
+    "compile:watch": "../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration --importHelpers --watch --preserveWatchOutput",
+    "start": "node tooling/server.js"
   },
   "license": "Apache-2.0",
   "browserslist": [
