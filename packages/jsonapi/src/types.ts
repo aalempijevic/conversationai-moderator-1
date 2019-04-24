@@ -94,7 +94,7 @@ export interface IParams {
   filters: IFilters;
   sort: Array<string>;
   fields: IFields;
-  tag: string;
+  tag?: string;
 }
 
 export interface IStatusError {
