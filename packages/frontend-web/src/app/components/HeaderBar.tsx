@@ -17,7 +17,7 @@ limitations under the License.
 import React from 'react';
 import { Link } from 'react-router';
 
-import { AssignmentInd, Home, Menu, Person, Search } from '@material-ui/icons';
+import { AssignmentInd, Home, Menu, OpenInNew, Person, Search } from '@material-ui/icons';
 
 import { IArticleModel, ICategoryModel } from '../../models';
 import { authorSearchLink, dashboardLink, searchLink } from '../scenes/routes';
@@ -29,6 +29,7 @@ import {
   NICE_DARK_BLUE,
   NICE_MIDDLE_BLUE,
 } from '../styles';
+import { COMMON_STYLES } from '../stylesx';
 import { css, stylesheet } from '../utilx';
 
 const STYLES = stylesheet({
@@ -145,7 +146,16 @@ export class HeaderBar extends React.Component<IHeaderBarProps> {
         </div>
         }
         {homeLink && renderHeaderItem(<Home/>, 'Dashboard', dashboardLink())}
-        <span key="cat" {...css(STYLES.title)}>{categoryStr}</span>
+        <span key="cat" {...css(STYLES.title)}>
+          {categoryStr}
+          {article && article.url && (
+            <div style={{display: 'inline-block', margin: '0 10px', position: 'relative', top: '3px'}}>
+              <a href={article.url} target="_blank" {...css(COMMON_STYLES.cellLink)}>
+                <OpenInNew fontSize="small"/>
+              </a>
+            </div>
+          )}
+        </span>
         {/*{renderHeaderItem(<icons.ListIcon/>, 'All Articles', allArticles, !isMe)}*/}
         {/*{renderHeaderItem(<icons.ListIcon/>, 'My Articles', myArticles, isMe)}*/}
         <div key="spacer" style={{flexGrow: 1}}/>

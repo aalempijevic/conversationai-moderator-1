@@ -69,8 +69,8 @@ export interface IAllArticlesData {
 }
 
 export interface IArticleUpdate {
-  category?: ICategoryModel;
-  article: IArticleModel;
+  categories?: List<ICategoryModel>;
+  articles?: List<IArticleModel>;
 }
 
 export interface IPerUserData {
@@ -81,6 +81,18 @@ export interface IPerUserData {
 //       When this is availabe, replace the "any" types in the code below.
 // TODO: API sending number IDs, but we expect strings due to the way the old REST code works.
 //       Convert for now.  But at some point need to refactor to use numbers.
+
+function fixObject(o: any) {
+  o.id = o.id.toString();
+  if (o.categoryId) {
+    o.categoryId = o.categoryId.toString();
+  }
+  if (o.tagId) {
+    o.tagId = o.tagId.toString();
+  }
+
+}
+
 function packSystemData(data: any): ISystemData {
   return {
     users: List<IUserModel>(data.users.map((u: any) => {
@@ -92,12 +104,15 @@ function packSystemData(data: any): ISystemData {
       return TagModel(t);
     })),
     taggingSensitivities: List<ITaggingSensitivityModel>(data.taggingSensitivities.map((t: any) => {
+      fixObject(t);
       return TaggingSensitivityModel(t);
     })),
     rules: List<IRuleModel>(data.rules.map((r: any) => {
+      fixObject(r);
       return RuleModel(r);
     })),
     preselects: List<IPreselectModel>(data.preselects.map((p: any) => {
+      fixObject(p);
       return PreselectModel(p);
     })),
   };
@@ -123,25 +138,26 @@ function packArticleData(data: any): IAllArticlesData {
 }
 
 function packArticleUpdate(data: any): IArticleUpdate {
-  const cdata = data.category;
-  let cmodel;
-  let amodel;
-
-  if (cdata) {
-    cdata.id = cdata.id.toString();
-    cmodel = CategoryModel(cdata);
+  let categories;
+  let articles;
+  if(data.categories) {
+    categories = List<ICategoryModel>(data.categories.map((c: any) => {
+      c.id = c.id.toString();
+      return CategoryModel(c);
+    }));
   }
 
-  const adata = data.article;
-  if (adata) {
-    adata.id = adata.id.toString();
-    adata.categoryId = adata.categoryId && adata.categoryId.toString();
-    amodel = ArticleModel(adata);
+  if(data.articles) {
+    articles = List<IArticleModel>(data.articles.map((a: any) => {
+      a.id = a.id.toString();
+      a.categoryId = a.categoryId && a.categoryId.toString();
+      return ArticleModel(a);
+    }));
   }
 
   return {
-    category: cmodel,
-    article: amodel,
+    categories: categories,
+    articles: articles,
   };
 }
 

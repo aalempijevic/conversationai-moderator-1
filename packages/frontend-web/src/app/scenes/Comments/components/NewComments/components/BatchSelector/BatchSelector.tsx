@@ -16,7 +16,7 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import formatDate from 'date-fns/format';
-import { Set } from 'immutable';
+import { List } from 'immutable';
 import { clamp } from 'lodash';
 import React from 'react';
 
@@ -31,7 +31,7 @@ import {
   BOX_DEFAULT_SPACING,
   GUTTER_DEFAULT_SPACING,
   LIGHT_PRIMARY_TEXT_COLOR,
-  MEDIUM_COLOR,
+  NICE_MIDDLE_BLUE,
 } from '../../../../../../styles';
 
 import {
@@ -48,7 +48,7 @@ const ARROW_SIZE = 6;
 const STYLES = stylesheet({
   batchControls: {
     position: 'relative',
-    backgroundColor: MEDIUM_COLOR,
+    backgroundColor: NICE_MIDDLE_BLUE,
     padding: `8px ${GUTTER_DEFAULT_SPACING * 2}px`, // The overlapping height of the batch circle
   },
 
@@ -89,7 +89,7 @@ export interface IBatchSelectorProps {
   defaultSelectionPosition1: number;
   defaultSelectionPosition2: number;
   automatedRuleToast?(rule: IRuleModel): void;
-  commentScores: Set<ICommentScoredModel | ICommentDatedModel>;
+  commentScores: List<ICommentScoredModel | ICommentDatedModel>;
   groupBy: 'date' | 'score';
   rules?: Array<IRuleModel>;
   onSelectionChange?(selectedComments: Array<number>, pos1: number, pos2: number): void;
@@ -156,8 +156,9 @@ export class BatchSelector
     return (
       <div {...css(STYLES.batchControls)}>
         <div {...css({position: 'relative'})}>
-          <AspectRatio ratio={5 / 1}
-                       contents={(width: number, height: number) => (
+          <AspectRatio
+            ratio={5 / 1}
+            contents={(width: number, height: number) => (
               <DotChart
                 height={height}
                 width={width}
@@ -168,7 +169,8 @@ export class BatchSelector
                   end: max,
                 }}
               />
-            )}/>
+            )}
+          />
           {rules && rules.length > 0 && areAutomatedRulesApplied && (
             <RuleBars
               rules={rules}
