@@ -11,7 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-const { config } = require('@conversationai/moderator-config');
 const { makeServer } = require('@conversationai/moderator-backend-core');
 const { mountWebFrontend } = require('../dist-commonjs/index');
 
@@ -23,4 +22,4 @@ const {
 
 app.use('/', mountWebFrontend());
 
-start(config.get('port'));
+start(process.env['PORT']);
