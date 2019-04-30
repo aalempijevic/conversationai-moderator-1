@@ -173,7 +173,13 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: IModeratedComments
 
   return {
     loadData: (cId: string, aId: string, t: string) => {
-      dispatch(executeCommentListLoader(!!aId, aId, cId, t));
+      /*
+        NOTE: Change sort seems to trigger every time load data does.  Load data ends up calling the
+        moderated counts endpoint with the incorrect sort (noticeable when we look at flags as the rest
+        default to the same sort).  This causes a race condition which will cause the sort to be whichever 
+        request finished slower.  Without this call here we seem to function as expected.  
+       */
+      // dispatch(executeCommentListLoader(!!aId, aId, cId, t));
     },
 
     tagComments: (ids: Array<string>, tagId: string) =>
