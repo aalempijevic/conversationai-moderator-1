@@ -35,9 +35,7 @@ If `MODERATOR_FLAVOR` is not set, then we assume that comments will be pushed
 
 In a production setting, you'll also have to set the following:
 
-* `URL_BASE`: Base URL: Used by docker-compose to generate the other URLs.
-* `API_URL`: URL for the API endpoint
-* `FRONTEND_URL`: URL for the Frontend endpoint
+* `MODERATOR_URL`: URL (including protocol, host and port) that OSMOD will listen on.
 
 ### System setup:
 
@@ -88,8 +86,11 @@ CREATE USER '$DATABASE_USER' IDENTIFIED BY '$DATABASE_PASSWORD';
 GRANT ALL on $DATABASE_NAME.* to $DATABASE_USER;
 EOF
 
-mysql -u root -p $DATABASE_NAME < packages/backend-core/seed/initial-database.sql
-bin/osmod migrate
+cd packages/backend-core
+mysql -u root -p $DATABASE_NAME < seed/initial-database.sql
+npx sequelize db:migrate --config ../config/sequelize.js \
+  --migrations-path dist/migrations --models-path dist/models
+cd -
 
 # Add a service user that can talk to the Perspective API:
 bin/osmod users:create --group moderator --name "PerspectiveAPI" --moderator-type "perspective-api"
@@ -136,8 +137,6 @@ You can manage your OSMod system using the osmod commandline tool:
 
 where `command` is one of
 
-* `migrate`                          Migrate the database up
-* `migrate:undo`                     Reverse a database migration
 * `users:create`                     Create new OS Moderator users
 * `users:get-token`                  Get a JWT token for a user specified by id or email
 * `denormalize`                      Re-run denormalize counts

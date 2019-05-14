@@ -1,0 +1,54 @@
+/*
+Copyright 2017 Google Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+import * as yargs from 'yargs';
+
+import { denormalizeCommentCountsForCategory } from '../../domain/categories';
+import { logger } from '../../logger';
+import {
+  Article,
+  Category,
+} from '../../models';
+
+export const command = 'articles:delete';
+export const describe = 'Delete all articles from the database.';
+
+export function builder(args: yargs.Argv) {
+  return args
+    .usage('Usage: node $0 articles:delete');
+}
+
+export async function handler() {
+  logger.info(`Deleting articles`);
+
+  try {
+    await Article.destroy({where: {}});
+    const categories = await Category.findAll();
+    for (const c of categories) {
+      logger.info('Denormalizing category ' + c.id);
+      denormalizeCommentCountsForCategory(c);
+    }
+
+  }
+  catch (err) {
+    logger.error('Delete articles error: ', err.name, err.message);
+    logger.error(err.errors);
+    process.exit(1);
+  }
+
+  logger.info('Articles successfully deleted');
+  process.exit(0);
+}

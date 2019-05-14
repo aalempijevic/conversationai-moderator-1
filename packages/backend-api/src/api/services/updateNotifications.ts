@@ -19,6 +19,7 @@ const SEND_TEST_UPDATE_PACKETS = false;
 
 import * as express from 'express';
 import { isEqual, pick } from 'lodash';
+import * as Sequelize from 'sequelize';
 import * as WebSocket from 'ws';
 
 import {
@@ -34,29 +35,31 @@ import {
   IArticleInstance,
   ICategoryInstance,
   IModerationRuleInstance,
-  IModeratorAssignmentAttributes,
   IPreselectInstance,
   ITaggingSensitivityInstance,
   ITagInstance,
-  IUserCategoryAssignmentAttributes,
   IUserInstance,
 } from '@conversationai/moderator-backend-core';
 import { logger, registerInterest } from '@conversationai/moderator-backend-core';
 
-const tagFields = ['id', 'color', 'description', 'key', 'label', 'isInBatchView', 'inSummaryScore', 'isTaggable'];
-const rangeFields = ['id', 'categoryId', 'lowerThreshold', 'upperThreshold', 'tagId'];
-const taggingSensitivityFields = rangeFields;
-const ruleFields = ['action', 'createdBy', ...rangeFields];
-const preselectFields = rangeFields;
-const userFields = ['id', 'name', 'email', 'avatarURL', 'group', 'isActive'];
+const TAG_FIELDS = ['id', 'color', 'description', 'key', 'label', 'isInBatchView', 'inSummaryScore', 'isTaggable'];
+const RANGE_FIELDS = ['id', 'categoryId', 'lowerThreshold', 'upperThreshold', 'tagId'];
+const TAGGING_SENSITIVITY_FIELDS = RANGE_FIELDS;
+const RULE_FIELDS = ['action', 'createdBy', ...RANGE_FIELDS];
+const PRESELECT_FIELDS = RANGE_FIELDS;
+const USER_FIELDS = ['id', 'name', 'email', 'avatarURL', 'group', 'isActive'];
 
-const commonFields = ['id', 'updatedAt', 'allCount', 'unprocessedCount', 'unmoderatedCount', 'moderatedCount',
+const COMMENTSET_FIELDS = ['id', 'updatedAt', 'allCount', 'unprocessedCount', 'unmoderatedCount', 'moderatedCount',
   'approvedCount', 'highlightedCount', 'rejectedCount', 'deferredCount', 'flaggedCount',
   'batchedCount', 'recommendedCount', 'assignedModerators', ];
-const categoryFields = [...commonFields, 'label'];
-const articleFields = [...commonFields, 'title', 'url', 'categoryId', 'sourceCreatedAt', 'lastModeratedAt',
+const CATEGORY_FIELDS = [...COMMENTSET_FIELDS, 'label', 'ownerId'];
+const ARTICLE_FIELDS = [...COMMENTSET_FIELDS, 'title', 'url', 'categoryId', 'sourceCreatedAt', 'lastModeratedAt',
   'isCommentingEnabled', 'isAutoModerated'];
 
+const ID_FIELDS = new Set(['categoryId', 'tagId', 'ownerId']);
+
+// TODO: Can't find a good way to get rid of the any types below.  And typing is generally a mess.
+//       Revisit when sequelize has been updated
 interface ISystemData {
   users: any;
   tags: any;
@@ -87,27 +90,27 @@ interface IMessage {
 async function getSystemData() {
   const users = await User.findAll({where: {group: ['admin', 'general']}});
   const userdata = users.map((u: IUserInstance) => {
-    return pick(u.toJSON(), userFields);
+    return serialiseObject(u, USER_FIELDS);
   });
 
   const tags = await Tag.findAll({});
   const tagdata = tags.map((t: ITagInstance) => {
-    return pick(t.toJSON(), tagFields);
+    return serialiseObject(t, TAG_FIELDS);
   });
 
   const taggingSensitivities = await TaggingSensitivity.findAll({});
   const tsdata = taggingSensitivities.map((t: ITaggingSensitivityInstance) => {
-    return pick(t.toJSON(), taggingSensitivityFields);
+    return serialiseObject(t, TAGGING_SENSITIVITY_FIELDS);
   });
 
   const rules = await ModerationRule.findAll({});
   const ruledata = rules.map((r: IModerationRuleInstance) => {
-    return pick(r.toJSON(), ruleFields);
+    return serialiseObject(r, RULE_FIELDS);
   });
 
   const preselects = await Preselect.findAll({});
   const preselectdata = preselects.map((p: IPreselectInstance) => {
-    return pick(p.toJSON(), preselectFields);
+    return serialiseObject(p, PRESELECT_FIELDS);
   });
 
   return {
@@ -122,8 +125,31 @@ async function getSystemData() {
   } as IMessage;
 }
 
-// TODO: Can't find a good way to get rid of the any types below
-//       Revisit when sequelize has been updated
+// Convert IDs to strings, and assignedModerators to arrays of strings.
+function serialiseObject(
+  o: Sequelize.Instance<any>,
+  fields: Array<string>,
+): {[key: string]: {} | Array<string> | string | number} {
+  const serialised = pick(o.toJSON(), fields);
+
+  serialised.id = serialised.id.toString();
+
+  for (const k in serialised) {
+    const v = serialised[k];
+
+    if (ID_FIELDS.has(k) && v) {
+      serialised[k] = v.toString();
+    }
+  }
+
+  if (serialised.assignedModerators) {
+    serialised.assignedModerators = serialised.assignedModerators.map(
+      (i: any) => (i.user_category_assignment ?  i.user_category_assignment.userId.toString() :
+                                                 i.moderator_assignment.userId.toString()));
+  }
+  return serialised;
+}
+
 async function getAllArticlesData() {
   const categories = await Category.findAll({
     where: {isActive: true},
@@ -132,12 +158,7 @@ async function getAllArticlesData() {
   const categoryIds: Array<number> = [];
   const categorydata = categories.map((c: ICategoryInstance) => {
     categoryIds.push(c.id);
-    const category: any = pick(c.toJSON(), categoryFields);
-    category.assignedModerators = category.assignedModerators.map(
-      (i: {user_category_assignment: IUserCategoryAssignmentAttributes}) =>
-        i.user_category_assignment.userId.toString(),
-    );
-    return category;
+    return serialiseObject(c, CATEGORY_FIELDS);
   });
 
   const articles = await Article.findAll({
@@ -145,12 +166,7 @@ async function getAllArticlesData() {
     include: [{ model: User, as: 'assignedModerators', attributes: ['id']}],
   });
   const articledata = articles.map((a: IArticleInstance) => {
-    const article: any = pick(a.toJSON(), articleFields);
-    article.assignedModerators = article.assignedModerators.map(
-      (i: {moderator_assignment: IModeratorAssignmentAttributes}) =>
-        i.moderator_assignment.userId.toString(),
-    );
-    return article;
+    return serialiseObject(a, ARTICLE_FIELDS);
   });
 
   return {
@@ -170,15 +186,14 @@ async function getArticleUpdate(articleId: number) {
   if (!article) {
     return null;
   }
-  const aData: any = pick(article.toJSON(), articleFields);
-  aData.assignedModerators = aData.assignedModerators.map((i: any) => i.moderator_assignment.userId.toString());
+  const aData = serialiseObject(article, ARTICLE_FIELDS);
 
   const category = await Category.findById(
-    aData.categoryId,
+    await article.get('categoryId'),
     {include: [{ model: User, as: 'assignedModerators', attributes: ['id']}]},
   );
-  const cData: any = pick(category.toJSON(), categoryFields);
-  cData.assignedModerators = cData.assignedModerators.map((i: any) => i.user_category_assignment.userId.toString());
+
+  const cData = serialiseObject(category, CATEGORY_FIELDS);
 
   return {
     type: 'article-update',
