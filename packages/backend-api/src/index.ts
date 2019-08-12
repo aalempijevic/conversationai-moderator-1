@@ -70,13 +70,14 @@ export async function mountAPI(testMode?: boolean): Promise<express.Express> {
     next();
   });
 
-  app.use('/', createHealthcheckRouter(oauthConfig != null));
+  app.use('/', createHealthcheckRouter(oauthConfig));
 
-  if (oauthConfig == null && !testMode) {
+  if (!testMode && (oauthConfig == null || !oauthConfig.knownGood)) {
     console.log('*** Starting in bootstrap mode ***');
     app.use('/', createAuthConfigRouter());
   }
-  else {
+
+  if (testMode || oauthConfig) {
     app.use('/', createAuthRouter());
     if (oauthConfig != null) {
       app.use('/', createYouTubeRouter(oauthConfig, jwtAuthenticator));

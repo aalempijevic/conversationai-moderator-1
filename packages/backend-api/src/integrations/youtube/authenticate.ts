@@ -29,7 +29,7 @@ export async function for_one_youtube_user(
   callback: (owner: IUserInstance, client: OAuth2Client) => Promise<void>,
 ) {
   const oauthConfig = await getOAuthConfiguration();
-  if (!oauthConfig) {
+  if (!oauthConfig || !oauthConfig.knownGood) {
     return;
   }
 

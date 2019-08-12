@@ -66,6 +66,7 @@ function _Root(props: React.PropsWithChildren<RouteComponentProps<{}>>) {
   const [wsState, setWsState] = React.useState<WebsocketStates>('ws_connecting');
 
   function setState(state: SystemStates) {
+    console.log(state);
     if (state.startsWith('s_')) {
       setServerState(state as ServerStates);
     }
@@ -109,7 +110,10 @@ function _Root(props: React.PropsWithChildren<RouteComponentProps<{}>>) {
     case 's_init_oauth':
       return <ConfigureOAuth restart={retry}/>;
     case 's_init_first_user':
-      return <Login firstUser/>;
+      function backToOAuth() {
+        setState('s_init_oauth');
+      }
+      return <Login firstUser backToOAuth={backToOAuth}/>;
   }
 
   switch (authState) {

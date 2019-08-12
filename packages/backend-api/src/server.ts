@@ -45,6 +45,7 @@ import { mountWebFrontend } from '@conversationai/moderator-frontend-web';
 import { mountAPI } from '.';
 import { applyCommonPostprocessors, getExpressAppWithPreprocessors } from './api/util/server';
 import { mountQueueDashboard } from './processing';
+import { registerServer } from './utils';
 
 const frontend_url = config.get('frontend_url');
 if (!frontend_url) {
@@ -102,6 +103,10 @@ async function init() {
   console.log(`Binding to ${pUrl.protocol} ${pUrl.hostname} : ${port}`);
   await server.listen({host: '0.0.0.0', port});
   console.log(`Started server in ${STANDALONE ? 'standalone' : 'API only'} mode`);
+
+  registerServer(server, init);
 }
 
 init();
+
+
