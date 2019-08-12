@@ -14,35 +14,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { google } from 'googleapis';
-
 import { CONFIGURATION_GOOGLE_OAUTH, getConfigItem, setConfigItem } from '@conversationai/moderator-backend-core';
-import { config } from '@conversationai/moderator-config';
+import { restartService } from '../utils';
 
 export interface IGoogleOAuthConfiguration {
   id: string;
   secret: string;
+  knownGood: boolean;
 }
 
 export async function getOAuthConfiguration() {
   return await getConfigItem(CONFIGURATION_GOOGLE_OAUTH) as IGoogleOAuthConfiguration | null;
 }
 
-export async function checkOAuthConfiguration(oauthConfig: IGoogleOAuthConfiguration) {
-  console.log(oauthConfig);
-  const oauth2Client = new google.auth.OAuth2(
-    oauthConfig.id,
-    oauthConfig.secret,
-    `${config.get('api_url')}/auth/callback/google`,
-  );
-  const x = await oauth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: ['profile', 'email'],
-  });
-  console.log(x);
-  return true;
-}
-
-export async function setOAuthConfiguration(oauthConfig: IGoogleOAuthConfiguration) {
+export async function setOAuthConfiguration(oauthConfig: IGoogleOAuthConfiguration, isGood?: boolean) {
+  oauthConfig.knownGood = !!isGood;
   return await setConfigItem(CONFIGURATION_GOOGLE_OAUTH, oauthConfig);
+  restartService();
 }

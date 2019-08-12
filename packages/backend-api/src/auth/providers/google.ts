@@ -19,7 +19,7 @@ limitations under the License.
 import { IUserInstance, User } from '@conversationai/moderator-backend-core';
 import { config } from '@conversationai/moderator-config';
 
-import { IGoogleOAuthConfiguration } from '../config';
+import { getOAuthConfiguration, IGoogleOAuthConfiguration, setOAuthConfiguration } from '../config';
 import { ensureFirstUser, findOrCreateUserSocialAuth, isFirstUserInitialised } from '../users';
 
 const Strategy = require('passport-google-oauth20').Strategy;
@@ -87,6 +87,11 @@ export async function verifyGoogleToken(accessToken: string, refreshToken: strin
 
   if (!await isFirstUserInitialised()) {
     await ensureFirstUser(userData);
+  }
+
+  const oauthConfig = await getOAuthConfiguration();
+  if (oauthConfig && !oauthConfig.knownGood) {
+    await setOAuthConfiguration(oauthConfig, true);
   }
 
   const user = await User.findOne({

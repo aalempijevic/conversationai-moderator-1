@@ -45,6 +45,7 @@ import { mountWebFrontend } from '@conversationai/moderator-frontend-web';
 import { mountAPI } from '.';
 import { applyCommonPostprocessors, getExpressAppWithPreprocessors } from './api/util/server';
 import { mountQueueDashboard } from './processing';
+import { registerServer } from './utils';
 
 const frontend_url = config.get('frontend_url');
 if (!frontend_url) {
@@ -89,7 +90,7 @@ async function init() {
   // TODO: We may need to resurrect these entrypoints for external integration.
   //       Not sure who will use the task API.
   //       The cron API is used to integrate with a system status or cron "heartbeat".
-  //       E.g., https://cloud.google.com/appengine/docs/standard/nodejs/scheduling-jobs-with-cron-yaml
+  //       E.g., https://cloud.google.com/appengie server programmaticallyne/docs/standard/nodejs/scheduling-jobs-with-cron-yaml
   //       though we may be able to replace this with the new worker infrastructure.
   // app.use('/tasks', mountTaskAPI());
   // app.use('/cron', mountCronAPI());
@@ -106,6 +107,10 @@ async function init() {
   console.log(`Binding to ${pUrl.protocol} ${pUrl.hostname} : ${port}`);
   await server.listen({host: '0.0.0.0', port});
   console.log(`Started server in ${STANDALONE ? 'standalone' : 'API only'} mode`);
+
+  registerServer(server, init);
 }
 
 init();
+
+

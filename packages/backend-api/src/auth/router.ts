@@ -21,7 +21,7 @@ import * as qs from 'qs';
 import { IUserInstance } from '@conversationai/moderator-backend-core';
 import { config } from '@conversationai/moderator-config';
 
-import { checkOAuthConfiguration, getOAuthConfiguration, IGoogleOAuthConfiguration } from './config';
+import { getOAuthConfiguration, IGoogleOAuthConfiguration, setOAuthConfiguration } from './config';
 import { createToken } from './tokens';
 import { isFirstUserInitialised } from './users';
 import { generateServerCSRF, getClientCSRF } from './utils';
@@ -52,7 +52,7 @@ function redirectToFrontend(
   res.redirect(`${redirectHost}?${queryString}`);
 }
 
-export function createHealthcheckRouter(isOAuthReady: boolean): express.Router {
+export function createHealthcheckRouter(oauthConfig: IGoogleOAuthConfiguration | null): express.Router {
   const router = express.Router({
     caseSensitive: true,
     mergeParams: true,
@@ -61,11 +61,11 @@ export function createHealthcheckRouter(isOAuthReady: boolean): express.Router {
   router.get(
     '/auth/healthcheck',
     async (_1, res, _2) => {
-      if (!isOAuthReady) {
+      if (oauthConfig == null) {
         res.status(218).send('init_oauth');
         return;
       }
-      if (!await isFirstUserInitialised()) {
+      if (!oauthConfig.knownGood || !await isFirstUserInitialised()) {
         res.status(218).send('init_first_user');
         return;
       }
@@ -98,7 +98,7 @@ export function createAuthConfigRouter(): express.Router {
   router.post(
     '/auth/config',
     async (req, res) => {
-      checkOAuthConfiguration(req.body.data as IGoogleOAuthConfiguration);
+      await setOAuthConfiguration(req.body.data as IGoogleOAuthConfiguration);
       res.send('ok');
     },
   );
