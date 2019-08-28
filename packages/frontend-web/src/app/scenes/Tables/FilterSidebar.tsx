@@ -42,7 +42,6 @@ import { IUserModel, ModelId } from '../../../models';
 import * as icons from '../../components/Icons';
 import { HEADER_HEIGHT, SCRIM_STYLE } from '../../styles';
 import { css, stylesheet } from '../../utilx';
-import { SmallUserIcon } from './components';
 import {
   FILTER_DATE_lastModeratedAt,
   FILTER_DATE_sourceCreatedAt,
@@ -71,6 +70,7 @@ import {
   resetFilterToRoot,
   updateFilter,
 } from './utils';
+import {Avatar} from '../../components/Avatar';
 
 const SIDEBAR_WIDTH = 350;
 
@@ -348,7 +348,7 @@ export class FilterSidebar extends React.Component<IFilterSidebarProps, IFilterS
     return (
       <tr key={u.id} onClick={this.setModerator(u.id)}>
         <td key="icon">
-          <SmallUserIcon user={u}/>
+          <Avatar target={u} size={30}/>
         </td>
         <td key="text" {...css({textAlign: 'left'})}>
           {u.name}
