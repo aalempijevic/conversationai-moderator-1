@@ -13,64 +13,96 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+// tslint:disable:no-bitwise
 
-import React from 'react';
+import React, { ReactNode } from 'react';
+
+import { Avatar as MAvatar, Tooltip, withStyles } from '@material-ui/core';
+
 import {
-  AuthorModelRecord,
   IAuthorModel,
   IUserModel,
 } from '../../../models';
-import { DIVIDER_COLOR, MEDIUM_COLOR } from '../../styles';
-import { css, stylesheet } from '../../utilx';
-import { UserIcon } from '../Icons';
 
-const ICON_SIZE = '100%';
-
-const STYLES = stylesheet({
-  base: {
-    borderRadius: '50%',
-    overflow: 'hidden',
+const MyTooltip = withStyles((theme) => ({
+  tooltip: {
+    fontSize: 14,
+    backgroundColor: theme.palette.common.white,
+    color: 'rgba(0, 0, 0, 0.87)',
+    boxShadow: theme.shadows[1],
   },
-});
+}))(Tooltip);
 
-export interface IAvatarProps {
-  target: IAuthorModel | IUserModel;
-  size: number;
+function hashCode(str: string) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return hash;
 }
 
-export class Avatar extends React.PureComponent<IAvatarProps> {
-  render() {
-    const { target, size } = this.props;
+function intToRGB(i: number) {
+  const c = (i & 0x00FFFFFF)
+    .toString(16)
+    .toUpperCase();
 
-    let avatarURL = target instanceof AuthorModelRecord
-        ? (target as IAuthorModel).avatar
-                  : (target as IUserModel).avatarURL;
+  return '00000'.substring(0, 6 - c.length) + c;
+}
 
-    if (avatarURL && !avatarURL.startsWith('https://')) {
-      avatarURL = null;
-    }
+export function Avatar(props: {
+  target: IAuthorModel | IUserModel;
+  size: number;
+}) {
+  const { target, size } = props;
 
-    const name = target instanceof AuthorModelRecord
-        ? (target as IAuthorModel).name
-        : (target as IUserModel).name;
+  let avatarURL = (target as IUserModel).avatarURL || (target as IAuthorModel).avatar;
+  if (avatarURL && !avatarURL.startsWith('https://')) {
+    avatarURL = null;
+  }
 
-    return (
-      <div
-        {...css(
-          STYLES.base,
-          {
+  const name = target.name;
+  const initials = name.match(/\b\w/g) || [];
+  const ins = ((initials.shift() || '') + (initials.pop() || '')).toUpperCase();
+  const color = intToRGB(hashCode(name) & 0x007F7F7F);
+  console.log(ins, color);
+  return (
+    <div style={{display: 'inline-block', margin: '1px'}}>
+      <MyTooltip title={name} placement="top">
+        <MAvatar
+          alt={name}
+          src={avatarURL}
+          style={{
             width: `${size}px`,
             height: `${size}px`,
-            ...(avatarURL ? {} : { backgroundColor: DIVIDER_COLOR }),
-          },
-        )}
+            backgroundColor: `#${color}`,
+            color: 'white',
+            fontSize: `${size / 2}px`,
+          }}
+        >
+          {ins}
+        </MAvatar>
+      </MyTooltip>
+    </div>
+  );
+}
+
+export function PseudoAvatar(props: {
+  children: ReactNode;
+  size: number;
+}) {
+  const {children, size} = props;
+
+  return (
+    <div style={{display: 'inline-block', margin: '1px'}}>
+      <MAvatar
+        style={{
+          width: `${size}px`,
+          height: `${size}px`,
+          fontSize: `${size / 2}px`,
+        }}
       >
-        {
-          avatarURL
-              ? <img src={avatarURL} alt={name} width="100%" />
-              : <UserIcon {...css({ fill: MEDIUM_COLOR })} size={ICON_SIZE} />
-        }
-      </div>
-    );
-  }
+        {children}
+      </MAvatar>
+    </div>
+  );
 }
