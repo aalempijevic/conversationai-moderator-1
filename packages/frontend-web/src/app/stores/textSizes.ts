@@ -16,15 +16,11 @@ limitations under the License.
 
 import { List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
-import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 
 import { listTextSizesByIds } from '../platform/dataService';
 import { IAppStateRecord, IThunkAction } from './appstate';
 
 const DATA_PREFIX = ['global', 'textSizes'];
-const TEXT_SIZES_HAS_DATA = [...DATA_PREFIX, 'hasData'];
-const TEXT_SIZES_DATA = [...DATA_PREFIX, 'textSizes'];
-const TEXT_SIZES_IS_LOADING = [...DATA_PREFIX, 'isLoading'];
 
 const loadTextSizesStart = createAction(
   'text-sizes/LOAD_TEXT_SIZES_START',
@@ -37,60 +33,52 @@ const loadTextSizesComplete = createAction<ILoadTestSizesCompletePayload>(
   'text-sizes/LOAD_TEXT_SIZES_COMPLETE',
 );
 
-interface ITextSizesState {
+export interface ITextSizesState {
   isLoading: boolean;
   hasData: boolean;
-  textSizes: Map<number, number>;
+  textSizes: Map<string, number>;
 }
 
-interface ITextSizesStateRecord extends TypedRecord<ITextSizesStateRecord>, ITextSizesState {}
-
-const TextSizesStateFactory = makeTypedFactory<ITextSizesState, ITextSizesStateRecord>({
-  isLoading: true,
-  hasData: false,
-  textSizes: Map<number, number>(),
-});
-
-const textSizesReducer = handleActions<
-  ITextSizesStateRecord,
+export const reducer = handleActions<
+  Readonly<ITextSizesState>,
   void                          | // loadTextSizesStart
   ILoadTestSizesCompletePayload   // loadTextSizesComplete
 >({
-  [loadTextSizesStart.toString()]: (state) => (
-    state
-        .set('isLoading', true)
-  ),
+  [loadTextSizesStart.toString()]: (state) => ({...state, isLoading: true}),
 
-  [loadTextSizesComplete.toString()]: (state, { payload: { textSizes } }: Action<ILoadTestSizesCompletePayload>) => (
-    state
-        .set('isLoading', false)
-        .set('hasData', true)
-        .mergeIn(['textSizes'], textSizes)
-  ),
+  [loadTextSizesComplete.toString()]: (state, { payload: { textSizes } }: Action<ILoadTestSizesCompletePayload>) => ({
+    isLoading: false,
+    hasData: true,
+    textSizes: state.textSizes.merge(textSizes),
+  }),
 
-}, TextSizesStateFactory());
+}, {
+  isLoading: true,
+  hasData: false,
+  textSizes: Map<string, number>(),
+});
 
-function getTextSizesHasData(state: IAppStateRecord): boolean {
-  return state.getIn(TEXT_SIZES_HAS_DATA);
+function getState(state: IAppStateRecord): ITextSizesState {
+  return state.getIn(DATA_PREFIX);
 }
 
-function getTextSizes(state: IAppStateRecord): Map<string, number> {
-  return state.getIn(TEXT_SIZES_DATA);
+export function getTextSizesHasData(state: IAppStateRecord): boolean {
+  return getState(state).hasData;
 }
 
-function getTextSizesIsLoading(state: IAppStateRecord): boolean {
-  return state.getIn(TEXT_SIZES_IS_LOADING);
+export function getTextSizes(state: IAppStateRecord): Map<string, number> {
+  return getState(state).textSizes;
 }
 
-function loadTextSizesByIds(ids: List<string>, width: number): IThunkAction<Promise<void>> {
-  return async (dispatch, getState) => {
+export function loadTextSizesByIds(ids: List<string>, width: number): IThunkAction<Promise<void>> {
+  return async (dispatch, getGlobalState) => {
     if (ids.size <= 0) {
       return;
     }
 
     await dispatch(loadTextSizesStart());
 
-    const state = getState();
+    const state = getGlobalState();
     const hasData = getTextSizesHasData(state);
     const loadedSizes = getTextSizes(state);
     const unloadedIDs = !hasData ? ids : ids.filter((id) => !loadedSizes.has(id));
@@ -100,14 +88,3 @@ function loadTextSizesByIds(ids: List<string>, width: number): IThunkAction<Prom
     await dispatch(loadTextSizesComplete({ textSizes }));
   };
 }
-
-export {
-  ITextSizesState,
-  ITextSizesStateRecord,
-  textSizesReducer,
-  getTextSizesHasData,
-  getTextSizes,
-  getTextSizesIsLoading,
-  loadTextSizesByIds,
-  textSizesReducer as reducer,
-};

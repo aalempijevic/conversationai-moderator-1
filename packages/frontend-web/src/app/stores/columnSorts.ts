@@ -14,22 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { fromJS, Map, Record } from 'immutable';
+import { Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
-import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 
 import { getStoreItem, saveStoreItem } from '../platform/localStore';
-import { IAppStateRecord, IThunkAction } from './appstate';
+import { IAppStateRecord } from './appstate';
 
-export interface IColumnSortGroupAttributes {
+export interface IColumnSortGroup {
   defaultValue: string;
   overrides: Map<string, string>;
   customized: Map<string, string>;
-}
-export interface IColumnSortGroup extends TypedRecord<IColumnSortGroup>, IColumnSortGroupAttributes {}
-
-function ColumnSortGroup(keyValuePairs?: IColumnSortGroupAttributes): IColumnSortGroup {
-  return Record(keyValuePairs)(keyValuePairs) as any;
 }
 
 export type IChangeColumnSortPayload = {
@@ -59,10 +53,8 @@ export interface IColumnSortState {
   commentsIndexNew: IColumnSortGroup;
 }
 
-export interface IColumnSortStateRecord extends TypedRecord<IColumnSortStateRecord>, IColumnSortState {}
-
-const StateFactory = makeTypedFactory<IColumnSortState, IColumnSortStateRecord>({
-  dashboard: ColumnSortGroup({
+const initialState = {
+  dashboard: {
     defaultValue: 'newCount',
 
     overrides: Map<string, string>({
@@ -70,9 +62,9 @@ const StateFactory = makeTypedFactory<IColumnSortState, IColumnSortStateRecord>(
     }),
 
     customized: Map<string, string>(),
-  }),
+  },
 
-  dashboardVisible: ColumnSortGroup({
+  dashboardVisible: {
     defaultValue: 'newest',
 
     overrides: Map<string, string>({
@@ -80,9 +72,9 @@ const StateFactory = makeTypedFactory<IColumnSortState, IColumnSortStateRecord>(
     }),
 
     customized: Map<string, string>(),
-  }),
+  },
 
-  commentsIndexModerated: ColumnSortGroup({
+  commentsIndexModerated: {
     defaultValue: 'updated',
 
     overrides: Map<string, string>({
@@ -92,9 +84,9 @@ const StateFactory = makeTypedFactory<IColumnSortState, IColumnSortStateRecord>(
     }),
 
     customized: Map<string, string>(),
-  }),
+  },
 
-  commentsIndexNew: ColumnSortGroup({
+  commentsIndexNew: {
     defaultValue: 'highest',
 
     overrides: Map<string, string>({
@@ -104,20 +96,14 @@ const StateFactory = makeTypedFactory<IColumnSortState, IColumnSortStateRecord>(
     }),
 
     customized: Map<string, string>(),
-  }),
-});
-
-export const initialState = StateFactory();
-
-function writeToLocalStorage(state: IColumnSortStateRecord): void {
-  saveStoreItem(LOCAL_STORAGE_KEY, SCHEMA_VERSION, JSON.stringify(state.toJS()));
+  },
 }
 
-function parseGroup(group: any): IColumnSortGroup {
-  return ColumnSortGroup(fromJS(group).toObject());
+function writeToLocalStorage(state: IColumnSortState): void {
+  saveStoreItem(LOCAL_STORAGE_KEY, SCHEMA_VERSION, JSON.stringify(state));
 }
 
-function loadFromLocalStorage(): IColumnSortStateRecord {
+function loadFromLocalStorage(): IColumnSortState {
   const stringData = getStoreItem(LOCAL_STORAGE_KEY, SCHEMA_VERSION);
 
   if (!stringData) {
@@ -125,14 +111,7 @@ function loadFromLocalStorage(): IColumnSortStateRecord {
   }
 
   try {
-    const parsedData = JSON.parse(stringData);
-    const sortState: IColumnSortState = {
-      dashboard: parseGroup(parsedData.dashboard),
-      dashboardVisible: parseGroup(parsedData.dashboardVisible),
-      commentsIndexModerated: parseGroup(parsedData.commentsIndexModerated),
-      commentsIndexNew: parseGroup(parsedData.commentsIndexNew),
-    };
-    return StateFactory(sortState);
+    return JSON.parse(stringData);
   } catch (e) {
     return initialState;
   }
@@ -166,12 +145,12 @@ export function getCurrentColumnSort(state: IAppStateRecord, section: string, ke
 }
 
 export const reducer = handleActions<
-  IColumnSortStateRecord,
+  IColumnSortState,
   IChangeColumnSortPayload             | // changeColumnSort
   IChangeColumnSortGroupDefaultPayload   // changeColumnSortGroupDefault
 >({
   [changeColumnSort.toString()]: (state, { payload: { group, section, key } }: Action<IChangeColumnSortPayload>) => {
-    const updatedState = state
+    const updatedState = {...state, [group]: {...state[group], customized: {}}
         .update(group, (g?: IColumnSortGroup | null) => g || ColumnSortGroup())
         .setIn([group, 'customized', section], key);
 
@@ -190,9 +169,3 @@ export const reducer = handleActions<
     return updatedState;
   },
 }, loadFromLocalStorage());
-
-export function fetchCurrentColumnSort(section: string, key: string): IThunkAction<string> {
-  return (_, getState) => {
-    return getCurrentColumnSort(getState(), section, key);
-  };
-}
