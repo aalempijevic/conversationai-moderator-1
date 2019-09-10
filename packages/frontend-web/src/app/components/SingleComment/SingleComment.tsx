@@ -598,7 +598,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
     onUpdateCommentText(comment.set('text', commentText).setIn(['author', 'name'], authorName).setIn(['author', 'location'], authorLoc));
     // null out local scores for comment
     this.props.allScores.forEach((score) => (
-     onRemoveCommentScore(score.set('score', null).set('annotationStart', null).set('annotationEnd', null))
+     onRemoveCommentScore({...score, score: null, annotationStart: null, annotationEnd: null})
     ));
 
     // send comment text to be update to publisher

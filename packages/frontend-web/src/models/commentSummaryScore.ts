@@ -14,9 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Record } from 'immutable';
-import { TypedRecord } from 'typed-immutable-record';
-
 export interface ICommentSummaryScoreAttributes {
   id: number;
   commentId: string;
@@ -25,16 +22,8 @@ export interface ICommentSummaryScoreAttributes {
   isConfirmed: boolean | null;
 }
 
-export interface ICommentSummaryScoreModel extends TypedRecord<ICommentSummaryScoreModel>, ICommentSummaryScoreAttributes {}
+export type ICommentSummaryScoreModel = Readonly<ICommentSummaryScoreAttributes>;
 
-const CommentSummaryScoreModelRecord = Record({
-  id: null,
-  commentId: null,
-  tagId: null,
-  score: null,
-  isConfirmed: null,
-});
-
-export function CommentSummaryScoreModel(keyValuePairs?: ICommentSummaryScoreAttributes): ICommentSummaryScoreModel {
-  return new CommentSummaryScoreModelRecord(keyValuePairs) as ICommentSummaryScoreModel;
+export function CommentSummaryScoreModel(attributes?: ICommentSummaryScoreAttributes): ICommentSummaryScoreModel {
+  return attributes as ICommentSummaryScoreModel;
 }

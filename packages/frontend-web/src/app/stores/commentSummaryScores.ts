@@ -25,13 +25,6 @@ export interface ICommentSummaryScore {
   score: number;
 }
 
-export interface ICommentSummaryScoreStateRecord extends TypedRecord<ICommentSummaryScoreStateRecord>, ICommentSummaryScore {}
-
-const CommentSummaryScore = makeTypedFactory<ICommentSummaryScore, ICommentSummaryScoreStateRecord>({
-  tagId: null,
-  score: null,
-});
-
 export type ICommentSummaryScores = Map<number, List<ICommentSummaryScore>>;
 
 export interface ICommentSummaryScoresState {
@@ -53,7 +46,7 @@ export const loadCommentSummaryScoresStart: () => Action<void> = createAction(
     'comment-summary-scores/LOAD_COMMENT_SUMMARY_SCORES_START',
   );
 
-export type ILoadCommentSummaryScoresCompletePayload = Map<string, List<ICommentSummaryScoreStateRecord>>;
+export type ILoadCommentSummaryScoresCompletePayload = Map<string, List<Readonly<ICommentSummaryScore>>>;
 export const loadCommentSummaryScoresComplete: (payload: ILoadCommentSummaryScoresCompletePayload) => Action<ILoadCommentSummaryScoresCompletePayload> =
   createAction<ILoadCommentSummaryScoresCompletePayload>(
     'comment-summary-scores/LOAD_COMMENT_SUMMARY_SCORES_COMPLETE',
@@ -70,7 +63,7 @@ export const reducer = handleActions<
   [loadCommentSummaryScoresComplete.toString()]: (state, { payload }: Action<ILoadCommentSummaryScoresCompletePayload>) => (
     state
         .set('isReady', true)
-        .update('items', (s: Map<string, List<ICommentSummaryScoreStateRecord>>) => s ? s.merge(payload) : payload)
+        .update('items', (s: Map<string, List<ICommentSummaryScore>>) => s ? s.merge(payload) : payload)
   ),
 }, StateFactory());
 
@@ -79,10 +72,9 @@ export function loadCommentSummaryScores(commentId: string): IThunkAction<Promis
     await dispatch(loadCommentSummaryScoresStart());
     const scores = await listCommentSummaryScoresById(commentId);
     const mappedScores = scores.reduce((sum, score) => {
-      const existingList = sum.get(commentId) ? sum.get(commentId) : List<ICommentSummaryScoreStateRecord>();
-
-      return sum.set(score.commentId, existingList.push(CommentSummaryScore(score)));
-    }, Map<string, List<ICommentSummaryScoreStateRecord>>());
+      const existingList = sum.get(commentId) || List<ICommentSummaryScore>();
+      return sum.set(score.commentId, existingList.push(score));
+    }, Map<string, List<ICommentSummaryScore>>());
 
     await dispatch(loadCommentSummaryScoresComplete(mappedScores));
   };
@@ -92,6 +84,6 @@ export function getSummaryScores(state: IAppStateRecord): ICommentSummaryScores 
   return state.getIn(COMMENT_SUMMARY_SCORES_DATA);
 }
 
-export function getSummaryScoresById(state: IAppStateRecord, commentId: string): List<ICommentSummaryScoreStateRecord> {
+export function getSummaryScoresById(state: IAppStateRecord, commentId: string): List<ICommentSummaryScore> {
   return state.getIn([...COMMENT_SUMMARY_SCORES_DATA, commentId]);
 }

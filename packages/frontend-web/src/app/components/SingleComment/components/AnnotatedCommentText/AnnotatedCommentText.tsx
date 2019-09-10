@@ -519,7 +519,7 @@ export class AnnotatedCommentText extends React.PureComponent<IAnnotatedCommentT
   @autobind
   async confirmTag() {
     if (this.props.onUpdateCommentScore) {
-      await this.props.onUpdateCommentScore(this.state.confirmationScore.set('isConfirmed', true).set('confirmedUserId', this.props.currentUser.id));
+      await this.props.onUpdateCommentScore({...this.state.confirmationScore, isConfirmed: true, confirmedUserId: this.props.currentUser.id});
     }
     if (this.props.onConfirmCommentScore) {
       await this.props.onConfirmCommentScore(this.state.confirmationScore.commentId, this.state.confirmationScore.id);
@@ -544,7 +544,7 @@ export class AnnotatedCommentText extends React.PureComponent<IAnnotatedCommentT
     }
 
     if (this.props.onUpdateCommentScore) {
-      await this.props.onUpdateCommentScore(this.state.confirmationScore.set('isConfirmed', null));
+      await this.props.onUpdateCommentScore({...this.state.confirmationScore, isConfirmed: null});
     }
 
     if (this.props.onResetCommentScore) {
@@ -558,7 +558,7 @@ export class AnnotatedCommentText extends React.PureComponent<IAnnotatedCommentT
   async removeTag() {
     if (this.props.onUpdateCommentScore) {
       await this.props.onUpdateCommentScore(
-        this.state.confirmationScore.set('isConfirmed', false).set('confirmedUserId', this.props.currentUser.id),
+        {...this.state.confirmationScore, isConfirmed: false, confirmedUserId: this.props.currentUser.id},
       );
     }
     if (this.props.onRejectCommentScore) {

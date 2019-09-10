@@ -25,7 +25,7 @@ import {
 
 import { ICommentModel, ITaggingSensitivityModel, ITagModel, ModelId } from '../../../models';
 import { getSummaryScoresAboveThreshold } from '../../scenes/Comments/store';
-import { ICommentSummaryScoreStateRecord } from '../../stores/commentSummaryScores';
+import { ICommentSummaryScore } from '../../stores/commentSummaryScores';
 import { partial } from '../../util';
 import { css, stylesheet } from '../../utilx';
 import { CheckboxRow } from '../CheckboxRow';
@@ -80,7 +80,7 @@ export interface IAssignTagsFormProps {
   comment: ICommentModel;
   tags: List<ITagModel>;
   sensitivities: List<ITaggingSensitivityModel>;
-  summaryScores:  List<ICommentSummaryScoreStateRecord>;
+  summaryScores:  List<ICommentSummaryScore>;
   loadScoresForCommentId?(id: string): void;
   clearPopups(): void;
   submit(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;

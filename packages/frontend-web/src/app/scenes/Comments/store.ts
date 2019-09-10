@@ -20,10 +20,10 @@ import {
 } from '../../../models';
 import { IAppStateRecord } from '../../stores';
 import { getArticle } from '../../stores/articles';
-import { ICommentSummaryScoreStateRecord } from '../../stores/commentSummaryScores';
+import { ICommentSummaryScore } from '../../stores/commentSummaryScores';
 import { getTaggingSensitivities } from '../../stores/taggingSensitivities';
 
-function aboveThreshold(taggingSensitivities: List<ITaggingSensitivityModel>, score: ICommentSummaryScoreStateRecord): boolean {
+function aboveThreshold(taggingSensitivities: List<ITaggingSensitivityModel>, score: ICommentSummaryScore): boolean {
   if (score.tagId === null) {
     return false;
   }
@@ -38,29 +38,29 @@ function aboveThreshold(taggingSensitivities: List<ITaggingSensitivityModel>, sc
 
 export function getSummaryScoresAboveThreshold(
   taggingSensitivities: List<ITaggingSensitivityModel>,
-  scores: List<ICommentSummaryScoreStateRecord>): List<ICommentSummaryScoreStateRecord> {
+  scores: List<ICommentSummaryScore>): List<ICommentSummaryScore> {
   if (!scores) {
     return;
   }
 
   return scores
       .filter((s) => aboveThreshold(taggingSensitivities, s))
-      .sort((a, b) => b.score - a.score) as List<ICommentSummaryScoreStateRecord>;
+      .sort((a, b) => b.score - a.score) as List<ICommentSummaryScore>;
 }
 
 export function getSummaryScoresBelowThreshold(
   taggingSensitivities: List<ITaggingSensitivityModel>,
-  scores: List<ICommentSummaryScoreStateRecord>): List<ICommentSummaryScoreStateRecord> {
+  scores: List<ICommentSummaryScore>): List<ICommentSummaryScore> {
   if (!scores) {
     return;
   }
-  const scoresAboveThreshold = scores.filter((s) => aboveThreshold(taggingSensitivities, s)) as List<ICommentSummaryScoreStateRecord>;
+  const scoresAboveThreshold = scores.filter((s) => aboveThreshold(taggingSensitivities, s)) as List<ICommentSummaryScore>;
   const scoresBelowThreshold = scores.filter((s) =>
       !aboveThreshold(taggingSensitivities, s) &&
-      !scoresAboveThreshold.find((sa) => sa.tagId === s.tagId)) as List<ICommentSummaryScoreStateRecord>;
+      !scoresAboveThreshold.find((sa) => sa.tagId === s.tagId)) as List<ICommentSummaryScore>;
 
   return scoresBelowThreshold
-      .sort((a, b) => b.score - a.score) as List<ICommentSummaryScoreStateRecord>;
+      .sort((a, b) => b.score - a.score) as List<ICommentSummaryScore>;
 }
 
 export function getTaggingSensitivitiesInCategory(

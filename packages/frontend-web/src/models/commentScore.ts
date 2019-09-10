@@ -14,16 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Record } from 'immutable';
-import { TypedRecord } from 'typed-immutable-record';
-import { ITagModel } from './tag';
-
 export interface ICommentScoreAttributes {
   id: string;
   commentId: string;
   confirmedUserId?: string;
   tagId?: string;
-  tag?: ITagModel;
   score: number;
   annotationStart?: number;
   annotationEnd?: number;
@@ -31,21 +26,8 @@ export interface ICommentScoreAttributes {
   isConfirmed: boolean;
 }
 
-export interface ICommentScoreModel extends TypedRecord<ICommentScoreModel>, ICommentScoreAttributes {}
+export type ICommentScoreModel = Readonly<ICommentScoreAttributes>;
 
-const CommentScoreModelRecord = Record({
-  id: null,
-  commentId: null,
-  confirmedUserId: null,
-  tagId: null,
-  tag: null,
-  score: null,
-  annotationStart: null,
-  annotationEnd: null,
-  sourceType: null,
-  isConfirmed: null,
-});
-
-export function CommentScoreModel(keyValuePairs?: ICommentScoreAttributes): ICommentScoreModel {
-  return new CommentScoreModelRecord(keyValuePairs) as ICommentScoreModel;
+export function CommentScoreModel(attributes?: ICommentScoreAttributes): ICommentScoreModel {
+  return attributes as ICommentScoreModel;
 }
