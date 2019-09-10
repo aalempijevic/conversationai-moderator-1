@@ -30,7 +30,6 @@ import {
   ITopScore,
 } from '../../../types';
 import { REQUIRE_REASON_TO_REJECT } from '../../config';
-import { FlagsSummary } from '../../scenes/Comments/components/FlagsSummary';
 import {
   articleBase,
   commentRepliesDetailsLink,
@@ -51,6 +50,7 @@ import { Avatar } from '../Avatar';
 import {
   ConfirmationCircle,
 } from '../ConfirmationCircle';
+import { FlagsSummary } from '../FlagsSummary';
 import {
   MoreVerticalIcon,
   ReplyIcon,
