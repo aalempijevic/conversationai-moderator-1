@@ -16,7 +16,6 @@ limitations under the License.
 
 import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
-import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
 import { IAppStateRecord } from './appstate';
 
@@ -26,46 +25,41 @@ export const saveFocus: () => Action<void> = createAction('root/SAVE_FOCUS');
 export const restoreFocus: () => Action<void> = createAction('root/RESTORE_FOCUS');
 
 const STATE_ROOT = ['global', 'focus'];
-const CURRENTLY_FOCUSED = [...STATE_ROOT, 'currentlyFocused'];
 
-export interface IFocusState {
+export type IFocusState = Readonly<{
   currentlyFocused: string | null;
   stack: List<string>;
-}
+}>;
 
-export interface IFocusStateRecord extends TypedRecord<IFocusStateRecord>, IFocusState {}
-
-const StateFactory = makeTypedFactory<IFocusState, IFocusStateRecord>({
+export const initialState: IFocusState = {
   currentlyFocused: null,
   stack: List<string>(),
-});
-
-export const initialState = StateFactory();
+};
 
 export const reducer = handleActions<
-  IFocusStateRecord,
+  IFocusState,
   (string | null) | // focusedElement
   void              // unfocusedElement, saveFocus, restoreFocus
 >({
-  [focusedElement.toString()]: (state, { payload }: Action<string | null>) => (
-    state.set('currentlyFocused', payload)
-  ),
+  [focusedElement.toString()]: (state, { payload }: Action<string | null>) => ({
+    ...state,
+    currentlyFocused: payload,
+  }),
 
-  [unfocusedElement.toString()]: (state) => (
-    state.set('currentlyFocused', null)
-  ),
+  [unfocusedElement.toString()]: (state) => ({...state, currentlyFocused: null}),
 
-  [saveFocus.toString()]: (state) => (
-    state.update('stack', (s) => s.push(state.get('currentlyFocused')))
-  ),
+  [saveFocus.toString()]: (state) => ({
+    ...state,
+    stack: state.stack.push(state.currentlyFocused),
+  }),
 
-  [restoreFocus.toString()]: (state) => (
-    state
-        .set('currentlyFocused', state.get('stack').last())
-        .update('stack', (s) => s.pop())
-  ),
+  [restoreFocus.toString()]: (state) => ({
+    currentlyFocused: state.stack.last(),
+    stack: state.stack.pop(),
+  }),
 }, initialState);
 
 export function getCurrentlyFocused(state: IAppStateRecord): string | null {
-  return state.getIn(CURRENTLY_FOCUSED);
+  const stateRecord = state.getIn(STATE_ROOT) as IFocusState;
+  return stateRecord && stateRecord.currentlyFocused;
 }

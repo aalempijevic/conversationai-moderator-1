@@ -27,162 +27,78 @@ import {
 describe('focus reducer', () => {
   it('should focus a given element', () => {
     const testState = reducer(initialState, focusedElement('testFocusedElement'));
-    expect(
-      testState.getIn(['currentlyFocused']),
-    ).to.equal(
-      'testFocusedElement',
-    );
+    expect(testState.currentlyFocused).to.equal('testFocusedElement');
   });
 
   it('should focus a new given element', () => {
     let testState = reducer(initialState, focusedElement('testFocusedElement'));
-    expect(
-      testState.getIn(['currentlyFocused']),
-    ).to.equal(
-      'testFocusedElement',
-    );
+    expect(testState.currentlyFocused).to.equal('testFocusedElement');
 
     testState = reducer(testState, focusedElement('testNewFocusedElement'));
-    expect(
-      testState.getIn(['currentlyFocused']),
-    ).to.equal(
-      'testNewFocusedElement',
-    );
+    expect(testState.currentlyFocused).to.equal('testNewFocusedElement');
   });
 
   it('should unfocus an element', () => {
     let testState = reducer(initialState, focusedElement('testFocusedElement'));
-    expect(
-      testState.getIn(['currentlyFocused']),
-    ).to.equal(
-      'testFocusedElement',
-    );
+    expect(testState.currentlyFocused).to.equal('testFocusedElement');
 
     testState = reducer(testState, unfocusedElement());
-    expect(
-      testState.getIn(['currentlyFocused']),
-    ).to.equal(
-      null,
-    );
+    expect(testState.currentlyFocused).to.equal(null);
   });
 
   it('should save the focus of an element', () => {
     let testState = reducer(initialState, focusedElement('testFocusedElement'));
-    expect(
-      testState.getIn(['stack']).size,
-    ).to.equal(
-      0,
-    );
+    expect(testState.stack.size).to.equal(0);
 
     testState = reducer(testState, saveFocus());
-    expect(
-      testState.getIn(['stack']).size,
-    ).to.equal(
-      1,
-    );
+    expect(testState.stack.size).to.equal(1);
   });
 
   it('should save the focus of two elements', () => {
     let testState = reducer(initialState, focusedElement('testFocusedElement'));
-    expect(
-      testState.getIn(['currentlyFocused']),
-    ).to.equal(
-      'testFocusedElement',
-    );
+    expect(testState.currentlyFocused).to.equal('testFocusedElement');
 
     testState = reducer(testState, saveFocus());
-    expect(
-      testState.getIn(['stack']).size,
-    ).to.equal(
-      1,
-    );
+    expect(testState.stack.size).to.equal(1);
 
     testState = reducer(testState, focusedElement('testSecondFocusedElement'));
-    expect(
-      testState.getIn(['currentlyFocused']),
-    ).to.equal(
-      'testSecondFocusedElement',
-    );
+    expect(testState.currentlyFocused).to.equal('testSecondFocusedElement');
 
     testState = reducer(testState, saveFocus());
-    expect(
-      testState.getIn(['stack']).size,
-    ).to.equal(
-      2,
-    );
+    expect(testState.stack.size).to.equal(2);
   });
 
   it('should restore the focus of the previously focused element', () => {
     let testState = reducer(initialState, focusedElement('testFocusedElement'));
-    expect(
-      testState.getIn(['currentlyFocused']),
-    ).to.equal(
-      'testFocusedElement',
-    );
+    expect(testState.currentlyFocused).to.equal('testFocusedElement');
 
     testState = reducer(testState, saveFocus());
-    expect(
-      testState.getIn(['stack']).size,
-    ).to.equal(
-      1,
-    );
+    expect(testState.stack.size).to.equal(1);
 
     testState = reducer(testState, unfocusedElement());
-    expect(
-      testState.getIn(['currentlyFocused']),
-    ).to.equal(
-      null,
-    );
+    expect(testState.currentlyFocused).to.equal(null);
 
     testState = reducer(testState, restoreFocus());
-    expect(
-      testState.getIn(['currentlyFocused']),
-    ).to.equal(
-      'testFocusedElement',
-    );
+    expect(testState.currentlyFocused).to.equal('testFocusedElement');
   });
 
   it('should restore the focus of the previously focused element after two save states', () => {
     let testState = reducer(initialState, focusedElement('testFocusedElement'));
-    expect(
-      testState.getIn(['currentlyFocused']),
-    ).to.equal(
-      'testFocusedElement',
-    );
+    expect(testState.currentlyFocused).to.equal('testFocusedElement');
 
     testState = reducer(testState, saveFocus());
-    expect(
-      testState.getIn(['stack']).size,
-    ).to.equal(
-      1,
-    );
+    expect(testState.stack.size).to.equal(1);
 
     testState = reducer(testState, focusedElement('testSecondFocusedElement'));
-    expect(
-      testState.getIn(['currentlyFocused']),
-    ).to.equal(
-      'testSecondFocusedElement',
-    );
+    expect(testState.currentlyFocused).to.equal('testSecondFocusedElement');
 
     testState = reducer(testState, saveFocus());
-    expect(
-      testState.getIn(['stack']).size,
-    ).to.equal(
-      2,
-    );
+    expect(testState.stack.size).to.equal(2);
 
     testState = reducer(testState, focusedElement('testThirdFocusedElement'));
-    expect(
-      testState.getIn(['currentlyFocused']),
-    ).to.equal(
-      'testThirdFocusedElement',
-    );
+    expect(testState.currentlyFocused).to.equal('testThirdFocusedElement');
 
     testState = reducer(testState, restoreFocus());
-    expect(
-      testState.getIn(['currentlyFocused']),
-    ).to.equal(
-      'testSecondFocusedElement',
-    );
+    expect(testState.currentlyFocused).to.equal('testSecondFocusedElement');
   });
 });

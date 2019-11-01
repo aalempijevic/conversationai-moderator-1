@@ -22,7 +22,7 @@ import { ICategoriesState } from './categories';
 import { IColumnSortStateRecord } from './columnSorts';
 import { IState as ICommentsState } from './comments';
 import { ICommentSummaryScoresStateRecord } from './commentSummaryScores';
-import { IFocusStateRecord } from './focus';
+import { IFocusState } from './focus';
 import { IPreselectsState } from './preselects';
 import { IRulesState } from './rules';
 import { ITaggingSensitivitiesState } from './taggingSensitivities';
@@ -41,7 +41,7 @@ export interface IAppState {
   rules: IRulesState;
   preselects: IPreselectsState;
   taggingSensitivities: ITaggingSensitivitiesState;
-  focus: IFocusStateRecord;
+  focus: IFocusState;
   columnSorts: IColumnSortStateRecord;
   textSizes: ITextSizesStateRecord;
   topScores: ITopScoresState;
