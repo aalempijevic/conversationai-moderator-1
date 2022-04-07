@@ -124,23 +124,23 @@ const mapStateToProps = createStructuredSelector({
   },
 
   currentCommentIndex: (state: IAppStateRecord, { params: { commentId }, location: { query: { pagingIdentifier } } }: ICommentDetailProps) => {
-    return getCurrentCommentIndex(state, pagingIdentifier, commentId);
+    return getCurrentCommentIndex(state, pagingIdentifier as string, commentId);
   },
 
   nextCommentId: (state: IAppStateRecord, { params: { commentId }, location: { query: { pagingIdentifier } } }: ICommentDetailProps) => {
-    return getNextCommentId(state, pagingIdentifier, commentId);
+    return getNextCommentId(state, pagingIdentifier as string , commentId);
   },
 
   previousCommentId: (state: IAppStateRecord, { params: { commentId }, location: { query: { pagingIdentifier } } }: ICommentDetailProps) => {
-    return getPreviousCommentId(state, pagingIdentifier, commentId);
+    return getPreviousCommentId(state, pagingIdentifier as string, commentId);
   },
 
   detailSource: (state: IAppStateRecord, { location: { query: { pagingIdentifier } } }: ICommentDetailProps) => {
-    return getPagingSource(state, pagingIdentifier);
+    return getPagingSource(state, pagingIdentifier as string );
   },
 
   linkBackToList: (state: IAppStateRecord, { location: { query: { pagingIdentifier } } }: ICommentDetailProps) => {
-    return getPagingLink(state, pagingIdentifier);
+    return getPagingLink(state, pagingIdentifier as string);
   },
 
   isFromBatch: getPagingIsFromBatch,

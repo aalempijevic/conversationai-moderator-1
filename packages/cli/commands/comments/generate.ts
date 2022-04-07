@@ -148,7 +148,7 @@ function get_words(data: string, count: number): string {
 }
 
 export async function handler(argv: any) {
-  const data = fs.readFileSync(path.join(__dirname, '../../data/alice.txt'), 'UTF8');
+  const data = fs.readFileSync(path.join(__dirname, '../../data/alice.txt'), { encoding: "utf-8" });
 
   const categories = await Category.findAll({
     where: {

@@ -527,6 +527,9 @@ async function resolveFlagsAndDenormalize(
 ): Promise<void> {
   await resolveFlags(commentId, userId);
   const comment = await Comment.findById(commentId);
+
+  if (!comment)
+    return
   const article = await comment.getArticle();
   await denormalizeCountsForComment(comment);
   await denormalizeCommentCountsForArticle(article, true);
@@ -771,6 +774,7 @@ export const addTagTask = handler<IAddTagData>(async (data) => {
   });
 
   const comment = await cs.getComment();
+  if (!comment) return cs
   const article = await comment.getArticle();
 
   await denormalizeCountsForComment(comment);

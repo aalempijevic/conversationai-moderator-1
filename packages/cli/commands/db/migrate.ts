@@ -77,11 +77,11 @@ function callSequelizeCommand(command: string, env: { [key: string]: string }): 
       },
     );
 
-    cmd.stdout.on('data', (data) => {
+    cmd.stdout?.on('data', (data) => {
       console.log(data);
     });
 
-    cmd.stderr.on('data', (data) => {
+    cmd.stderr?.on('data', (data) => {
       console.error(data);
       reject();
     });

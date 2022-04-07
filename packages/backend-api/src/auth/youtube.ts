@@ -73,7 +73,7 @@ export function createYouTubeRouter(): express.Router {
       }
 
       const oauth2Client = new google.auth.OAuth2(config.get('google_client_id'), config.get('google_client_secret'), `${apiPrefix}/youtube/callback`, );
-      const tokenRsp = await oauth2Client.getToken(req.query.code);
+      const tokenRsp = await oauth2Client.getToken(req.query.code as string);
       const token = tokenRsp.tokens;
       oauth2Client.setCredentials(token);
       const service = google.oauth2('v2');

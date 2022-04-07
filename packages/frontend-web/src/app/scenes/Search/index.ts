@@ -99,7 +99,7 @@ const mapStateToProps = createStructuredSelector({
   tags: getTaggableTags,
   searchTerm: (_state: IAppStateRecord, { location }: ISearchOwnProps) => location.query.term,
   articleId: (_: IAppStateRecord, { location }: ISearchOwnProps) => location.query.articleId,
-  article: (state: IAppStateRecord, { location }: ISearchOwnProps) => location.query.articleId && getArticle(state, location.query.articleId),
+  article: (state: IAppStateRecord, { location }: ISearchOwnProps) => location.query.articleId && getArticle(state, location.query.articleId as string),
   textSizes: getTextSizes,
   getLinkTarget: (state: IAppStateRecord, { location }: ISearchOwnProps) => {
     const identifier = getCurrentPagingIdentifier(state);

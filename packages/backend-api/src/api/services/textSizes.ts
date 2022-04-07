@@ -47,7 +47,7 @@ export function createTextSizesService(): express.Router {
     validateTextSizesRequest,
     async ({ body: { data }, query: { width } }, res, next) => {
       try {
-        const widthNum = parseInt(width, 10);
+        const widthNum = parseInt(width as string, 10);
 
         if (isNaN(widthNum)) {
           res.status(422).json({ status: 'error', errors: [`width query string param must be a number, got ${width}`] });

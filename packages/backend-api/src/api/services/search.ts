@@ -41,7 +41,7 @@ export function createSearchService(): express.Router {
       let ids: Array<number> = [];
       let results;
 
-      if (term.length >= MINIMUM_QUERY_LENGTH) {
+      if ((term as string).length >= MINIMUM_QUERY_LENGTH) {
         if (searchByAuthor === 'true') {
           const iffyTerm = `%${term}%`;
           results = await sequelizeInstance.query(
@@ -93,7 +93,7 @@ export function createSearchService(): express.Router {
       ids = results.map((r: any) => r.id);
 
       const { query: { sort: sortQuery } } = req;
-      const sortOrder = sortQuery ? sortQuery.split(',') : null;
+      const sortOrder = sortQuery ? (sortQuery as string).split(',') : null;
 
       // No sort order is specified, defaults to relevance
       if (sortOrder == null) {

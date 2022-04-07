@@ -410,8 +410,8 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       defaultSort = 'newest';
     }
 
-    const pos1 = props.location.query.pos1 ? Number.parseFloat(props.location.query.pos1) : defaultPos1;
-    const pos2 = props.location.query.pos2 ? Number.parseFloat(props.location.query.pos2) : defaultPos2;
+    const pos1 = props.location.query.pos1 ? Number.parseFloat(props.location.query.pos1 as string) : defaultPos1;
+    const pos2 = props.location.query.pos2 ? Number.parseFloat(props.location.query.pos2 as string) : defaultPos2;
     const sort = props.location.query.sort || defaultSort;
 
     const commentIds = getCommentIDsInRange(
@@ -433,7 +433,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
 
     if ((categoryId !== state.categoryId) || (articleId !== state.articleId) || (tag !== state.tag) ||
         (pos1 !== state.pos1) || (pos2 !== state.pos2) || (sort !== state.sort)) {
-      props.loadData(categoryId, articleId, tag, pos1, pos2, sort);
+      props.loadData(categoryId, articleId, tag, pos1, pos2, sort as string);
     }
 
     return {

@@ -94,8 +94,7 @@ export function handleGet(
   prefixGetter: (req: any) => string,
 ): express.RequestHandler {
   return async (req, res, next) => {
-    const { query: { page, include, filter, sort, fields } } = req;
-
+    const { page, include, filter, sort, fields } = req.query as any;
     const paging = {
       ...defaultPaging,
       ...(page && page.limit
