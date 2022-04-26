@@ -73,6 +73,7 @@ function subscribe<T, S, R>(pluginName: string, eventName: T, callback: IEventCa
 
   logger.info(`Event subscription: ${pluginName} is listening to ${eventName}`);
 
+  // @ts-ignore
   e.addListener(eventName.toString(), callback);
 }
 
@@ -87,6 +88,7 @@ function unsubscribe<T, S, R>(pluginName: string, eventName: T, callback: IEvent
 
   logger.info(`Event unsubscription: ${pluginName} is no longer listening to ${eventName}`);
 
+  // @ts-ignore
   e.removeListener(eventName.toString(), callback);
 }
 
@@ -95,6 +97,7 @@ function trigger<T>(name: T, args: object) {
 
   logger.info(`Triggering event: ${name}`);
 
+  // @ts-ignore
   e.emit(name.toString(), args);
 }
 
@@ -102,6 +105,7 @@ function triggerMap(name: 'api.publisher.pullArticle', args: IEventPublisherPull
 async function triggerMap<T, S, R>(name: T, args: S): Promise<Array<R>> {
   const e = getEventEmitterSingleton();
 
+  // @ts-ignore
   const listeners = e.listeners(name.toString());
 
   logger.info(`Mapping event: ${name} across ${listeners.length} listeners`);

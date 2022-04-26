@@ -21,8 +21,8 @@ import * as moment from 'moment';
 import { CSRF } from '@conversationai/moderator-backend-core';
 
 export async function generateServerCSRF(req: express.Request, res: express.Response, next: express.NextFunction) {
-  const clientCSRF = req.query.csrf;
-  const referrer = req.query.referrer;
+  const clientCSRF = req.query.csrf as string;
+  const referrer = req.query.referrer as string;
 
   if (!clientCSRF) {
     res.status(403).send('No CSRF included in login request.');

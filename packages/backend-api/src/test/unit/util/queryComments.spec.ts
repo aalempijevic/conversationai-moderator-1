@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+ // @ts-nocheck
 import {
   cacheCommentTopScores,
   calculateTopScores,
@@ -44,6 +45,8 @@ describe('queryComments Functions', () => {
       await Category.destroy({where: {}});
       await Tag.destroy({where: {}});
       await TaggingSensitivity.destroy({where: {}});
+
+
 
       this.category = await makeCategory({ label: 'Test' });
 

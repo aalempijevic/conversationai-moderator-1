@@ -9,8 +9,8 @@
     "lint:fix": "find src -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json --fix",
     "watch": "npm run compile:watch | npm run server",
     "build": "npm run compile",
-    "compile": "../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration",
-    "compile:watch": "../../node_modules/.bin/tsc --watch --sourceMap --outDir dist --declaration",
+    "compile": "../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration --skipLibCheck",
+    "compile:watch": "../../node_modules/.bin/tsc --watch --sourceMap --outDir dist --declaration --skipLibCheck",
     "start": "npm run compile && node ./server.js",
     "server": "nodemon --delay 5 --debug=5859 --legacy-watch --watch 'dist/**/*.js' --ignore 'test' ./server.js"
   },
@@ -38,6 +38,10 @@
     "request": "2.87.0"
   },
   "devDependencies": {
+    "@types/express-serve-static-core": "^4.17.28",
+    "@types/qs": "^6.9.7",
+    "@types/sequelize": "4.28.1",
+    "@types/validator": "10.11.3",
     "nodemon": "1.18.3"
   }
 }

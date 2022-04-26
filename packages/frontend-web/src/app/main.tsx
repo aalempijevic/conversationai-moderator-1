@@ -24,6 +24,7 @@ import {
   applyMiddleware,
   compose,
   createStore,
+  GenericStoreEnhancer,
 } from 'redux';
 import { combineReducers } from 'redux-immutable';
 import thunk from 'redux-thunk';
@@ -47,7 +48,7 @@ const store = createStore(
     auth: authReducer,
   }),
   Immutable.Map(),
-  compose(
+  compose<GenericStoreEnhancer>(
     applyMiddleware(thunk),
     // TODO: Make this toggle based on environment
     // (window as any)['devToolsExtension'] ? (window as any)['devToolsExtension']() : (f: any) => f,
@@ -82,7 +83,7 @@ const queryString = window.location.search && qs.parse(window.location.search.re
 if (queryString && queryString['token']) {
   (async () => {
     try {
-      await dispatch(handleToken(queryString['token'], queryString['csrf']) as any);
+      await dispatch(handleToken(queryString['token'] as string, queryString['csrf'] as string) as any);
 
       const returnURL = getReturnURL();
 

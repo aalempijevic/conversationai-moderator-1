@@ -6,8 +6,8 @@
     "lint": "find commands -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json",
     "lint:fix": "find commands -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json --fix",
     "build": "npm run compile",
-    "compile": "../../node_modules/.bin/tsc --sourceMap --outDir dist --rootDir commands --declaration",
-    "watch": "../../node_modules/.bin/tsc --sourceMap --outDir dist --rootDir commands --declaration --watch"
+    "compile": "../../node_modules/.bin/tsc --sourceMap --outDir dist --rootDir commands --declaration --skipLibCheck",
+    "watch": "../../node_modules/.bin/tsc --sourceMap --outDir dist --rootDir commands --declaration --skipLibCheck --watch"
   },
   "dependencies": {
     "@conversationai/moderator-backend-core": "1.1.0",
@@ -17,5 +17,11 @@
     "googleapis": "32.0.0",
     "request": "2.87.0",
     "yargs": "11.1.0"
+  },
+  "devDependencies": {
+    "@types/express-serve-static-core": "^4.17.28",
+    "@types/qs": "^6.9.7",
+    "@types/sequelize": "4.28.1",
+    "@types/validator": "10.11.3"
   }
 }

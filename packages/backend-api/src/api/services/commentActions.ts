@@ -129,8 +129,8 @@ export function queueScoreCommentSummaryAction(name: IKnownTasks): express.Reque
     logger.info('start queue for detail action for', name);
 
     await enqueue<ICommentSummaryScoreData>(name, {
-      commentId: params.commentid,
-      tagId: params.tagid,
+      commentId: parseInt(params.commentid),
+      tagId: parseInt(params.tagid),
     }, body.runImmediately || false);
 
     res.json(REPLY_SUCCESS);
@@ -148,7 +148,7 @@ export function queueScoreAction(name: IKnownTasks): express.RequestHandler {
     await enqueue<IGenericTagData>(name, {
       commentId: parseInt(params.commentid, 10),
       tagId: body.data ? parseInt(body.data.tagId, 10) : undefined,
-      commentScoreId: params.commentscoreid ? params.commentscoreid : undefined,
+      commentScoreId: params.commentscoreid ? parseInt(params.commentscoreid) : undefined,
       // TODO(ldixon): explore if user is actually always defined.
       userId: user!.id,
       annotationStart: body.data ? body.data.annotationStart : undefined,
