@@ -704,6 +704,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
             { this.props.params.articleId && (
               <ArticleControlIcon
                 article={article}
+                tags={tags}
                 open={this.state.articleControlOpen}
                 clearPopups={this.closePopup}
                 openControls={this.openPopup}
@@ -1196,8 +1197,8 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   }
 
   @autobind
-  applyRules(isCommentingEnabled: boolean, isAutoModerated: boolean): void {
+  applyRules(isCommentingEnabled: boolean, isAutoModerated: boolean, isModerationOverriden: boolean = false, moderationRules: Array<IRuleModel> = []): void {
     this.closePopup();
-    updateArticle(this.props.article.id, isCommentingEnabled, isAutoModerated);
+    updateArticle(this.props.article.id, isCommentingEnabled, isAutoModerated, isModerationOverriden?moderationRules: []);
   }
 }

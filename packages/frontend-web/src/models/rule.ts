@@ -23,6 +23,7 @@ export interface IRuleAttributes {
   id: ModelId;
   action: IServerAction | null;
   categoryId?: ModelId;
+  articleId?: ModelId;
   createdBy: string | null;
   lowerThreshold: number;
   upperThreshold: number;
@@ -35,6 +36,7 @@ const RuleModelRecord = Record({
   id: null,
   action: null,
   categoryId: null,
+  articleId: null,
   createdBy: null,
   lowerThreshold: null,
   upperThreshold: null,

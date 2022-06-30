@@ -21,7 +21,7 @@ import keyboardJS from 'keyboardjs';
 import React from 'react';
 import { WithRouterProps } from 'react-router';
 
-import { IArticleModel, ICommentModel, ITagModel, TagModel } from '../../../../../models';
+import { IArticleModel, ICommentModel, IRuleModel, ITagModel, TagModel } from '../../../../../models';
 import { ICommentAction, IConfirmationAction } from '../../../../../types';
 import { ArticleControlIcon, AssignTagsForm, Scrim } from '../../../../components';
 import {
@@ -415,6 +415,7 @@ export class ModeratedComments
         { this.props.params.articleId && (
           <ArticleControlIcon
             article={this.props.article}
+            tags={this.props.tags}
             open={this.state.articleControlOpen}
             clearPopups={this.closePopup}
             openControls={this.openPopup}
@@ -938,8 +939,8 @@ export class ModeratedComments
   }
 
   @autobind
-  applyRules(isCommentingEnabled: boolean, isAutoModerated: boolean): void {
+  applyRules(isCommentingEnabled: boolean, isAutoModerated: boolean, isModerationOverriden: boolean = false, moderationRules: Array<IRuleModel> = []): void {
     this.closePopup();
-    updateArticle(this.props.article.id, isCommentingEnabled, isAutoModerated);
+    updateArticle(this.props.article.id, isCommentingEnabled, isAutoModerated, isModerationOverriden? moderationRules: []);
   }
 }

@@ -22,7 +22,7 @@ import {
   updateArticle,
   updateArticleModerators,
 } from '../app/platform/dataService';
-import { ModelId } from '../models';
+import { IRuleModel, ModelId } from '../models';
 import { articleData } from './notificationChecks';
 
 export async function listenForMessages(
@@ -111,10 +111,11 @@ export async function setArticleState(
   articleId: ModelId,
   isCommentingEnabled: boolean,
   isAutoModerated: boolean,
+  moderationRules: Array<IRuleModel> = []
 ) {
   console.log(`  setting article ${articleId} to ${isCommentingEnabled} / ${isAutoModerated}`);
   await listenForMessages(
-    () => updateArticle(articleId, isCommentingEnabled, isAutoModerated),
+    () => updateArticle(articleId, isCommentingEnabled, isAutoModerated, moderationRules),
     (type, message) => {
       checkTypeIsUpdate(type);
       if (message.articles.get(0).isCommentingEnabled !== isCommentingEnabled) {

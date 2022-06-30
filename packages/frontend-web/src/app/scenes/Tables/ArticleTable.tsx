@@ -16,13 +16,13 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
-import { Map, Seq, Set } from 'immutable';
+import { List, Map, Seq, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { InjectedRouter, Link, WithRouterProps } from 'react-router';
 
-import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
+import { IArticleModel, ICategoryModel, IRuleModel, ITagModel, IUserModel, ModelId } from '../../../models';
 import { ArticleControlIcon } from '../../components';
 import * as icons from '../../components/Icons';
 import { Scrim } from '../../components/Scrim';
@@ -89,6 +89,7 @@ const STYLES = stylesheet({
 export interface IIArticleTableProps extends WithRouterProps {
   myUserId: string;
   categories: Map<ModelId, ICategoryModel>;
+  tags: List<ITagModel>;
   selectedCategory: ICategoryModel;
   articles: Map<ModelId, IArticleModel>;
   users: Map<ModelId, IUserModel>;
@@ -355,14 +356,14 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
   }
 
   @autobind
-  saveControls(isCommentingEnabled: boolean, isAutoModerated: boolean) {
+  saveControls(isCommentingEnabled: boolean, isAutoModerated: boolean, isModerationOverriden: boolean, moderationRules: Array<IRuleModel>) {
     const articleId = this.state.selectedArticle.id;
     this.setState({
       ...clearPopupsState,
       popupToShow: POPUP_SAVING,
     });
 
-    updateArticle(articleId, isCommentingEnabled, isAutoModerated)
+    updateArticle(articleId, isCommentingEnabled, isAutoModerated, isModerationOverriden? moderationRules : [])
       .then(this.clearPopups);
   }
 
@@ -460,7 +461,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     return <MagicTimestamp timestamp={time} inFuture={false}/>;
   }
 
-  renderRow(article: IArticleModel, isSummary: boolean) {
+  renderRow(article: IArticleModel, tags: List<ITagModel>, isSummary: boolean) {
     const lastModerated: any = (!isSummary) ? ArticleTable.renderTime(article.lastModeratedAt) : '';
     const category = this.props.categories.get(article.categoryId);
     function getLink(tag: string) {
@@ -546,6 +547,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
             {!isSummary &&
             <ArticleControlIcon
               article={article}
+              tags={tags}
               open={this.state.selectedArticle && this.state.selectedArticle.id === article.id}
               clearPopups={this.clearPopups}
               openControls={this.openControls}
@@ -568,6 +570,10 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       processedArticles,
       numberToShow,
     } = this.state;
+
+    const {
+      tags,
+    } = this.props;
 
     const currentFilter = filterString(filter);
     const currentSort = sortString(sort);
@@ -672,8 +678,8 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
           >
             <table key="data" {...css(ARTICLE_TABLE_STYLES.dataTable)}>
               <tbody>
-                {this.renderRow(summary, true)}
-                {processedArticles.slice(0, numberToShow).map((id: ModelId) => this.renderRow(this.props.articles.get(id), false))}
+                {this.renderRow(summary, tags, true)}
+                {processedArticles.slice(0, numberToShow).map((id: ModelId) => this.renderRow(this.props.articles.get(id), tags, false))}
               </tbody>
             </table>
           </PerfectScrollbar>
