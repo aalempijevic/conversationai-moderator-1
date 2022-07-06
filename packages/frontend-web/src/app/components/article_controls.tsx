@@ -14,7 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
+import { getTags } from '../stores/tags';
 import React from 'react';
 
 import {
@@ -269,7 +271,15 @@ interface IArticleControlIconProps {
   saveControls(isCommentingEnabled: boolean, isAutoModerated: boolean, isModerationRuleOveridden: boolean, moderationRules: Array<IRuleModel>): void;
 }
 
-export class ArticleControlIcon extends React.Component<IArticleControlIconProps> {
+function mapStateToProps(state: any, ownProps: any): any {
+  const tags = getTags(state)
+  return {
+    ...ownProps,
+    tags,
+  }
+}
+
+class LazyArticleControlIcon extends React.Component<IArticleControlIconProps> {
   anchorElement: any;
 
   @autobind
@@ -324,3 +334,7 @@ export class ArticleControlIcon extends React.Component<IArticleControlIconProps
     );
   }
 }
+
+export const ArticleControlIcon: React.ComponentClass<IArticleControlIconProps> = connect(
+  mapStateToProps,
+)(LazyArticleControlIcon);
