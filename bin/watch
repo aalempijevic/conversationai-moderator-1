@@ -6,10 +6,4 @@ npm run compile:watch &
 npm run watch &
 cd -
 
-cd packages/backend-api
-npm run compile
-npm run compile:watch &
-npm run watch &
-cd -
-
 wait
