@@ -128,7 +128,7 @@ function packArticleData(data: any): IAllArticlesData {
   const articles = List<IArticleModel>(data.articles.map((a: any) => {
     a.id = a.id.toString();
     a.categoryId = a.categoryId && a.categoryId.toString();
-    a.moderationRules = a.moderationRules.map((r:any) => {
+    a.moderationRules = a.moderationRules?.map((r:any) => {
       fixObject(r)
       return RuleModel(r)
     });
@@ -155,7 +155,7 @@ function packArticleUpdate(data: any): IArticleUpdate {
     articles = List<IArticleModel>(data.articles.map((a: any) => {
       a.id = a.id.toString();
       a.categoryId = a.categoryId && a.categoryId.toString();
-      a.moderationRules = a.moderationRules.map((r:any) => {
+      a.moderationRules = a.moderationRules?.map((r:any) => {
         fixObject(r)
         return RuleModel(r)
       });
