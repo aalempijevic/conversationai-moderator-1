@@ -17,6 +17,7 @@ limitations under the License.
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import { getTags } from '../stores/tags';
+import { getCurrentUserIsAdmin } from '../stores/users';
 import React from 'react';
 
 import {
@@ -75,6 +76,7 @@ export class ControlFlag extends React.Component<IIControlFlagProps> {
 }
 
 export interface IIControlPopupProps {
+  isAdmin?: boolean;
   article: IArticleModel;
   tags: List<ITagModel>;
   clearPopups(): void;
@@ -114,6 +116,9 @@ export class ArticleControlPopup extends React.Component<IIControlPopupProps, II
 
   @autobind
   handleModerationRulesOverride() {
+    if (!this.state.isCommentingEnabled || !this.state.isAutoModerated || !this.props.isAdmin) {
+      return;
+    }
     this.setState({isModerationOverriden: !this.state.isModerationOverriden});
   }
 
@@ -154,6 +159,9 @@ export class ArticleControlPopup extends React.Component<IIControlPopupProps, II
 
   @autobind
   handleAddAutomatedRule(event: React.FormEvent<any>) {
+    if (!this.isModerationRuleEditingEnabled()) {
+      return;
+    }
     event.preventDefault();
     const newValue = RuleModel(
       {
@@ -171,6 +179,10 @@ export class ArticleControlPopup extends React.Component<IIControlPopupProps, II
     this.setState({ moderationRules: updatedRules });
   }
 
+  @autobind
+  isModerationRuleEditingEnabled() {
+    return this.state.isCommentingEnabled && this.state.isAutoModerated && this.props.isAdmin
+  }
 
   render() {
     return (
@@ -205,47 +217,49 @@ export class ArticleControlPopup extends React.Component<IIControlPopupProps, II
                 <Switch checked={this.state.isAutoModerated} disabled={!this.state.isCommentingEnabled} color="primary"/>
               </td>
             </tr>
-            <tr key="moderationOverride" onClick={this.handleModerationRulesOverride}>
+            <tr key="moderationOverride" onClick={this.handleModerationRulesOverride} {...css(this.isModerationRuleEditingEnabled() ? {} : {opacity: 0.5})}>
               <td key="icon">
                 <ControlFlag isCommentingEnabled={this.state.isCommentingEnabled}/>
               </td>
               <td key="text" {...css({textAlign: 'left', padding: '15px 4px'})}>
                 <label {...css(SCRIM_STYLE.popupContent)}>
-                  Rules Override
+                  Rules Override {!this.props.isAdmin && ("(read only)")}
                 </label>
               </td>
               <td key="toggle" {...css({textAlign: 'right'})}>
-                <Switch checked={this.state.isModerationOverriden} color="primary"/>
+                <Switch  checked={this.state.isModerationOverriden} color="primary" disabled={!this.isModerationRuleEditingEnabled()}/>
               </td>
             </tr>
             <tr>
-      <td key="editRulesSection">
-        
-          {this.state.moderationRules && this.state.moderationRules.map((rule, i) => (
-            <ArticleRuleRow
-              key={i}
-              onDelete={this.handleAutomatedRuleDelete}
-              rule={rule}
-              onTagChange={partial(this.handleAutomatedRuleChange, 'tagId', rule)}
-              onLowerThresholdChange={partial(this.handleAutomatedRuleChange, 'lowerThreshold', rule)}
-              onUpperThresholdChange={partial(this.handleAutomatedRuleChange, 'upperThreshold', rule)}
-              rangeBottom={Math.round(rule.lowerThreshold * 100)}
-              rangeTop={Math.round(rule.upperThreshold * 100)}
-              selectedTag={rule.tagId}
-              selectedAction={rule.action}
-              hasTagging
-              onModerateButtonClick={this.handleModerateButtonClick}
-              tags={this.props.tags}
-            />
-          ))}
-          <AddButton
-            width={44}
-            onClick={this.handleAddAutomatedRule}
-            label="Add an automated rule"
-            buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
-          />
-      </td>
-    </tr>
+             <td key="editRulesSection">
+
+                {this.state.moderationRules && this.state.moderationRules.map((rule, i) => (
+                  <ArticleRuleRow
+                    disabled={!this.isModerationRuleEditingEnabled()}
+                    key={i}
+                    onDelete={this.handleAutomatedRuleDelete}
+                    rule={rule}
+                    onTagChange={partial(this.handleAutomatedRuleChange, 'tagId', rule)}
+                    onLowerThresholdChange={partial(this.handleAutomatedRuleChange, 'lowerThreshold', rule)}
+                    onUpperThresholdChange={partial(this.handleAutomatedRuleChange, 'upperThreshold', rule)}
+                    rangeBottom={Math.round(rule.lowerThreshold * 100)}
+                    rangeTop={Math.round(rule.upperThreshold * 100)}
+                    selectedTag={rule.tagId}
+                    selectedAction={rule.action}
+                    hasTagging
+                    onModerateButtonClick={this.handleModerateButtonClick}
+                    tags={this.props.tags}
+                  />
+                ))}
+                {this.isModerationRuleEditingEnabled() && this.state.isModerationOverriden &&
+                (<AddButton
+                  width={44}
+                  onClick={this.handleAddAutomatedRule}
+                  label="Add an automated rule"
+                  buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
+                />)}
+              </td>
+            </tr>
             </tbody>
           </table>
           <div key="footer" {...css({textAlign: 'right', margin: '35px 25px 30px 25px'})}>
@@ -259,6 +273,7 @@ export class ArticleControlPopup extends React.Component<IIControlPopupProps, II
 }
 
 interface IArticleControlIconProps {
+  isAdmin?: boolean;
   article: IArticleModel;
   tags: List<ITagModel>;
   open: boolean;
@@ -273,9 +288,11 @@ interface IArticleControlIconProps {
 
 function mapStateToProps(state: any, ownProps: any): any {
   const tags = getTags(state)
+  const isAdmin = getCurrentUserIsAdmin(state)
   return {
     ...ownProps,
     tags,
+    isAdmin,
   }
 }
 
@@ -294,10 +311,8 @@ class LazyArticleControlIcon extends React.Component<IArticleControlIconProps> {
   }
 
   render() {
-    const {article, tags: tagsFromProps, open, whiteBackground, saveControls, clearPopups} = this.props;
-    console.log(`TAGS FROM PROPS = ${JSON.stringify(tagsFromProps)}`);
-    // todo [SEO-2339] temporary solution for PoC - tags need to be properly passed.
-    const tags = tagsFromProps ? tagsFromProps : List<ITagModel>([TagModel({id: "15", label: "Summary Score"})]);
+    const {isAdmin, article, tags, open, whiteBackground, saveControls, clearPopups} = this.props;
+
     return (
       <div key="aci">
         <div
@@ -328,6 +343,7 @@ class LazyArticleControlIcon extends React.Component<IArticleControlIconProps> {
             tags={tags}
             saveControls={saveControls}
             clearPopups={clearPopups}
+            isAdmin={isAdmin}
           />
         </Popper>
       </div>

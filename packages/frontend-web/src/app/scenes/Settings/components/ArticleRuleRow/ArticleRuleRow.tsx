@@ -96,6 +96,7 @@ const STYLES = stylesheet({
 });
 
 export interface IArticleRuleRowProps {
+  disabled?: boolean;
   tags: List<ITagModel>;
   rangeBottom: number;
   rangeTop: number;
@@ -143,6 +144,7 @@ export class ArticleRuleRow extends React.Component<IArticleRuleRowProps> {
   }
   render() {
     const {
+      disabled,
       tags,
       rangeBottom,
       rangeTop,
@@ -155,7 +157,6 @@ export class ArticleRuleRow extends React.Component<IArticleRuleRowProps> {
       onDelete,
       rule,
     } = this.props;
-    console.log(`TAGS::::: ${tags}`)
     const sortedTags = tags && sortByLabel(tags);
 
     return (
@@ -167,6 +168,7 @@ export class ArticleRuleRow extends React.Component<IArticleRuleRowProps> {
         <div {...css(STYLES.selectContainer)}>
           <label {...css(OFFSCREEN)} htmlFor={`tags-${rule.id}`}>Select a tag</label>
           <select
+            disabled={disabled}
             {...css(STYLES.select)}
             id={`tags-${rule.id}`}
             name={`tags-${rule.id}`}
@@ -181,6 +183,7 @@ export class ArticleRuleRow extends React.Component<IArticleRuleRowProps> {
         </div>
         <label {...css(OFFSCREEN)} htmlFor={`rangeBottom-${rule.id}`}>Bottom of range</label>
         <input
+          disabled={disabled}
           {...css(STYLES.input, {marginRight: 10})}
           type="number"
           min="0"
@@ -192,6 +195,7 @@ export class ArticleRuleRow extends React.Component<IArticleRuleRowProps> {
         <label {...css(OFFSCREEN)} htmlFor={`rangeTop-${rule.id}`}>Top of range</label>
         <span {...css({fontSize: 14})}>–</span>
         <input
+          disabled={disabled}
           {...css(STYLES.input, {marginLeft: 10})}
           type="number"
           min="0"
@@ -202,6 +206,7 @@ export class ArticleRuleRow extends React.Component<IArticleRuleRowProps> {
         />
           { hasTagging && (
             <ModerateButtons
+              disabled={disabled}
               darkOnLight
               hideLabel
               activeButtons={List<IModerationAction>().push(convertServerAction(selectedAction))}
@@ -210,6 +215,7 @@ export class ArticleRuleRow extends React.Component<IArticleRuleRowProps> {
             />
           )}
         <button
+          disabled={disabled}
           {...css(STYLES.button, STYLES.deleteButton)}
           type="button"
           onClick={partial(maybeCallback(onDelete), rule)}
