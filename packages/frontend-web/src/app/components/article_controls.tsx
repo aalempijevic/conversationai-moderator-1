@@ -227,7 +227,7 @@ export class ArticleControlPopup extends React.Component<IIControlPopupProps, II
                 </label>
               </td>
               <td key="toggle" {...css({textAlign: 'right'})}>
-                <Switch  checked={this.state.isModerationOverriden} color="primary" disabled={!this.isModerationRuleEditingEnabled()}/>
+                <Switch checked={this.state.isModerationOverriden} color="primary" disabled={!this.isModerationRuleEditingEnabled()}/>
               </td>
             </tr>
             <tr>
