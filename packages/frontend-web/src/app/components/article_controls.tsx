@@ -226,7 +226,7 @@ export class ArticleControlPopup extends React.Component<IIControlPopupProps, II
             </tr>
             <tr key="moderationOverride" onClick={this.handleModerationRulesOverride} {...css(this.isModerationRuleEditingEnabled() ? {} : {opacity: 0.5})}>
               <td key="icon">
-                <ControlFlag isCommentingEnabled={this.state.isCommentingEnabled} isModerationOverriden={this.state.isModerationOverriden}/>
+                <ControlFlag isCommentingEnabled={this.state.isCommentingEnabled} isModerationOverriden={this.state.isModerationOverriden} isAutoModerated={this.state.isAutoModerated}/>
               </td>
               <td key="text" {...css({textAlign: 'left', padding: '15px 4px'})}>
                 <label {...css(SCRIM_STYLE.popupContent)}>
@@ -319,7 +319,7 @@ class LazyArticleControlIcon extends React.Component<IArticleControlIconProps> {
 
   render() {
     const {isAdmin, article, tags, open, whiteBackground, saveControls, clearPopups} = this.props;
-
+    console.log("article", article.moderationRules)
     return (
       <div key="aci">
         <div
@@ -330,7 +330,7 @@ class LazyArticleControlIcon extends React.Component<IArticleControlIconProps> {
           }}
         >
           <div onClick={this.setOpen} {...css(ICON_STYLES.iconCenter)}>
-            <ControlFlag isCommentingEnabled={article.isCommentingEnabled} isAutoModerated={article.isAutoModerated}/>
+            <ControlFlag isCommentingEnabled={article.isCommentingEnabled} isAutoModerated={article.isAutoModerated} isModerationOverriden={this.props.article.moderationRules?.length > 0}/>
           </div>
         </div>
         <Popper
