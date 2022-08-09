@@ -27,7 +27,7 @@ import {
   Switch,
 } from '@material-ui/core';
 
-import { IArticleModel, IRuleModel, IServerAction, ITagModel, RuleModel, SERVER_ACTION_ACCEPT, TagModel } from '../../models';
+import { IArticleModel, IRuleModel, IServerAction, ITagModel, RuleModel, SERVER_ACTION_ACCEPT } from '../../models';
 import {
   GREY_COLOR,
   GUTTER_DEFAULT_SPACING,
