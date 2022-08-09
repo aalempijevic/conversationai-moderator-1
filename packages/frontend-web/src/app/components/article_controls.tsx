@@ -54,6 +54,7 @@ interface IIControlFlagProps {
 let placeholderId = -1;
 export class ControlFlag extends React.Component<IIControlFlagProps> {
   render() {
+    console.log("Control Flag Props", this.props)
     let style: any;
     let Icon: any;
 
@@ -69,6 +70,9 @@ export class ControlFlag extends React.Component<IIControlFlagProps> {
     }
     else {
       style = {color: GREY_COLOR};
+    }
+    if (this.props.isModerationOverriden) {
+      style = {color: NICE_CONTROL_BLUE, outline: "#fc1c03 dashed 3px"}
     }
     // todo add styling to indicate overrides
     return (<Icon {...css(style)}/>);
@@ -100,7 +104,6 @@ export class ArticleControlPopup extends React.Component<IIControlPopupProps, II
       moderationRules: this.props.article.moderationRules,
     };
   }
-
   @autobind
   handleCommentingEnabledClicked() {
     this.setState({isCommentingEnabled: !this.state.isCommentingEnabled});
@@ -116,9 +119,11 @@ export class ArticleControlPopup extends React.Component<IIControlPopupProps, II
 
   @autobind
   handleModerationRulesOverride() {
+    console.log("Handle Moderation Rules");
     if (!this.state.isCommentingEnabled || !this.state.isAutoModerated || !this.props.isAdmin) {
       return;
     }
+    console.log("updating state for moderation override")
     this.setState({isModerationOverriden: !this.state.isModerationOverriden});
   }
 
@@ -185,6 +190,8 @@ export class ArticleControlPopup extends React.Component<IIControlPopupProps, II
   }
 
   render() {
+    console.log('PROPS', this.props)
+    console.log('STATE', this.state)
     return (
       <ClickAwayListener onClickAway={this.props.clearPopups}>
         <div tabIndex={0} {...css(SCRIM_STYLE.popupMenu, {padding: '20px'})}>
@@ -219,7 +226,7 @@ export class ArticleControlPopup extends React.Component<IIControlPopupProps, II
             </tr>
             <tr key="moderationOverride" onClick={this.handleModerationRulesOverride} {...css(this.isModerationRuleEditingEnabled() ? {} : {opacity: 0.5})}>
               <td key="icon">
-                <ControlFlag isCommentingEnabled={this.state.isCommentingEnabled}/>
+                <ControlFlag isCommentingEnabled={this.state.isCommentingEnabled} isModerationOverriden={this.state.isModerationOverriden}/>
               </td>
               <td key="text" {...css({textAlign: 'left', padding: '15px 4px'})}>
                 <label {...css(SCRIM_STYLE.popupContent)}>
