@@ -32,6 +32,7 @@ import {
   GREY_COLOR,
   GUTTER_DEFAULT_SPACING,
   NICE_CONTROL_BLUE,
+  RED,
   SCRIM_STYLE,
 } from '../styles';
 import {
@@ -72,9 +73,8 @@ export class ControlFlag extends React.Component<IIControlFlagProps> {
       style = {color: GREY_COLOR};
     }
     if (this.props.isModerationOverriden) {
-      style = {color: NICE_CONTROL_BLUE, outline: "#fc1c03 dashed 3px"}
+      style = {color: RED}
     }
-    // todo add styling to indicate overrides
     return (<Icon {...css(style)}/>);
   }
 }
