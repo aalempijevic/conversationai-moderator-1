@@ -2,7 +2,14 @@
 
 Requirement:
 
-- NodeJS LTS 6.11.x
+- NodeJS 11.10.1
+- ~~NodeJS LTS 6.11.x~~
+
+Set Environmental Variables:
+
+```
+source ./.env
+```
 
 Install dependencies:
 
@@ -30,11 +37,16 @@ npm run storybook:test -- -u
 Run webpack dev server:
 
 ```
-cd packages/frontend-web
-npm run start
+./bin/watch
 ```
+Vist [http://localhost:80](http://localhost:80).
 
-Visit [http://localhost:8000/](http://localhost:8000/).
+~~```~~
+~~cd packages/frontend-web~~
+~~npm run start~~
+~~```~~
+
+~~Visit [http://localhost:8000/](http://localhost:8000/).~~
 
 ### Linting
 
