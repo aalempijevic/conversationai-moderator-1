@@ -56,6 +56,9 @@ import {
 } from '../../stores/users';
 import { partial, setCSRF } from '../../util';
 import { css, stylesheet } from '../../utilx';
+
+import BannedKeywordsSection from './sections/BannedKeywords';
+
 import { AddButton, EditButton } from './components/AddButton';
 import { AddUsers } from './components/AddUsers';
 import { EditUsers } from './components/EditUsers';
@@ -1121,8 +1124,10 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
         <HeaderBar logout={logout} homeLink title="Settings"/>
         <div {...css(STYLES.body)}>
           <h1 {...css(VISUALLY_HIDDEN)}>Open Source Moderator Settings</h1>
-          {this.renderUsers()}
+          {/* TEMP COMMENTING OUT TO MAKE DEV EASIER */}
+          {/* {this.renderUsers()} */}
           <form onSubmit={this.handleFormSubmit} {...css(STYLES.formContainer)}>
+        <BannedKeywordsSection styles={STYLES} />
             {this.renderTags(tagsNoSummary)}
             {this.renderRules(tags, categoriesWithAll)}
             {this.renderSensitivities(tagsWithAllNoSummary, categoriesWithAll)}
