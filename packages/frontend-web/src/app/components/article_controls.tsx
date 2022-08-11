@@ -55,7 +55,6 @@ interface IIControlFlagProps {
 let placeholderId = -1;
 export class ControlFlag extends React.Component<IIControlFlagProps> {
   render() {
-    console.log("Control Flag Props", this.props)
     let style: any;
     let Icon: any;
 
@@ -119,11 +118,9 @@ export class ArticleControlPopup extends React.Component<IIControlPopupProps, II
 
   @autobind
   handleModerationRulesOverride() {
-    console.log("Handle Moderation Rules");
     if (!this.state.isCommentingEnabled || !this.state.isAutoModerated || !this.props.isAdmin) {
       return;
     }
-    console.log("updating state for moderation override")
     this.setState({isModerationOverriden: !this.state.isModerationOverriden});
   }
 
@@ -190,8 +187,6 @@ export class ArticleControlPopup extends React.Component<IIControlPopupProps, II
   }
 
   render() {
-    console.log('PROPS', this.props)
-    console.log('STATE', this.state)
     return (
       <ClickAwayListener onClickAway={this.props.clearPopups}>
         <div tabIndex={0} {...css(SCRIM_STYLE.popupMenu, {padding: '20px'})}>
@@ -319,7 +314,7 @@ class LazyArticleControlIcon extends React.Component<IArticleControlIconProps> {
 
   render() {
     const {isAdmin, article, tags, open, whiteBackground, saveControls, clearPopups} = this.props;
-    console.log("article", article.moderationRules)
+    
     return (
       <div key="aci">
         <div
