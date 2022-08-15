@@ -31,6 +31,7 @@ export const NICE_CONTROL_BLUE = '#2e84ed';
 export const NICE_BLUE_GREY = '#eff0f0';
 export const SIDEBAR_BLUE = '#0f4a92';
 export const NICE_LIGHT_HIGHLIGHT_BLUE = '#2e83ed';
+export const RED = "#ff0000"
 
 // TEXT COLOR
 export const DARK_PRIMARY_TEXT_COLOR = 'rgba(0, 0, 0, 0.87)';

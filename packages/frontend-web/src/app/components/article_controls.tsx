@@ -32,6 +32,7 @@ import {
   GREY_COLOR,
   GUTTER_DEFAULT_SPACING,
   NICE_CONTROL_BLUE,
+  RED,
   SCRIM_STYLE,
 } from '../styles';
 import {
@@ -70,7 +71,9 @@ export class ControlFlag extends React.Component<IIControlFlagProps> {
     else {
       style = {color: GREY_COLOR};
     }
-    // todo add styling to indicate overrides
+    if (this.props.isModerationOverriden) {
+      style = {color: RED}
+    }
     return (<Icon {...css(style)}/>);
   }
 }
@@ -100,7 +103,6 @@ export class ArticleControlPopup extends React.Component<IIControlPopupProps, II
       moderationRules: this.props.article.moderationRules,
     };
   }
-
   @autobind
   handleCommentingEnabledClicked() {
     this.setState({isCommentingEnabled: !this.state.isCommentingEnabled});
@@ -219,7 +221,7 @@ export class ArticleControlPopup extends React.Component<IIControlPopupProps, II
             </tr>
             <tr key="moderationOverride" onClick={this.handleModerationRulesOverride} {...css(this.isModerationRuleEditingEnabled() ? {} : {opacity: 0.5})}>
               <td key="icon">
-                <ControlFlag isCommentingEnabled={this.state.isCommentingEnabled}/>
+                <ControlFlag isCommentingEnabled={this.state.isCommentingEnabled} isModerationOverriden={this.state.isModerationOverriden} isAutoModerated={this.state.isAutoModerated}/>
               </td>
               <td key="text" {...css({textAlign: 'left', padding: '15px 4px'})}>
                 <label {...css(SCRIM_STYLE.popupContent)}>
@@ -312,7 +314,7 @@ class LazyArticleControlIcon extends React.Component<IArticleControlIconProps> {
 
   render() {
     const {isAdmin, article, tags, open, whiteBackground, saveControls, clearPopups} = this.props;
-
+    
     return (
       <div key="aci">
         <div
@@ -323,7 +325,7 @@ class LazyArticleControlIcon extends React.Component<IArticleControlIconProps> {
           }}
         >
           <div onClick={this.setOpen} {...css(ICON_STYLES.iconCenter)}>
-            <ControlFlag isCommentingEnabled={article.isCommentingEnabled} isAutoModerated={article.isAutoModerated}/>
+            <ControlFlag isCommentingEnabled={article.isCommentingEnabled} isAutoModerated={article.isAutoModerated} isModerationOverriden={this.props.article.moderationRules?.length > 0}/>
           </div>
         </div>
         <Popper
