@@ -3,7 +3,6 @@
 Requirement:
 
 - NodeJS 11.10.1
-- ~~NodeJS LTS 6.11.x~~
 
 Set Environmental Variables:
 
@@ -39,14 +38,8 @@ Run webpack dev server:
 ```
 ./bin/watch
 ```
+
 Vist [http://localhost:80](http://localhost:80).
-
-~~```~~
-~~cd packages/frontend-web~~
-~~npm run start~~
-~~```~~
-
-~~Visit [http://localhost:8000/](http://localhost:8000/).~~
 
 ### Linting
 
