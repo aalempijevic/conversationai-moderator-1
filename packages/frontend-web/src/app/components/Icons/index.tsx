@@ -118,6 +118,5 @@ export const UserPlusIcon = makeIcon(<g><path d="M22.2727273,20.7272727 C24.6836
 /* tslint:enable:max-line-length */
 
 export function renderSwatch() {
-  console.log(icons.length);
   return (<div>{icons.map((I) => (<I/>))}</div>);
 }
