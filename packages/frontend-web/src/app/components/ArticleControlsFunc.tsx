@@ -53,30 +53,30 @@ interface IIControlFlagProps {
 }
 
 let placeholderId = -1;
-export class ControlFlag extends React.Component<IIControlFlagProps> {
-  render() {
+export function ControlFlag({isAutoModerated, isCommentingEnabled, isModerationOverriden}: IIControlFlagProps){
+
     let style: any;
     let Icon: any;
 
-    if (this.props.isAutoModerated) {
+    if (isAutoModerated) {
       Icon = icons.SpeechBubbleIconCircle;
     }
     else {
       Icon = icons.SpeechBubbleIcon;
     }
 
-    if (this.props.isCommentingEnabled) {
+    if (isCommentingEnabled) {
       style = {color: NICE_CONTROL_BLUE};
     }
     else {
       style = {color: GREY_COLOR};
     }
-    if (this.props.isModerationOverriden) {
+    if (isModerationOverriden) {
       style = {color: RED}
     }
     return (<Icon {...css(style)}/>);
-  }
 }
+
 
 export interface IArticleControlIconState {
   isCommentingEnabled: boolean;
