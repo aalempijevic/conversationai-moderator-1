@@ -45,5 +45,5 @@ export * from './TagLabelRow';
 export * from './Toast';
 export * from './Toggle';
 export * from './ToolTip';
-export * from './ArticleControls';
+export * from './ArticleControlsFunc';
 export * from './HeaderBar';
