@@ -78,31 +78,62 @@ export class ControlFlag extends React.Component<IIControlFlagProps> {
   }
 }
 
-export interface IIControlPopupProps {
-  isAdmin?: boolean;
-  article: IArticleModel;
-  tags: List<ITagModel>;
-  clearPopups(): void;
-  saveControls(isCommentingEnabled: boolean, isAutoModerated: boolean, isModerationOverriden: boolean, moderationRules: Array<IRuleModel>): void;
-}
-
-export interface IIControlPopupState {
+export interface IArticleControlIconState {
   isCommentingEnabled: boolean;
   isAutoModerated: boolean;
   isModerationOverriden: boolean;
   moderationRules: Array<IRuleModel>;
 }
 
-export class ArticleControlPopup extends React.Component<IIControlPopupProps, IIControlPopupState> {
-  constructor(props: Readonly<IIControlPopupProps>) {
-    super(props);
+interface IArticleControlIconProps {
+  isAdmin?: boolean;
+  article: IArticleModel;
+  tags: List<ITagModel>;
+  open: boolean;
+  whiteBackground?: boolean;
+
+  clearPopups(): void;
+
+  openControls(article: IArticleModel): void;
+
+  saveControls(isCommentingEnabled: boolean, isAutoModerated: boolean, isModerationRuleOveridden: boolean, moderationRules: Array<IRuleModel>): void;
+}
+
+function mapStateToProps(state: any, ownProps: any): any {
+  const tags = getTags(state)
+  const isAdmin = getCurrentUserIsAdmin(state)
+  return {
+    ...ownProps,
+    tags,
+    isAdmin,
+  }
+}
+
+class LazyArticleControlIcon extends React.Component<IArticleControlIconProps, IArticleControlIconState> {
+  anchorElement: any;
+  // added to place ArticleControlPopup within this component
+  constructor(props: Readonly<IArticleControlIconProps>) {
+    super(props)
     this.state = {
       isCommentingEnabled: this.props.article.isCommentingEnabled,
       isAutoModerated: this.props.article.isAutoModerated,
       isModerationOverriden: this.props.article.moderationRules && this.props.article.moderationRules?.length > 0,
       moderationRules: this.props.article.moderationRules,
-    };
+    }
   }
+
+  @autobind
+  setOpen() {
+    const {article, open, clearPopups, openControls} = this.props;
+    if (open) {
+      clearPopups();
+    }
+    else {
+      openControls(article);
+    }
+  }
+
+  // moved here from ArticleControlPopup
   @autobind
   handleCommentingEnabledClicked() {
     this.setState({isCommentingEnabled: !this.state.isCommentingEnabled});
@@ -187,8 +218,34 @@ export class ArticleControlPopup extends React.Component<IIControlPopupProps, II
   }
 
   render() {
+    const {isAdmin, article, tags, open, whiteBackground, clearPopups} = this.props;
+    
     return (
-      <ClickAwayListener onClickAway={this.props.clearPopups}>
+      <div key="aci">
+        <div
+          key="icon"
+          {...css(open || whiteBackground ? ICON_STYLES.iconBackgroundCircle : big)}
+          ref={(node) => {
+            this.anchorElement = node;
+          }}
+        >
+          <div onClick={this.setOpen} {...css(ICON_STYLES.iconCenter)}>
+            <ControlFlag isCommentingEnabled={article.isCommentingEnabled} isAutoModerated={article.isAutoModerated} isModerationOverriden={article.moderationRules?.length > 0}/>
+          </div>
+        </div>
+        <Popper
+          key="popper"
+          open={open}
+          anchorEl={this.anchorElement}
+          placement="left"
+          modifiers={{
+            preventOverflow: {
+              enabled: true,
+              boundariesElement: 'viewport',
+            },
+          }}
+        >
+      <ClickAwayListener onClickAway={clearPopups}>
         <div tabIndex={0} {...css(SCRIM_STYLE.popupMenu, {padding: '20px'})}>
           <DialogTitle id="article-controls">Moderation settings</DialogTitle>
           <table key="main" {...css({width: 'compute(100% - 50px)', margin: '4px 9px 4px 25px'})}>
@@ -225,7 +282,7 @@ export class ArticleControlPopup extends React.Component<IIControlPopupProps, II
               </td>
               <td key="text" {...css({textAlign: 'left', padding: '15px 4px'})}>
                 <label {...css(SCRIM_STYLE.popupContent)}>
-                  Rules Override {!this.props.isAdmin && ("(read only)")}
+                  Rules Override {!isAdmin && ("(read only)")}
                 </label>
               </td>
               <td key="toggle" {...css({textAlign: 'right'})}>
@@ -250,7 +307,7 @@ export class ArticleControlPopup extends React.Component<IIControlPopupProps, II
                     selectedAction={rule.action}
                     hasTagging
                     onModerateButtonClick={this.handleModerateButtonClick}
-                    tags={this.props.tags}
+                    tags={tags}
                   />
                 ))}
                 {this.isModerationRuleEditingEnabled() && this.state.isModerationOverriden &&
@@ -265,88 +322,11 @@ export class ArticleControlPopup extends React.Component<IIControlPopupProps, II
             </tbody>
           </table>
           <div key="footer" {...css({textAlign: 'right', margin: '35px 25px 30px 25px'})}>
-            <span onClick={this.props.clearPopups} {...css({marginRight: '30px', opacity: '0.5'})}>Cancel</span>
+            <span onClick={clearPopups} {...css({marginRight: '30px', opacity: '0.5'})}>Cancel</span>
             <span onClick={this.saveControls} {...css({color: NICE_CONTROL_BLUE})}>Save</span>
           </div>
         </div>
       </ClickAwayListener>
-    );
-  }
-}
-
-interface IArticleControlIconProps {
-  isAdmin?: boolean;
-  article: IArticleModel;
-  tags: List<ITagModel>;
-  open: boolean;
-  whiteBackground?: boolean;
-
-  clearPopups(): void;
-
-  openControls(article: IArticleModel): void;
-
-  saveControls(isCommentingEnabled: boolean, isAutoModerated: boolean, isModerationRuleOveridden: boolean, moderationRules: Array<IRuleModel>): void;
-}
-
-function mapStateToProps(state: any, ownProps: any): any {
-  const tags = getTags(state)
-  const isAdmin = getCurrentUserIsAdmin(state)
-  return {
-    ...ownProps,
-    tags,
-    isAdmin,
-  }
-}
-
-class LazyArticleControlIcon extends React.Component<IArticleControlIconProps> {
-  anchorElement: any;
-
-  @autobind
-  setOpen() {
-    const {article, open, clearPopups, openControls} = this.props;
-    if (open) {
-      clearPopups();
-    }
-    else {
-      openControls(article);
-    }
-  }
-
-  render() {
-    const {isAdmin, article, tags, open, whiteBackground, saveControls, clearPopups} = this.props;
-    
-    return (
-      <div key="aci">
-        <div
-          key="icon"
-          {...css(open || whiteBackground ? ICON_STYLES.iconBackgroundCircle : big)}
-          ref={(node) => {
-            this.anchorElement = node;
-          }}
-        >
-          <div onClick={this.setOpen} {...css(ICON_STYLES.iconCenter)}>
-            <ControlFlag isCommentingEnabled={article.isCommentingEnabled} isAutoModerated={article.isAutoModerated} isModerationOverriden={this.props.article.moderationRules?.length > 0}/>
-          </div>
-        </div>
-        <Popper
-          key="popper"
-          open={open}
-          anchorEl={this.anchorElement}
-          placement="left"
-          modifiers={{
-            preventOverflow: {
-              enabled: true,
-              boundariesElement: 'viewport',
-            },
-          }}
-        >
-          <ArticleControlPopup
-            article={article}
-            tags={tags}
-            saveControls={saveControls}
-            clearPopups={clearPopups}
-            isAdmin={isAdmin}
-          />
         </Popper>
       </div>
     );
