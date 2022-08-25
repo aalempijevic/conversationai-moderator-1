@@ -93,7 +93,6 @@ class LazyArticleControlIcon extends React.Component<
     }
   }
 
-  // moved here from ArticleControlPopup
   @autobind
   handleCommentingEnabledClicked() {
     this.setState({ isCommentingEnabled: !this.state.isCommentingEnabled });
