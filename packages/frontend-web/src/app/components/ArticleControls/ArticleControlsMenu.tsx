@@ -5,7 +5,7 @@ import { List } from "immutable";
 import { ClickAwayListener, DialogTitle, Switch } from "@material-ui/core";
 
 import { IArticleControlIconState } from "./ArticleControls";
-import { ControlFlag } from "./ControlFlag";
+import { ControlFlag } from "../ControlFlag";
 
 import {
   IArticleModel,
@@ -276,7 +276,7 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
                         tags={tags}
                       />
                     ))}
-                  {this.isModerationRuleEditingEnabled() &&
+                  {/* {this.isModerationRuleEditingEnabled() &&
                     this.props.controlState.isModerationOverriden && (
                       <AddButton
                         width={44}
@@ -286,7 +286,7 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
                           margin: `${GUTTER_DEFAULT_SPACING}px 0`,
                         }}
                       />
-                    )}
+                    )} */}
                 </td>
               </tr>
             </tbody>

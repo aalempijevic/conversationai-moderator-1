@@ -1,3 +1,1 @@
-import {ArticleControlIcon} from './ArticleControls';
-
-export default ArticleControlIcon;
+export { ArticleControlIcon } from './ArticleControls';

@@ -28,7 +28,7 @@ import { css } from "../../utilx";
 import { List } from "immutable";
 
 import { ArticleControlMenu } from "./ArticleControlsMenu";
-import { ControlFlag } from "./ControlFlag";
+import { ControlFlag } from "../ControlFlag";
 
 export interface IArticleControlIconState {
   isCommentingEnabled: boolean;
