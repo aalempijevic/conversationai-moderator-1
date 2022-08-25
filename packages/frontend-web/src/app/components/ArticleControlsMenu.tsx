@@ -3,7 +3,8 @@ import React from "react";
 
 import { ClickAwayListener, DialogTitle, Switch } from "@material-ui/core";
 
-import { ControlFlag, IArticleControlIconState } from "./ArticleControls";
+import { IArticleControlIconState } from "./ArticleControls";
+import {ControlFlag} from './ControlFlag';
 
 import {
   IArticleModel,

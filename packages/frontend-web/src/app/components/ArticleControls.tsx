@@ -26,50 +26,14 @@ import {
 
 import { IArticleModel, IRuleModel, ITagModel } from '../../models';
 import {
-  GREY_COLOR,
-  NICE_CONTROL_BLUE,
-  RED,
-} from '../styles';
-import {
   big,
   ICON_STYLES,
 } from '../stylesx';
 import { css } from '../utilx';
-import * as icons from './Icons';
 import { List } from 'immutable';
 
 import { ArticleControlMenu } from './ArticleControlsMenu';
-
-interface IIControlFlagProps {
-  isCommentingEnabled?: boolean;
-  isAutoModerated?: boolean;
-  isModerationOverriden?: boolean;
-}
-
-export class ControlFlag extends React.Component<IIControlFlagProps> {
-  render() {
-    let style: any;
-    let Icon: any;
-
-    if (this.props.isAutoModerated) {
-      Icon = icons.SpeechBubbleIconCircle;
-    }
-    else {
-      Icon = icons.SpeechBubbleIcon;
-    }
-
-    if (this.props.isCommentingEnabled) {
-      style = {color: NICE_CONTROL_BLUE};
-    }
-    else {
-      style = {color: GREY_COLOR};
-    }
-    if (this.props.isModerationOverriden) {
-      style = {color: RED}
-    }
-    return (<Icon {...css(style)}/>);
-  }
-}
+import { ControlFlag } from './ControlFlag';
 
 export interface IArticleControlIconState {
   isCommentingEnabled: boolean;
@@ -104,7 +68,6 @@ function mapStateToProps(state: any, ownProps: any): any {
 
 class LazyArticleControlIcon extends React.Component<IArticleControlIconProps, IArticleControlIconState> {
   anchorElement: any;
-  // added to place ArticleControlPopup within this component
   constructor(props: Readonly<IArticleControlIconProps>) {
     super(props)
     this.state = {
