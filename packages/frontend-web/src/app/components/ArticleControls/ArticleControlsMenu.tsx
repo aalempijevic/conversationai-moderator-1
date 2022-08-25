@@ -276,7 +276,7 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
                         tags={tags}
                       />
                     ))}
-                  {/* {this.isModerationRuleEditingEnabled() &&
+                  {this.isModerationRuleEditingEnabled() &&
                     this.props.controlState.isModerationOverriden && (
                       <AddButton
                         width={44}
@@ -286,7 +286,7 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
                           margin: `${GUTTER_DEFAULT_SPACING}px 0`,
                         }}
                       />
-                    )} */}
+                    )}
                 </td>
               </tr>
             </tbody>
