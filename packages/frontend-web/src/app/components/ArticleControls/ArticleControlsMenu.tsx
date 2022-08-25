@@ -1,5 +1,6 @@
 import { autobind } from "core-decorators";
 import React from "react";
+import { List } from "immutable";
 
 import { ClickAwayListener, DialogTitle, Switch } from "@material-ui/core";
 
@@ -13,17 +14,16 @@ import {
   ITagModel,
   RuleModel,
   SERVER_ACTION_ACCEPT,
-} from "../../models";
+} from "../../../models";
 import {
   GUTTER_DEFAULT_SPACING,
   NICE_CONTROL_BLUE,
   SCRIM_STYLE,
-} from "../styles";
-import { css } from "../utilx";
-import { ArticleRuleRow } from "../scenes/Settings/components/ArticleRuleRow";
-import { List } from "immutable";
-import { partial } from "../util";
-import { AddButton } from "../scenes/Settings/components/AddButton";
+} from "../../styles";
+import { css } from "../../utilx";
+import { ArticleRuleRow } from "../../scenes/Settings/components/ArticleRuleRow";
+import { partial } from "../../util";
+import { AddButton } from "../../scenes/Settings/components/AddButton";
 
 let placeholderId = -1;
 

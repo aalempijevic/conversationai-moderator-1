@@ -16,15 +16,15 @@ limitations under the License.
 
 import { connect } from "react-redux";
 import { autobind } from "core-decorators";
-import { getTags } from "../stores/tags";
-import { getCurrentUserIsAdmin } from "../stores/users";
+import { getTags } from "../../stores/tags";
+import { getCurrentUserIsAdmin } from "../../stores/users";
 import React from "react";
 
 import { Popper } from "@material-ui/core";
 
-import { IArticleModel, IRuleModel, ITagModel } from "../../models";
-import { big, ICON_STYLES } from "../stylesx";
-import { css } from "../utilx";
+import { IArticleModel, IRuleModel, ITagModel } from "../../../models";
+import { big, ICON_STYLES } from "../../stylesx";
+import { css } from "../../utilx";
 import { List } from "immutable";
 
 import { ArticleControlMenu } from "./ArticleControlsMenu";

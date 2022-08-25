@@ -1,8 +1,8 @@
 import React from "react";
 
-import { css } from "../utilx";
-import { GREY_COLOR, NICE_CONTROL_BLUE, RED } from "../styles";
-import * as icons from "./Icons";
+import { css } from "../../utilx";
+import { GREY_COLOR, NICE_CONTROL_BLUE, RED } from "../../styles";
+import * as icons from "../Icons";
 
 interface IIControlFlagProps {
   isCommentingEnabled?: boolean;
