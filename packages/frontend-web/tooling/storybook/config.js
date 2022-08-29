@@ -16,7 +16,7 @@ limitations under the License.
 
 import { configure } from '@storybook/react';
 
-const req = require.context('../../dist/app', true, /Story\.jsx?$/);
+const req = require.context('../../dist/src/app', true, /Story\.jsx?$/);
 
 function loadStories() {
   req.keys().forEach(req)
