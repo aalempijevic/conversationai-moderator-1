@@ -31,7 +31,6 @@ const ROW_HEIGHT = 42;
 export const SETTINGS_STYLES = {
   row: {
     position: 'relative',
-    padding: `0 0 ${GUTTER_DEFAULT_SPACING}px 0`,
     display: 'flex',
     alignItems: 'center',
     maxWidth: '100%',
