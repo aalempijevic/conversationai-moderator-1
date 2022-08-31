@@ -90,6 +90,7 @@ const STYLES = stylesheet({
   },
 
   deleteButton: {
+    position: 'inherit',
     right: 0,
     marginLeft: 0,
   },
