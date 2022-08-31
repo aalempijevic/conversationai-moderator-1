@@ -57,7 +57,7 @@ import {
 import { partial, setCSRF } from '../../util';
 import { css, stylesheet } from '../../utilx';
 
-import BannedKeywordsSection from './sections/BannedKeywords';
+import RestrictedTermsSection from './sections/RestrictedTerms';
 
 import { AddButton, EditButton } from './components/AddButton';
 import { AddUsers } from './components/AddUsers';
@@ -1127,7 +1127,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
           {/* TEMP COMMENTING OUT TO MAKE DEV EASIER */}
           {/* {this.renderUsers()} */}
           <form onSubmit={this.handleFormSubmit} {...css(STYLES.formContainer)}>
-        <BannedKeywordsSection styles={STYLES} settingsState={this.state} setSettingsState={(state: any)=>this.setState(state)} />
+        <RestrictedTermsSection styles={STYLES} settingsState={this.state} setSettingsState={(state: any)=>this.setState(state)} />
             {this.renderTags(tagsNoSummary)}
             {this.renderRules(tags, categoriesWithAll)}
             {this.renderSensitivities(tagsWithAllNoSummary, categoriesWithAll)}
