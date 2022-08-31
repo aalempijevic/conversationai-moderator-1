@@ -3,6 +3,8 @@ import { SETTINGS_STYLES } from "../settingsStyles";
 
 export interface ISection {
   styles?: any;
+  settingsState: any;
+  setSettingsState: any;
 }
 
 const TEMP_KEYWORDS = [
