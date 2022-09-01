@@ -4,6 +4,7 @@ import { List } from "immutable";
 import { serviceURL } from "./dataService";
 import { IRestrictedTermModel, RestrictedTermModel } from "../../models";
 
+// /services/simple/restrictedTerms
 export async function getRestrictedTerms(): Promise<List<IRestrictedTermModel>> {
   const getRestrictedTermsUrl = serviceURL("simple", "/restrictedTerms");
   console.log("get URL", getRestrictedTermsUrl);
@@ -15,3 +16,12 @@ export async function getRestrictedTerms(): Promise<List<IRestrictedTermModel>> 
     })
   );
 }
+
+// /services/simple/restrictedTerms
+export async function addRestrictedTerm() {}
+
+// /services/simple/restrictedTerms
+export async function updateRestrictedTerm() {}
+
+// /services/simple/restrictedTerms/{termId}
+export async function deleteRestrictedTerm() {}
