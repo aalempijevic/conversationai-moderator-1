@@ -792,11 +792,3 @@ export async function listSystemUsers(type: string): Promise<List<IUserModel>> {
     return UserModel(u);
   }));
 }
-
-export async function getRestrictedTerms(): Promise<List<IRestrictedTermModel>> {
-  const response: any = await axios.get(serviceURL('restrictedTerm'));
-  return List<IRestrictedTermModel>(response.data.terms.map((term: any) => {
-    term.id = term.id.toString();
-    return RestrictedTermModel(term);
-  }));
-};
