@@ -32,11 +32,13 @@ import {
   ICommentSummaryScoreModel,
   IRuleModel,
   IUserModel,
+  IRestrictedTermModel,
   ModelId,
 } from '../../models';
 import {
   CommentDatedModel,
   CommentScoredModel,
+  RestrictedTermModel,
   UserModel,
 } from '../../models';
 import { ITopScore } from '../../types';
@@ -53,6 +55,7 @@ export type IValidModelNames =
     'moderation_rules' |
     'moderator_assignments' |
     'preselects' |
+    'restricted_terms' |
     'tagging_sensitivities' |
     'tags' |
     'users' |
@@ -69,6 +72,7 @@ const VALID_MODEL_NAMES_LOOKUP: {
   moderation_rules: true,
   moderator_assignments: true,
   preselects: true,
+  restrictedTerms: true,
   tagging_sensitivities: true,
   tags: true,
   users: true,
@@ -788,3 +792,11 @@ export async function listSystemUsers(type: string): Promise<List<IUserModel>> {
     return UserModel(u);
   }));
 }
+
+export async function getRestrictedTerms(): Promise<List<IRestrictedTermModel>> {
+  const response: any = await axios.get(serviceURL('restrictedTerm'));
+  return List<IRestrictedTermModel>(response.data.terms.map((term: any) => {
+    term.id = term.id.toString();
+    return RestrictedTermModel(term);
+  }));
+};
