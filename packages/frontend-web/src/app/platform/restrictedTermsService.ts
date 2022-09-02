@@ -20,3 +20,7 @@ export async function updateRestrictedTerm() {}
 
 // /services/simple/restrictedTerms/{termId}
 export async function deleteRestrictedTerm() {}
+
+export const globalRestrictedTerms = {
+  get: getRestrictedTerms,
+};

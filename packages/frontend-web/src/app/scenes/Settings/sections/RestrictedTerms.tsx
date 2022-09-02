@@ -17,7 +17,7 @@ export class RestrictedTerms extends Component<ISectionProps> {
   componentDidMount() {
     async function getTerms() {
       try {
-        const terms = await getRestrictedTerms();
+        const terms = await globalRestrictedTerms.get();
         console.log("terms recieved", terms);
       } catch (err) {
         console.log("error getting terms", err);
