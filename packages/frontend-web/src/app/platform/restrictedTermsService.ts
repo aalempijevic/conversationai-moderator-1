@@ -4,11 +4,11 @@ import { List } from "immutable";
 import { serviceURL } from "./dataService";
 import { IRestrictedTermModel, RestrictedTermModel } from "../../models";
 
+const RESTRICTED_TERMS_URL = serviceURL("simple", "/restrictedTerms");
+
 // /services/simple/restrictedTerms
 export async function getRestrictedTerms(): Promise<Array<IRestrictedTermModel>> {
-  const getRestrictedTermsUrl = serviceURL("simple", "/restrictedTerms");
-  console.log("get URL", getRestrictedTermsUrl);
-  const response: any = await axios.get(getRestrictedTermsUrl);
+  const response: any = await axios.get(RESTRICTED_TERMS_URL);
   return response.data;
 }
 
