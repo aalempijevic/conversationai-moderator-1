@@ -5,16 +5,11 @@ import { serviceURL } from "./dataService";
 import { IRestrictedTermModel, RestrictedTermModel } from "../../models";
 
 // /services/simple/restrictedTerms
-export async function getRestrictedTerms(): Promise<List<IRestrictedTermModel>> {
+export async function getRestrictedTerms(): Promise<Array<IRestrictedTermModel>> {
   const getRestrictedTermsUrl = serviceURL("simple", "/restrictedTerms");
   console.log("get URL", getRestrictedTermsUrl);
   const response: any = await axios.get(getRestrictedTermsUrl);
-  return List<IRestrictedTermModel>(
-    response.data.terms.map((term: any) => {
-      term.id = term.id.toString();
-      return RestrictedTermModel(term);
-    })
-  );
+  return response.data;
 }
 
 // /services/simple/restrictedTerms

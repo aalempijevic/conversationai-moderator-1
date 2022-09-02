@@ -1,12 +1,12 @@
 import { Component } from "react";
 
-import { getRestrictedTerms } from "../../../platform/restrictedTermsService";
+import { getRestrictedTerms, globalRestrictedTerms } from "../../../platform/restrictedTermsService";
 
 import { css } from "../../../utilx";
 import { SETTINGS_STYLES } from "../settingsStyles";
 
 export interface ISectionProps {
-  styles?: any;
+  styles: any;
   settingsState: any;
   setSettingsState: any;
 }
@@ -30,7 +30,7 @@ export class RestrictedTerms extends Component<ISectionProps> {
     const { styles } = this.props;
 
     return (
-      <div key="bannedKeywordsSection">
+      <div key="restrictedTermsSection">
         <div key="heading" {...css(styles.heading)}>
           <h2 {...css(styles.headingText)}>Banned Keywords</h2>
         </div>

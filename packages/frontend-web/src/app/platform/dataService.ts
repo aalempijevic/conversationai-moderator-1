@@ -32,13 +32,11 @@ import {
   ICommentSummaryScoreModel,
   IRuleModel,
   IUserModel,
-  IRestrictedTermModel,
   ModelId,
 } from '../../models';
 import {
   CommentDatedModel,
   CommentScoredModel,
-  RestrictedTermModel,
   UserModel,
 } from '../../models';
 import { ITopScore } from '../../types';
