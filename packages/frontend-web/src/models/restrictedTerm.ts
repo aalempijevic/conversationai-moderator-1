@@ -1,6 +1,6 @@
-import { Record } from 'immutable';
-import { TypedRecord } from 'typed-immutable-record';
-import { ModelId } from './common';
+// import { Record } from 'immutable';
+import { TypedRecord } from "typed-immutable-record";
+import { ModelId } from "./common";
 
 export interface IRestrictedTermAttributes {
   id: ModelId;
@@ -9,14 +9,20 @@ export interface IRestrictedTermAttributes {
   score: number;
 }
 
-export interface IRestrictedTermModel extends TypedRecord<IRestrictedTermModel>, IRestrictedTermAttributes {};
+// Unsure if needed.
+export interface IRestrictedTermModel extends TypedRecord<IRestrictedTermModel>, IRestrictedTermAttributes {}
 
-const RestrictedTermModelRecord = Record({
-  id: null,
-  term: null,
-  score: null,
-});
+// I do not think the code below is needed.
+// Mimicked other settings types at first.
+// Restricted terms api endpoints are so different from the other settings.
 
-export function RestrictedTermModel(keyValuePairs?:IRestrictedTermAttributes): IRestrictedTermModel {
-  return new RestrictedTermModelRecord(keyValuePairs) as IRestrictedTermModel;
-}
+// const RestrictedTermModelRecord = Record({
+//   id: null,
+//   term: null,
+//   score: null,
+// });
+
+// // I do not think this will be needed since the restricted terms api endpoints are so different from the other settings
+// export function RestrictedTermModel(keyValuePairs?:IRestrictedTermAttributes): IRestrictedTermModel {
+//   return new RestrictedTermModelRecord(keyValuePairs) as IRestrictedTermModel;
+// }

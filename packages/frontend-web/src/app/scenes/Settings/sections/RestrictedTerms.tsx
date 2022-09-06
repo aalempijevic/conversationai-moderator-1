@@ -16,6 +16,7 @@ const TEMP_KEYWORDS = ["dog", "basketball", "soccer", "carrot", "lamp", "tree", 
 export class RestrictedTerms extends Component<ISectionProps> {
   componentDidMount() {
     async function getTerms() {
+      // get rid of Try/Catch when done with dev
       try {
         const terms = await globalRestrictedTerms.get();
         console.log("terms recieved", terms);
