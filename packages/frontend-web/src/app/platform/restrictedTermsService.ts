@@ -1,8 +1,7 @@
 import axios from "axios";
-import { List } from "immutable";
 
 import { serviceURL } from "./dataService";
-import { IRestrictedTermModel, RestrictedTermModel } from "../../models";
+import { IRestrictedTermModel } from "../../models";
 
 const RESTRICTED_TERMS_URL = serviceURL("simple", "/restrictedTerms");
 
@@ -13,14 +12,27 @@ export async function getRestrictedTerms(): Promise<Array<IRestrictedTermModel>>
 }
 
 // /services/simple/restrictedTerms
-export async function addRestrictedTerm() {}
+export async function addRestrictedTerm(newTerm: IRestrictedTermModel) {
+  const response: any = await axios.post(RESTRICTED_TERMS_URL, newTerm);
+  return response.data;
+}
 
 // /services/simple/restrictedTerms
-export async function updateRestrictedTerm() {}
+export async function updateRestrictedTerm(updatedTerm: IRestrictedTermModel) {
+  const response: any = await axios.put(RESTRICTED_TERMS_URL, updatedTerm);
+  return response.data;
+}
 
 // /services/simple/restrictedTerms/{termId}
-export async function deleteRestrictedTerm() {}
+export async function deleteRestrictedTerm(termId: string) {
+  const deleteTermUrl = serviceURL("simple", `/restrictedTerms/${termId}`);
+  const response: any = await axios.delete(deleteTermUrl);
+  return response.data;
+}
 
 export const globalRestrictedTerms = {
   get: getRestrictedTerms,
+  add: addRestrictedTerm,
+  update: updateRestrictedTerm,
+  delete: deleteRestrictedTerm,
 };
