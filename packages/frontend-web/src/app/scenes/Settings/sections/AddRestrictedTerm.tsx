@@ -3,6 +3,12 @@ import { autobind } from "core-decorators";
 
 import { globalRestrictedTerms } from "../../../platform/restrictedTermsService";
 
+export enum RestrictedTermLevels {
+  warn = "0.1",
+  defer = "0.5",
+  reject = "0.9",
+}
+
 export interface IRestrictedTermsState {
   newTerm: string;
   newTermScore: string;
@@ -10,7 +16,7 @@ export interface IRestrictedTermsState {
 
 export class AddRestrictedTerm extends Component<{}, IRestrictedTermsState> {
   state = {
-    newTermScore: "0.1",
+    newTermScore: RestrictedTermLevels.warn,
     newTerm: "",
   };
 
@@ -44,9 +50,9 @@ export class AddRestrictedTerm extends Component<{}, IRestrictedTermsState> {
           onChange={this.handleNewTermScoreChange}
           value={this.state.newTermScore}
         >
-          <option value="0.1">Warn</option>
-          <option value="0.5">Defer</option>
-          <option value="0.9">Reject</option>
+          <option value={RestrictedTermLevels.warn}>Warn</option>
+          <option value={RestrictedTermLevels.defer}>Defer</option>
+          <option value={RestrictedTermLevels.reject}>Reject</option>
         </select>
         <button onClick={this.handleAddNewTerm}>add</button>
         <div>Add Error Messages</div>
