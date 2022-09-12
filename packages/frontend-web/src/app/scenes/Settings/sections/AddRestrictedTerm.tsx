@@ -15,7 +15,7 @@ export class AddRestrictedTerm extends Component<{}, IRestrictedTermsState> {
   };
 
   @autobind
-  handleNewTermLevelChange(e: ChangeEvent<HTMLInputElement>) {
+  handleNewTermLevelChange(e: ChangeEvent<HTMLSelectElement>) {
     console.log(e.target.value);
     this.setState({ newTermLevel: e.target.value });
   }
@@ -41,34 +41,16 @@ export class AddRestrictedTerm extends Component<{}, IRestrictedTermsState> {
       <div>
         <label htmlFor="new-restricted-term">New Restricted Term</label>
         <input type="text" id="new-restricted-term" value={this.state.newTerm} onChange={this.handleNewTermChange} />
-
-        <div onChange={this.handleNewTermLevelChange}>
-          <input
-            type="radio"
-            id="new-restricted-term-warn"
-            name="new-restricted-term-level"
-            value="warn"
-            checked={this.state.newTermLevel === "warn"}
-          />
-          <label htmlFor="new-restricted-term-warn">Warn</label>
-
-          <input
-            type="radio"
-            id="new-restricted-term-defer"
-            name="new-restricted-term-level"
-            value="defer"
-            checked={this.state.newTermLevel === "defer"}
-          />
-          <label htmlFor="new-restricted-term-defer">Defer</label>
-          <input
-            type="radio"
-            id="new-restricted-term-reject"
-            name="new-restricted-term-level"
-            value="reject"
-            checked={this.state.newTermLevel === "reject"}
-          />
-          <label htmlFor="new-restricted-term-reject">Reject</label>
-        </div>
+        <label htmlFor="new-restricted-term-level">Select Level:</label>
+        <select
+          name="new-restricted-term-level"
+          onChange={this.handleNewTermLevelChange}
+          value={this.state.newTermLevel}
+        >
+          <option value="warn">Warn</option>
+          <option value="defer">Defer</option>
+          <option value="reject">Reject</option>
+        </select>
         <button onClick={this.handleAddNewTerm}>add</button>
       </div>
     );
