@@ -37,6 +37,17 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
       console.log("error getting terms", err);
     }
   }
+
+  @autobind
+  async deleteTerm(termId: string) {
+    try {
+      const response = await globalRestrictedTerms.delete(termId);
+      console.log("delete response", response);
+    } catch (err) {
+      console.log("error occurred deleting a term", err);
+    }
+  }
+
   componentDidMount() {
     this.getTerms();
   }
@@ -68,7 +79,7 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
                 </tr>
               </thead>
               <tbody>
-                {this.state.terms.map(({ term, score }) => (
+                {this.state.terms.map(({ id, term, score }) => (
                   <tr key={`banned-term-${term}`} {...css(SETTINGS_STYLES.userTableCell)}>
                     <td {...css(SETTINGS_STYLES.userTableCell)}>{term}</td>
                     <td {...css(SETTINGS_STYLES.userTableCell)}>
@@ -83,7 +94,7 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
                       </select>
                     </td>
                     <td {...css(SETTINGS_STYLES.userTableCell)}>
-                      <input type="button" value="delete" />
+                      <button onClick={() => this.deleteTerm(id)}>Delete</button>
                     </td>
                   </tr>
                 ))}
