@@ -1,12 +1,12 @@
 import { Component } from "react";
 
-import AddRestrictedTerm from "./AddRestrictedTerm";
+import AddRestrictedTerm, { RestrictedTermLevels } from "./AddRestrictedTerm";
 
 import { globalRestrictedTerms } from "../../../platform/restrictedTermsService";
-// import { IRestrictedTermModel } from "../../../../models";
 
 import { css } from "../../../utilx";
 import { SETTINGS_STYLES } from "../settingsStyles";
+import { autobind } from "core-decorators";
 
 export interface ISectionProps {
   styles: any;
@@ -14,25 +14,31 @@ export interface ISectionProps {
   setSettingsState: any;
 }
 
-export interface IRestrictedTermsState {}
-
-const TEMP_TERMS = ["dog", "basketball", "soccer", "carrot", "lamp", "tree", "continent"];
-
-async function getTerms() {
-  // get rid of Try/Catch when done with dev
-  try {
-    const terms = await globalRestrictedTerms.get();
-    console.log("terms recieved", terms);
-  } catch (err) {
-    console.log("error getting terms", err);
-  }
+export interface IRestrictedTermsState {
+  // terms: Array<IRestrictedTermAttributes |>
+  terms: any;
 }
 
-export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsState> {
-  state = {};
+// const TEMP_TERMS = ["dog", "basketball", "soccer", "carrot", "lamp", "tree", "continent"];
 
+export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsState> {
+  state = {
+    terms: [],
+  };
+
+  @autobind
+  async getTerms() {
+    // get rid of Try/Catch when done with dev
+    try {
+      const terms = await globalRestrictedTerms.get();
+      console.log("terms recieved", terms);
+      this.setState({ terms: terms });
+    } catch (err) {
+      console.log("error getting terms", err);
+    }
+  }
   componentDidMount() {
-    getTerms();
+    this.getTerms();
   }
 
   render() {
@@ -62,16 +68,19 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
                 </tr>
               </thead>
               <tbody>
-                {TEMP_TERMS.map((term) => (
+                {this.state.terms.map(({ term, score }) => (
                   <tr key={`banned-term-${term}`} {...css(SETTINGS_STYLES.userTableCell)}>
                     <td {...css(SETTINGS_STYLES.userTableCell)}>{term}</td>
                     <td {...css(SETTINGS_STYLES.userTableCell)}>
-                      <input type="radio" id={`${term}-reject`} name={`term-${term}-level`} value="reject" />
-                      <label htmlFor={`${term}-reject`}>Reject</label>
-                      <input type="radio" id={`${term}-defer`} name={`term-${term}-level`} value="defer" />
-                      <label htmlFor={`${term}-reject`}>Defer</label>
-                      <input type="radio" id={`${term}-warn`} name={`term-${term}-level`} value="warn" />
-                      <label htmlFor={`${term}-reject`}>Warn</label>
+                      <select
+                        name="new-restricted-term-score"
+                        // onChange={this.handleNewTermScoreChange}
+                        value={score}
+                      >
+                        <option value={RestrictedTermLevels.warn}>Warn</option>
+                        <option value={RestrictedTermLevels.defer}>Defer</option>
+                        <option value={RestrictedTermLevels.reject}>Reject</option>
+                      </select>
                     </td>
                     <td {...css(SETTINGS_STYLES.userTableCell)}>
                       <input type="button" value="delete" />
