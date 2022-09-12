@@ -10,7 +10,7 @@ export interface IRestrictedTermsState {
 
 export class AddRestrictedTerm extends Component<{}, IRestrictedTermsState> {
   state = {
-    newTermScore: "warn",
+    newTermScore: "0.1",
     newTerm: "",
   };
 
@@ -27,13 +27,10 @@ export class AddRestrictedTerm extends Component<{}, IRestrictedTermsState> {
 
   @autobind
   async handleAddNewTerm() {
-    console.log("add occurred");
     await globalRestrictedTerms.add({
       term: this.state.newTerm,
-      level: this.state.newTermScore,
+      score: parseFloat(this.state.newTermScore),
     });
-    const response = await globalRestrictedTerms.get();
-    console.log(response);
   }
 
   render() {
@@ -47,11 +44,12 @@ export class AddRestrictedTerm extends Component<{}, IRestrictedTermsState> {
           onChange={this.handleNewTermScoreChange}
           value={this.state.newTermScore}
         >
-          <option value="warn">Warn</option>
-          <option value="defer">Defer</option>
-          <option value="reject">Reject</option>
+          <option value="0.1">Warn</option>
+          <option value="0.5">Defer</option>
+          <option value="0.9">Reject</option>
         </select>
         <button onClick={this.handleAddNewTerm}>add</button>
+        <div>Add Error Messages</div>
       </div>
     );
   }
