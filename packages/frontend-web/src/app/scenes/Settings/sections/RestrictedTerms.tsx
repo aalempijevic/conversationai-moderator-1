@@ -1,6 +1,9 @@
 import { Component } from "react";
 
-import { getRestrictedTerms, globalRestrictedTerms } from "../../../platform/restrictedTermsService";
+import AddRestrictedTerm from "./AddRestrictedTerm";
+
+import { globalRestrictedTerms } from "../../../platform/restrictedTermsService";
+// import { IRestrictedTermModel } from "../../../../models";
 
 import { css } from "../../../utilx";
 import { SETTINGS_STYLES } from "../settingsStyles";
@@ -11,19 +14,24 @@ export interface ISectionProps {
   setSettingsState: any;
 }
 
+export interface IRestrictedTermsState {}
+
 const TEMP_KEYWORDS = ["dog", "basketball", "soccer", "carrot", "lamp", "tree", "continent"];
 
-export class RestrictedTerms extends Component<ISectionProps> {
+async function getTerms() {
+  // get rid of Try/Catch when done with dev
+  try {
+    const terms = await globalRestrictedTerms.get();
+    console.log("terms recieved", terms);
+  } catch (err) {
+    console.log("error getting terms", err);
+  }
+}
+
+export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsState> {
+  state = {};
+
   componentDidMount() {
-    async function getTerms() {
-      // get rid of Try/Catch when done with dev
-      try {
-        const terms = await globalRestrictedTerms.get();
-        console.log("terms recieved", terms);
-      } catch (err) {
-        console.log("error getting terms", err);
-      }
-    }
     getTerms();
   }
 
@@ -73,11 +81,7 @@ export class RestrictedTerms extends Component<ISectionProps> {
               </tbody>
             </table>
           </div>
-          <div>
-            <label htmlFor="new-keyword">New Keyword</label>
-            <input type="text" id="new-keyword" />
-            <input type="button" value="add" />
-          </div>
+          <AddRestrictedTerm />
         </div>
       </div>
     );
