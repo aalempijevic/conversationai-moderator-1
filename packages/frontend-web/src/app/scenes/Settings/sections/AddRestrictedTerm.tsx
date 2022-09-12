@@ -22,7 +22,6 @@ export class AddRestrictedTerm extends Component<{}, IRestrictedTermsState> {
 
   @autobind
   handleNewTermScoreChange(e: ChangeEvent<HTMLSelectElement>) {
-    console.log(e.target.value);
     this.setState({ newTermScore: e.target.value });
   }
 
