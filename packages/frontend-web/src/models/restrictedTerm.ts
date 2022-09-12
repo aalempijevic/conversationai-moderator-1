@@ -22,7 +22,6 @@ export interface IRestrictedTermModel extends TypedRecord<IRestrictedTermModel>,
 //   score: null,
 // });
 
-// // I do not think this will be needed since the restricted terms api endpoints are so different from the other settings
 // export function RestrictedTermModel(keyValuePairs?:IRestrictedTermAttributes): IRestrictedTermModel {
 //   return new RestrictedTermModelRecord(keyValuePairs) as IRestrictedTermModel;
 // }

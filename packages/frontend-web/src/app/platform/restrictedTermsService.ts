@@ -12,7 +12,7 @@ export async function getRestrictedTerms(): Promise<Array<IRestrictedTermModel>>
 }
 
 // /services/simple/restrictedTerms
-export async function addRestrictedTerm(newTerm: IRestrictedTermModel) {
+export async function addRestrictedTerm(newTerm: any) {
   const response: any = await axios.post(RESTRICTED_TERMS_URL, newTerm);
   return response.data;
 }
