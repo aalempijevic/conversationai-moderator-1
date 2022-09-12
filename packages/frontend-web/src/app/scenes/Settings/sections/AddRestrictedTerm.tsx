@@ -5,19 +5,19 @@ import { globalRestrictedTerms } from "../../../platform/restrictedTermsService"
 
 export interface IRestrictedTermsState {
   newTerm: string;
-  newTermLevel: string;
+  newTermScore: string;
 }
 
 export class AddRestrictedTerm extends Component<{}, IRestrictedTermsState> {
   state = {
-    newTermLevel: "warn",
+    newTermScore: "warn",
     newTerm: "",
   };
 
   @autobind
-  handleNewTermLevelChange(e: ChangeEvent<HTMLSelectElement>) {
+  handleNewTermScoreChange(e: ChangeEvent<HTMLSelectElement>) {
     console.log(e.target.value);
-    this.setState({ newTermLevel: e.target.value });
+    this.setState({ newTermScore: e.target.value });
   }
 
   @autobind
@@ -30,7 +30,7 @@ export class AddRestrictedTerm extends Component<{}, IRestrictedTermsState> {
     console.log("add occurred");
     await globalRestrictedTerms.add({
       term: this.state.newTerm,
-      level: this.state.newTermLevel,
+      level: this.state.newTermScore,
     });
     const response = await globalRestrictedTerms.get();
     console.log(response);
@@ -41,11 +41,11 @@ export class AddRestrictedTerm extends Component<{}, IRestrictedTermsState> {
       <div>
         <label htmlFor="new-restricted-term">New Restricted Term</label>
         <input type="text" id="new-restricted-term" value={this.state.newTerm} onChange={this.handleNewTermChange} />
-        <label htmlFor="new-restricted-term-level">Select Level:</label>
+        <label htmlFor="new-restricted-term-score">Select Score: </label>
         <select
-          name="new-restricted-term-level"
-          onChange={this.handleNewTermLevelChange}
-          value={this.state.newTermLevel}
+          name="new-restricted-term-score"
+          onChange={this.handleNewTermScoreChange}
+          value={this.state.newTermScore}
         >
           <option value="warn">Warn</option>
           <option value="defer">Defer</option>
