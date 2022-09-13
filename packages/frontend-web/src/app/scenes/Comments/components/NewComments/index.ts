@@ -183,7 +183,7 @@ const mapStateToProps = createStructuredSelector({
   articleRules: (state: IAppStateRecord, { params }: INewCommentsProps) => {
     if (params.articleId) {
       let article = getArticle(state, params.articleId);
-      return  List<IRuleModel>(article.moderationRules)
+      return  List<IRuleModel>(article.moderationRules);
     }
   },
   
