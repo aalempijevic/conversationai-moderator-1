@@ -14,12 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Set } from 'immutable';
+import { Set, List } from 'immutable';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { ICommentModel } from '../../../../../models';
+import { ICommentModel, IRuleModel } from '../../../../../models';
 import { ICommentAction } from '../../../../../types';
 import { IAppDispatch, IAppStateRecord } from '../../../../stores';
 import { getArticle } from '../../../../stores/articles';
@@ -179,6 +179,14 @@ const mapStateToProps = createStructuredSelector({
   },
 
   rules: getRules,
+
+  articleRules: (state: IAppStateRecord, { params }: INewCommentsProps) => {
+    if (params.articleId) {
+      let article = getArticle(state, params.articleId);
+      return  List<IRuleModel>(article.moderationRules)
+    }
+  },
+  
 
   getLinkTarget: (state: IAppStateRecord, { params }: any) => {
     const identifier = getCurrentPagingIdentifier(state);
