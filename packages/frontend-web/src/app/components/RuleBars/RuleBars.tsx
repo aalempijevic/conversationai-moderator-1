@@ -94,7 +94,7 @@ export class RuleBars extends React.Component<IRuleBarsProps> {
       articleRules
     } = this.props;
 
-    const activeRules = articleRules && articleRules.size > 0 ? articleRules : rules
+    const activeRules = articleRules && articleRules.size > 0 ? articleRules : rules;
     const rulesToDisplay = activeRules && differentiateRules(activeRules);
 
     return (
