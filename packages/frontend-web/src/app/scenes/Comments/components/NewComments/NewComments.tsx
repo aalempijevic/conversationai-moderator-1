@@ -672,7 +672,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       tagSelectorLink(categoryBase, this.props.params.categoryId, selectedTag && selectedTag.id);
 
     const rules = selectedTag && selectedTag.key !== 'DATE' && rulesInCategory && List<IRuleModel>(rulesInCategory.filter( r => r.tagId && r.tagId == selectedTag.id));
-    const articleRulesForTag = selectedTag && selectedTag.key !== 'DATE' && List<IRuleModel>(articleRules.filter( r => r.tagId && r.tagId == selectedTag.id));
+    const articleRulesForTag = selectedTag && selectedTag.key !== 'DATE' && articleRules && List<IRuleModel>(articleRules.filter( r => r.tagId && r.tagId == selectedTag.id));
 
     const disableAllButtons = areNoneSelected || commentScores.size <= 0;
     const groupBy = (selectedTag && selectedTag.key === 'DATE') ? 'date' : 'score';
