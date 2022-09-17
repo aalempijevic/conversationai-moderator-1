@@ -1,5 +1,8 @@
 import { Component, ChangeEvent } from "react";
 import { autobind } from "core-decorators";
+import { css } from "../../../utilx";
+import { STYLES } from "../../Settings/components/RuleRow/RuleRow";
+import { SETTINGS_STYLES } from "../settingsStyles";
 
 import { globalRestrictedTerms } from "../../../platform/restrictedTermsService";
 
@@ -52,9 +55,16 @@ export class AddRestrictedTerm extends Component<IAddRestrictedTermProps, IRestr
     return (
       <div>
         <label htmlFor="new-restricted-term">New Restricted Term</label>
-        <input type="text" id="new-restricted-term" value={this.state.newTerm} onChange={this.handleNewTermChange} />
+        <input
+          {...css(SETTINGS_STYLES.input)}
+          type="text"
+          id="new-restricted-term"
+          value={this.state.newTerm}
+          onChange={this.handleNewTermChange}
+        />
         <label htmlFor="new-restricted-term-score">Select Score: </label>
         <select
+          {...css({ ...SETTINGS_STYLES.selectBox, width: "90px" })}
           name="new-restricted-term-score"
           onChange={this.handleNewTermScoreChange}
           value={this.state.newTermScore}

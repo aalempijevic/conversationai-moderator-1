@@ -99,9 +99,10 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
               <tbody>
                 {this.state.terms.map((term) => (
                   <tr key={`banned-term-${term.term}`} {...css(SETTINGS_STYLES.userTableCell)}>
-                    <td {...css(SETTINGS_STYLES.userTableCell)}>{term.term}</td>
+                    <td {...css(SETTINGS_STYLES.userTableCell, SETTINGS_STYLES.label)}>{term.term}</td>
                     <td {...css(SETTINGS_STYLES.userTableCell)}>
                       <select
+                        {...css({ ...SETTINGS_STYLES.selectBox, width: "90px" })}
                         name="new-restricted-term-score"
                         onChange={(event) => this.updateTermScore(event, term)}
                         value={term.score}
@@ -112,7 +113,9 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
                       </select>
                     </td>
                     <td {...css(SETTINGS_STYLES.userTableCell)}>
-                      <button onClick={() => this.deleteTerm(term.id)}>Delete</button>
+                      <button {...css(SETTINGS_STYLES.deleteButton)} onClick={() => this.deleteTerm(term.id)}>
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 ))}
