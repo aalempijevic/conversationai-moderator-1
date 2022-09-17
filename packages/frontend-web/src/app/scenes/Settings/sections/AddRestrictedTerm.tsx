@@ -9,12 +9,16 @@ export enum RestrictedTermLevels {
   reject = "0.9",
 }
 
+export interface IAddRestrictedTermProps {
+  getTerms: () => Promise<void>;
+}
+
 export interface IRestrictedTermsState {
   newTerm: string;
   newTermScore: string;
 }
 
-export class AddRestrictedTerm extends Component<{}, IRestrictedTermsState> {
+export class AddRestrictedTerm extends Component<IAddRestrictedTermProps, IRestrictedTermsState> {
   state = {
     newTermScore: RestrictedTermLevels.warn,
     newTerm: "",
@@ -32,10 +36,16 @@ export class AddRestrictedTerm extends Component<{}, IRestrictedTermsState> {
 
   @autobind
   async handleAddNewTerm() {
-    await globalRestrictedTerms.add({
-      term: this.state.newTerm,
-      score: parseFloat(this.state.newTermScore),
-    });
+    try {
+      await globalRestrictedTerms.add({
+        term: this.state.newTerm,
+        score: parseFloat(this.state.newTermScore),
+      });
+    } catch (error) {
+      console.log("error occurred trying to add a new term", error);
+    }
+    await this.props.getTerms();
+    console.log("After handle new term has an error");
   }
 
   render() {

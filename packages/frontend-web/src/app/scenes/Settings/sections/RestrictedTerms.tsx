@@ -44,6 +44,7 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
     try {
       const response = await globalRestrictedTerms.delete(termId);
       console.log("delete response", response);
+      await this.getTerms();
     } catch (err) {
       console.log("error occurred deleting a term", err);
     }
@@ -118,7 +119,7 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
               </tbody>
             </table>
           </div>
-          <AddRestrictedTerm />
+          <AddRestrictedTerm getTerms={this.getTerms} />
         </div>
       </div>
     );
