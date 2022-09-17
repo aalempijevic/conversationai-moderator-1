@@ -1,8 +1,9 @@
-import { Component } from "react";
+import { ChangeEvent, Component } from "react";
 
 import AddRestrictedTerm, { RestrictedTermLevels } from "./AddRestrictedTerm";
 
 import { globalRestrictedTerms } from "../../../platform/restrictedTermsService";
+import { IRestrictedTermAttributes } from "../../../../models";
 
 import { css } from "../../../utilx";
 import { SETTINGS_STYLES } from "../settingsStyles";
@@ -48,6 +49,22 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
     }
   }
 
+  @autobind
+  async updateTermScore(event: ChangeEvent<HTMLSelectElement>, term: IRestrictedTermAttributes) {
+    const updatedTerm = {
+      ...term,
+      id: parseInt(term.id, 10),
+      score: parseFloat(event.target.value),
+    };
+    console.log("updated term", updatedTerm);
+    try {
+      const response = await globalRestrictedTerms.update(updatedTerm);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   componentDidMount() {
     this.getTerms();
   }
@@ -79,14 +96,14 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
                 </tr>
               </thead>
               <tbody>
-                {this.state.terms.map(({ id, term, score }) => (
-                  <tr key={`banned-term-${term}`} {...css(SETTINGS_STYLES.userTableCell)}>
-                    <td {...css(SETTINGS_STYLES.userTableCell)}>{term}</td>
+                {this.state.terms.map((term) => (
+                  <tr key={`banned-term-${term.term}`} {...css(SETTINGS_STYLES.userTableCell)}>
+                    <td {...css(SETTINGS_STYLES.userTableCell)}>{term.term}</td>
                     <td {...css(SETTINGS_STYLES.userTableCell)}>
                       <select
                         name="new-restricted-term-score"
-                        // onChange={this.handleNewTermScoreChange}
-                        value={score}
+                        onChange={(event) => this.updateTermScore(event, term)}
+                        value={term.score}
                       >
                         <option value={RestrictedTermLevels.warn}>Warn</option>
                         <option value={RestrictedTermLevels.defer}>Defer</option>
@@ -94,7 +111,7 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
                       </select>
                     </td>
                     <td {...css(SETTINGS_STYLES.userTableCell)}>
-                      <button onClick={() => this.deleteTerm(id)}>Delete</button>
+                      <button onClick={() => this.deleteTerm(term.id)}>Delete</button>
                     </td>
                   </tr>
                 ))}

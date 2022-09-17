@@ -1,7 +1,7 @@
 import axios from "axios";
 
 import { serviceURL } from "./dataService";
-import { IRestrictedTermModel } from "../../models";
+import { IRestrictedTermModel, IRestrictedTermAttributes } from "../../models";
 
 const RESTRICTED_TERMS_URL = serviceURL("simple", "/restrictedTerms");
 
@@ -18,7 +18,9 @@ export async function addRestrictedTerm(newTerm: any) {
 }
 
 // /services/simple/restrictedTerms
-export async function updateRestrictedTerm(updatedTerm: IRestrictedTermModel) {
+// Currently using type any while trying to figure out what the backend wants
+export async function updateRestrictedTerm(updatedTerm: any) {
+  console.log("updated term being sent", updatedTerm);
   const response: any = await axios.put(RESTRICTED_TERMS_URL, updatedTerm);
   return response.data;
 }
