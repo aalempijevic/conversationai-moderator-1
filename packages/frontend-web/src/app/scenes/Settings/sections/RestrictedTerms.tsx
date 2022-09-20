@@ -1,6 +1,7 @@
 import { ChangeEvent, Component } from "react";
 
 import AddRestrictedTerm, { RestrictedTermLevels } from "./AddRestrictedTerm";
+import { AddButton } from "../components/AddButton";
 
 import { globalRestrictedTerms } from "../../../platform/restrictedTermsService";
 import { IRestrictedTermAttributes } from "../../../../models";
@@ -18,6 +19,8 @@ export interface ISectionProps {
 export interface IRestrictedTermsState {
   // terms: Array<IRestrictedTermAttributes |>
   terms: any;
+  displayAddTerm: boolean;
+  disableMenu: boolean;
 }
 
 // const TEMP_TERMS = ["dog", "basketball", "soccer", "carrot", "lamp", "tree", "continent"];
@@ -25,7 +28,14 @@ export interface IRestrictedTermsState {
 export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsState> {
   state = {
     terms: [],
+    displayAddTerm: false,
+    disableMenu: false,
   };
+
+  @autobind
+  toggleDisableMenu() {
+    this.setState({ disableMenu: !this.state.disableMenu });
+  }
 
   @autobind
   async getTerms() {
@@ -42,28 +52,36 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
   @autobind
   async deleteTerm(termId: string) {
     try {
+      this.toggleDisableMenu();
       const response = await globalRestrictedTerms.delete(termId);
       console.log("delete response", response);
       await this.getTerms();
     } catch (err) {
       console.log("error occurred deleting a term", err);
     }
+    this.toggleDisableMenu();
   }
 
   @autobind
   async updateTermScore(event: ChangeEvent<HTMLSelectElement>, term: IRestrictedTermAttributes) {
+    this.toggleDisableMenu();
     const updatedTerm = {
       ...term,
       id: parseInt(term.id, 10),
       score: parseFloat(event.target.value),
     };
-    console.log("updated term", updatedTerm);
     try {
-      const response = await globalRestrictedTerms.update(updatedTerm);
-      console.log(response);
+      await globalRestrictedTerms.update(updatedTerm);
+      this.getTerms();
     } catch (error) {
-      console.log(error);
+      console.log("error occurred updating a term", error);
     }
+    this.toggleDisableMenu();
+  }
+
+  @autobind
+  toggleDisplayAddTerm() {
+    this.setState({ displayAddTerm: !this.state.displayAddTerm });
   }
 
   componentDidMount() {
@@ -74,7 +92,8 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
     const { styles } = this.props;
 
     return (
-      <div key="restrictedTermsSection">
+      // Almost more jaring with the menu disabled. Not sure what is best to do.
+      <div key="restrictedTermsSection" {...css(this.state.disableMenu && SETTINGS_STYLES.disableMenu)}>
         <div key="heading" {...css(styles.heading)}>
           <h2 {...css(styles.headingText)}>Restricted Terms</h2>
         </div>
@@ -98,7 +117,7 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
               </thead>
               <tbody>
                 {this.state.terms.map((term) => (
-                  <tr key={`banned-term-${term.term}`} {...css(SETTINGS_STYLES.userTableCell)}>
+                  <tr {...css(SETTINGS_STYLES.userTableCell)} key={`banned-term-${term.id}`}>
                     <td {...css(SETTINGS_STYLES.userTableCell, SETTINGS_STYLES.label)}>{term.term}</td>
                     <td {...css(SETTINGS_STYLES.userTableCell)}>
                       <select
@@ -122,7 +141,11 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
               </tbody>
             </table>
           </div>
-          <AddRestrictedTerm getTerms={this.getTerms} />
+          {this.state.displayAddTerm ? (
+            <AddRestrictedTerm getTerms={this.getTerms} toggleDisplayAddTerm={this.toggleDisplayAddTerm} />
+          ) : (
+            <AddButton width={44} label="add new term" onClick={() => this.toggleDisplayAddTerm()} />
+          )}
         </div>
       </div>
     );

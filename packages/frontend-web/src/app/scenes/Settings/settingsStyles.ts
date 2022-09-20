@@ -23,6 +23,10 @@ import {
   INPUT_DROP_SHADOW,
   MEDIUM_COLOR,
   PALE_COLOR,
+  WHITE_COLOR,
+  DARK_COLOR,
+  DARK_PRIMARY_TEXT_COLOR,
+  DIVIDER_COLOR,
 } from "../../styles";
 
 const ARROW_SIZE = 6;
@@ -125,5 +129,35 @@ export const SETTINGS_STYLES = {
   userTableCell: {
     textAlign: "left",
     padding: "5px 30px",
+  },
+
+  buttonGroup: {
+    display: "flex",
+    flexDirection: "row",
+    backgroundColor: WHITE_COLOR,
+    padding: `${GUTTER_DEFAULT_SPACING}px`,
+  },
+  cancel: {
+    margin: "0 4px",
+    backgroundColor: WHITE_COLOR,
+    color: DARK_PRIMARY_TEXT_COLOR,
+    border: `1px solid ${DIVIDER_COLOR}`,
+    marginRight: `${GUTTER_DEFAULT_SPACING}px`,
+    ":focus": {
+      backgroundColor: PALE_COLOR,
+    },
+  },
+  save: {
+    margin: "0 4px",
+    backgroundColor: MEDIUM_COLOR,
+    color: WHITE_COLOR,
+    ":focus": {
+      backgroundColor: DARK_COLOR,
+    },
+  },
+  disableMenu: {
+    opacity: "20%",
+    pointerEvents: "none",
+    transition: "opacity 0.5s",
   },
 };
