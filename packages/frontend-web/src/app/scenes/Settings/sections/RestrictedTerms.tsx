@@ -67,7 +67,6 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
     this.toggleDisableMenu();
     const updatedTerm = {
       ...term,
-      id: parseInt(term.id, 10),
       score: parseFloat(event.target.value),
     };
     try {
