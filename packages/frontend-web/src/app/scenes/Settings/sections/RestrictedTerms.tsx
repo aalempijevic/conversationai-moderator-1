@@ -23,8 +23,6 @@ export interface IRestrictedTermsState {
   disableMenu: boolean;
 }
 
-// const TEMP_TERMS = ["dog", "basketball", "soccer", "carrot", "lamp", "tree", "continent"];
-
 export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsState> {
   state = {
     terms: [],
@@ -42,7 +40,6 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
     // get rid of Try/Catch when done with dev
     try {
       const terms = await globalRestrictedTerms.get();
-      console.log("terms recieved", terms);
       this.setState({ terms: terms });
     } catch (err) {
       console.log("error getting terms", err);
@@ -53,8 +50,7 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
   async deleteTerm(termId: string) {
     try {
       this.toggleDisableMenu();
-      const response = await globalRestrictedTerms.delete(termId);
-      console.log("delete response", response);
+      await globalRestrictedTerms.delete(termId);
       await this.getTerms();
     } catch (err) {
       console.log("error occurred deleting a term", err);
