@@ -7,19 +7,8 @@ import { ClickAwayListener, DialogTitle, Switch } from "@material-ui/core";
 import { IArticleControlIconState } from "./ArticleControls";
 import { ControlFlag } from "../ControlFlag";
 
-import {
-  IArticleModel,
-  IRuleModel,
-  IServerAction,
-  ITagModel,
-  RuleModel,
-  SERVER_ACTION_ACCEPT,
-} from "../../../models";
-import {
-  GUTTER_DEFAULT_SPACING,
-  NICE_CONTROL_BLUE,
-  SCRIM_STYLE,
-} from "../../styles";
+import { IArticleModel, IRuleModel, IServerAction, ITagModel, RuleModel, SERVER_ACTION_ACCEPT } from "../../../models";
+import { GUTTER_DEFAULT_SPACING, NICE_CONTROL_BLUE, SCRIM_STYLE } from "../../styles";
 import { css } from "../../utilx";
 import { ArticleRuleRow } from "../../scenes/Settings/components/ArticleRuleRow";
 import { partial } from "../../util";
@@ -76,11 +65,7 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
   }
 
   @autobind
-  handleAutomatedRuleChange(
-    attribute: string,
-    rule: IRuleModel,
-    value: number | string
-  ) {
+  handleAutomatedRuleChange(attribute: string, rule: IRuleModel, value: number | string) {
     let updatedRules = [...this.props.controlState.moderationRules];
     let idx = updatedRules.findIndex((r) => r.equals(rule));
     updatedRules[idx] = updatedRules[idx].set(attribute, value);
@@ -131,11 +116,7 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
 
   @autobind
   isModerationRuleEditingEnabled() {
-    return (
-      this.props.controlState.isCommentingEnabled &&
-      this.props.controlState.isAutoModerated &&
-      this.props.isAdmin
-    );
+    return this.props.controlState.isCommentingEnabled && this.props.controlState.isAutoModerated && this.props.isAdmin;
   }
 
   render() {
@@ -155,51 +136,28 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
             <tbody>
               <tr key="comments" onClick={this.handleCommentingEnabledClicked}>
                 <td key="icon">
-                  <ControlFlag
-                    isCommentingEnabled={
-                      this.props.controlState.isCommentingEnabled
-                    }
-                  />
+                  <ControlFlag isCommentingEnabled={this.props.controlState.isCommentingEnabled} />
                 </td>
-                <td
-                  key="text"
-                  {...css({ textAlign: "left", padding: "15px 4px" })}
-                >
-                  <label {...css(SCRIM_STYLE.popupContent)}>
-                    Comments Enabled
-                  </label>
+                <td key="text" {...css({ textAlign: "left", padding: "15px 4px" })}>
+                  <label {...css(SCRIM_STYLE.popupContent)}>Comments Enabled</label>
                 </td>
                 <td key="toggle" {...css({ textAlign: "right" })}>
-                  <Switch
-                    checked={this.props.controlState.isCommentingEnabled}
-                    color="primary"
-                  />
+                  <Switch checked={this.props.controlState.isCommentingEnabled} color="primary" />
                 </td>
               </tr>
               <tr
                 key="automod"
                 onClick={this.handleAutoModeratedClicked}
-                {...css(
-                  this.props.controlState.isCommentingEnabled
-                    ? {}
-                    : { opacity: 0.5 }
-                )}
+                {...css(this.props.controlState.isCommentingEnabled ? {} : { opacity: 0.5 })}
               >
                 <td key="icon">
                   <ControlFlag
-                    isCommentingEnabled={
-                      this.props.controlState.isCommentingEnabled
-                    }
+                    isCommentingEnabled={this.props.controlState.isCommentingEnabled}
                     isAutoModerated={this.props.controlState.isAutoModerated}
                   />
                 </td>
-                <td
-                  key="text"
-                  {...css({ textAlign: "left", padding: "15px 4px" })}
-                >
-                  <label {...css(SCRIM_STYLE.popupContent)}>
-                    Auto Moderation Enabled
-                  </label>
+                <td key="text" {...css({ textAlign: "left", padding: "15px 4px" })}>
+                  <label {...css(SCRIM_STYLE.popupContent)}>Auto Moderation Enabled</label>
                 </td>
                 <td key="toggle" {...css({ textAlign: "right" })}>
                   <Switch
@@ -212,28 +170,40 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
               <tr
                 key="moderationOverride"
                 onClick={this.handleModerationRulesOverride}
-                {...css(
-                  this.isModerationRuleEditingEnabled() ? {} : { opacity: 0.5 }
-                )}
+                {...css(this.isModerationRuleEditingEnabled() ? {} : { opacity: 0.5 })}
               >
                 <td key="icon">
                   <ControlFlag
-                    isCommentingEnabled={
-                      this.props.controlState.isCommentingEnabled
-                    }
-                    isModerationOverriden={
-                      this.props.controlState.isModerationOverriden
-                    }
+                    isCommentingEnabled={this.props.controlState.isCommentingEnabled}
+                    isModerationOverriden={this.props.controlState.isModerationOverriden}
                     isAutoModerated={this.props.controlState.isAutoModerated}
                   />
                 </td>
-                <td
-                  key="text"
-                  {...css({ textAlign: "left", padding: "15px 4px" })}
-                >
-                  <label {...css(SCRIM_STYLE.popupContent)}>
-                    Rules Override {!isAdmin && "(read only)"}
-                  </label>
+                <td key="text" {...css({ textAlign: "left", padding: "15px 4px" })}>
+                  <label {...css(SCRIM_STYLE.popupContent)}>Rules Override {!isAdmin && "(read only)"}</label>
+                </td>
+                <td key="toggle" {...css({ textAlign: "right" })}>
+                  <Switch
+                    checked={this.props.controlState.isModerationOverriden}
+                    color="primary"
+                    disabled={!this.isModerationRuleEditingEnabled()}
+                  />
+                </td>
+              </tr>
+              <tr
+                key="restrictedTerms"
+                onClick={this.handleModerationRulesOverride}
+                {...css(this.isModerationRuleEditingEnabled() ? {} : { opacity: 0.5 })}
+              >
+                <td key="icon">
+                  <ControlFlag
+                    isCommentingEnabled={this.props.controlState.isCommentingEnabled}
+                    isModerationOverriden={this.props.controlState.isModerationOverriden}
+                    isAutoModerated={this.props.controlState.isAutoModerated}
+                  />
+                </td>
+                <td key="text" {...css({ textAlign: "left", padding: "15px 4px" })}>
+                  <label {...css(SCRIM_STYLE.popupContent)}>Restricted Terms {!isAdmin && "(read only)"}</label>
                 </td>
                 <td key="toggle" {...css({ textAlign: "right" })}>
                   <Switch
@@ -252,21 +222,9 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
                         key={i}
                         onDelete={this.handleAutomatedRuleDelete}
                         rule={rule}
-                        onTagChange={partial(
-                          this.handleAutomatedRuleChange,
-                          "tagId",
-                          rule
-                        )}
-                        onLowerThresholdChange={partial(
-                          this.handleAutomatedRuleChange,
-                          "lowerThreshold",
-                          rule
-                        )}
-                        onUpperThresholdChange={partial(
-                          this.handleAutomatedRuleChange,
-                          "upperThreshold",
-                          rule
-                        )}
+                        onTagChange={partial(this.handleAutomatedRuleChange, "tagId", rule)}
+                        onLowerThresholdChange={partial(this.handleAutomatedRuleChange, "lowerThreshold", rule)}
+                        onUpperThresholdChange={partial(this.handleAutomatedRuleChange, "upperThreshold", rule)}
                         rangeBottom={Math.round(rule.lowerThreshold * 100)}
                         rangeTop={Math.round(rule.upperThreshold * 100)}
                         selectedTag={rule.tagId}
@@ -276,29 +234,22 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
                         tags={tags}
                       />
                     ))}
-                  {this.isModerationRuleEditingEnabled() &&
-                    this.props.controlState.isModerationOverriden && (
-                      <AddButton
-                        width={44}
-                        onClick={this.handleAddAutomatedRule}
-                        label="Add an automated rule"
-                        buttonStyles={{
-                          margin: `${GUTTER_DEFAULT_SPACING}px 0`,
-                        }}
-                      />
-                    )}
+                  {this.isModerationRuleEditingEnabled() && this.props.controlState.isModerationOverriden && (
+                    <AddButton
+                      width={44}
+                      onClick={this.handleAddAutomatedRule}
+                      label="Add an automated rule"
+                      buttonStyles={{
+                        margin: `${GUTTER_DEFAULT_SPACING}px 0`,
+                      }}
+                    />
+                  )}
                 </td>
               </tr>
             </tbody>
           </table>
-          <div
-            key="footer"
-            {...css({ textAlign: "right", margin: "35px 25px 30px 25px" })}
-          >
-            <span
-              onClick={clearPopups}
-              {...css({ marginRight: "30px", opacity: "0.5" })}
-            >
+          <div key="footer" {...css({ textAlign: "right", margin: "35px 25px 30px 25px" })}>
+            <span onClick={clearPopups} {...css({ marginRight: "30px", opacity: "0.5" })}>
               Cancel
             </span>
             <span
