@@ -30,6 +30,7 @@ import {
   ICommentModel,
   ICommentScoredModel,
   ICommentSummaryScoreModel,
+  IRuleModel,
   IUserModel,
   ModelId,
 } from '../../models';
@@ -572,9 +573,9 @@ export async function updateModel<T>(
   };
 }
 
-export async function updateArticle(id: string, isCommentingEnabled: boolean, isAutoModerated: boolean) {
+export async function updateArticle(id: string, isCommentingEnabled: boolean, isAutoModerated: boolean, moderationRules: Array<IRuleModel>) {
   const url = serviceURL('simple', `/article/update/${id}`);
-  await axios.post(url, {isCommentingEnabled, isAutoModerated});
+  await axios.post(url, {isCommentingEnabled, isAutoModerated, moderationRules});
 }
 
 /**

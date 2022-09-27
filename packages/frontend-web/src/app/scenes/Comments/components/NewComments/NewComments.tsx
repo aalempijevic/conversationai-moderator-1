@@ -272,6 +272,7 @@ export interface INewCommentsProps extends WithRouterProps {
   isItemChecked(id: string): boolean;
   tags: List<ITagModel>;
   rules?: List<IRuleModel>;
+  articleRules?: List<IRuleModel>;
   getLinkTarget(comment: ICommentModel): string;
   textSizes?: Map<number, number>;
   tagComments?(ids: Array<string>, tagId: string): any;
@@ -583,6 +584,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   render() {
     const {
       article,
+      articleRules,
       commentScores,
       textSizes,
       getLinkTarget,
@@ -670,6 +672,8 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       tagSelectorLink(categoryBase, this.props.params.categoryId, selectedTag && selectedTag.id);
 
     const rules = selectedTag && selectedTag.key !== 'DATE' && rulesInCategory && List<IRuleModel>(rulesInCategory.filter( r => r.tagId && r.tagId == selectedTag.id));
+    const articleRulesForTag = selectedTag && selectedTag.key !== 'DATE' && articleRules && List<IRuleModel>(articleRules.filter( r => r.tagId && r.tagId == selectedTag.id));
+
     const disableAllButtons = areNoneSelected || commentScores.size <= 0;
     const groupBy = (selectedTag && selectedTag.key === 'DATE') ? 'date' : 'score';
 
@@ -704,6 +708,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
             { this.props.params.articleId && (
               <ArticleControlIcon
                 article={article}
+                tags={tags}
                 open={this.state.articleControlOpen}
                 clearPopups={this.closePopup}
                 openControls={this.openPopup}
@@ -717,6 +722,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
             <BatchSelector
               groupBy={groupBy}
               rules={rules}
+              articleRules={articleRulesForTag}
               areAutomatedRulesApplied={article && article.isAutoModerated}
               defaultSelectionPosition1={pos1}
               defaultSelectionPosition2={pos2}
@@ -1196,8 +1202,8 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   }
 
   @autobind
-  applyRules(isCommentingEnabled: boolean, isAutoModerated: boolean): void {
+  applyRules(isCommentingEnabled: boolean, isAutoModerated: boolean, isModerationOverriden: boolean = false, moderationRules: Array<IRuleModel> = []): void {
     this.closePopup();
-    updateArticle(this.props.article.id, isCommentingEnabled, isAutoModerated);
+    updateArticle(this.props.article.id, isCommentingEnabled, isAutoModerated, isModerationOverriden?moderationRules: []);
   }
 }

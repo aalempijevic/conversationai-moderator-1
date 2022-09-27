@@ -18,7 +18,7 @@ import { Record } from 'immutable';
 import { TypedRecord } from 'typed-immutable-record';
 
 import { ModelId } from './common';
-
+import { IRuleModel } from './rule'
 export interface IArticleAttributes {
   id: ModelId;
   sourceCreatedAt: string;
@@ -42,6 +42,7 @@ export interface IArticleAttributes {
   assignedModerators: Array<ModelId>;
   isCommentingEnabled: boolean;
   isAutoModerated: boolean;
+  moderationRules: Array<IRuleModel>;
 }
 
 export interface IArticleModel extends TypedRecord<IArticleModel>, IArticleAttributes {}
@@ -68,6 +69,7 @@ const ArticleModelRecord = Record({
   assignedModerators: null,
   isCommentingEnabled: null,
   isAutoModerated: null,
+  moderationRules: null,
 });
 
 export function ArticleModel(keyValuePairs?: IArticleAttributes): IArticleModel {
