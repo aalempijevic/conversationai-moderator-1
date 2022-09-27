@@ -17,14 +17,13 @@ export interface ISectionProps {
 }
 
 export interface IRestrictedTermsState {
-  // terms: Array<IRestrictedTermAttributes |>
-  terms: any;
+  terms: IRestrictedTermAttributes[];
   displayAddTerm: boolean;
   disableMenu: boolean;
 }
 
 export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsState> {
-  state = {
+  state: IRestrictedTermsState = {
     terms: [],
     displayAddTerm: false,
     disableMenu: false,
