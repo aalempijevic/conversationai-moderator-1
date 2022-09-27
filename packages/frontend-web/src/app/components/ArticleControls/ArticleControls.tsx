@@ -34,8 +34,8 @@ export interface IArticleControlIconState {
   isCommentingEnabled: boolean;
   isAutoModerated: boolean;
   isModerationOverriden: boolean;
-  isRestrictedTermOverridden: boolean;
   moderationRules: Array<IRuleModel>;
+  isRestrictedTermsOverridden: boolean;
   restrictedTerms: IRestrictedTermAttributes[];
 }
 
@@ -54,7 +54,9 @@ interface IArticleControlIconProps {
     isCommentingEnabled: boolean,
     isAutoModerated: boolean,
     isModerationRuleOveridden: boolean,
-    moderationRules: Array<IRuleModel>
+    moderationRules: Array<IRuleModel>,
+    isRestrictedTermsOverridden: boolean,
+    restrictedTerms: IRestrictedTermAttributes[]
   ): void;
 }
 
@@ -76,8 +78,8 @@ class LazyArticleControlIcon extends React.Component<IArticleControlIconProps, I
       isCommentingEnabled: this.props.article.isCommentingEnabled,
       isAutoModerated: this.props.article.isAutoModerated,
       isModerationOverriden: this.props.article.moderationRules && this.props.article.moderationRules?.length > 0,
-      isRestrictedTermOverridden: this.props.article.restrictedTerms?.length > 0,
       moderationRules: this.props.article.moderationRules,
+      isRestrictedTermsOverridden: this.props.article.restrictedTerms?.length > 0,
       restrictedTerms: this.props.article.restrictedTerms,
     };
   }
@@ -111,7 +113,9 @@ class LazyArticleControlIcon extends React.Component<IArticleControlIconProps, I
       this.state.isCommentingEnabled,
       this.state.isAutoModerated,
       this.state.isModerationOverriden,
-      this.state.moderationRules
+      this.state.moderationRules,
+      this.state.isRestrictedTermsOverridden,
+      this.state.restrictedTerms
     );
   }
 
