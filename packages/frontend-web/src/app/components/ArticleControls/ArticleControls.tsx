@@ -22,7 +22,7 @@ import React from "react";
 
 import { Popper } from "@material-ui/core";
 
-import { IArticleModel, IRuleModel, ITagModel } from "../../../models";
+import { IArticleModel, IRuleModel, ITagModel, IRestrictedTermAttributes } from "../../../models";
 import { big, ICON_STYLES } from "../../stylesx";
 import { css } from "../../utilx";
 import { List } from "immutable";
@@ -34,7 +34,9 @@ export interface IArticleControlIconState {
   isCommentingEnabled: boolean;
   isAutoModerated: boolean;
   isModerationOverriden: boolean;
+  isRestrictedTermOverridden: boolean;
   moderationRules: Array<IRuleModel>;
+  restrictedTerms: IRestrictedTermAttributes[];
 }
 
 interface IArticleControlIconProps {
@@ -66,20 +68,17 @@ function mapStateToProps(state: any, ownProps: any): any {
   };
 }
 
-class LazyArticleControlIcon extends React.Component<
-  IArticleControlIconProps,
-  IArticleControlIconState
-> {
+class LazyArticleControlIcon extends React.Component<IArticleControlIconProps, IArticleControlIconState> {
   anchorElement: any;
   constructor(props: Readonly<IArticleControlIconProps>) {
     super(props);
     this.state = {
       isCommentingEnabled: this.props.article.isCommentingEnabled,
       isAutoModerated: this.props.article.isAutoModerated,
-      isModerationOverriden:
-        this.props.article.moderationRules &&
-        this.props.article.moderationRules?.length > 0,
+      isModerationOverriden: this.props.article.moderationRules && this.props.article.moderationRules?.length > 0,
+      isRestrictedTermOverridden: this.props.article.restrictedTerms?.length > 0,
       moderationRules: this.props.article.moderationRules,
+      restrictedTerms: this.props.article.restrictedTerms,
     };
   }
 
@@ -117,16 +116,13 @@ class LazyArticleControlIcon extends React.Component<
   }
 
   render() {
-    const { isAdmin, article, tags, open, whiteBackground, clearPopups } =
-      this.props;
+    const { isAdmin, article, tags, open, whiteBackground, clearPopups } = this.props;
 
     return (
       <div key="aci">
         <div
           key="icon"
-          {...css(
-            open || whiteBackground ? ICON_STYLES.iconBackgroundCircle : big
-          )}
+          {...css(open || whiteBackground ? ICON_STYLES.iconBackgroundCircle : big)}
           ref={(node) => {
             this.anchorElement = node;
           }}
