@@ -7,7 +7,7 @@ import * as icons from "../Icons";
 interface IIControlFlagProps {
   isCommentingEnabled?: boolean;
   isAutoModerated?: boolean;
-  isModerationOverriden?: boolean;
+  isModerationOverridden?: boolean;
 }
 
 export class ControlFlag extends React.Component<IIControlFlagProps> {
@@ -26,7 +26,7 @@ export class ControlFlag extends React.Component<IIControlFlagProps> {
     } else {
       style = { color: GREY_COLOR };
     }
-    if (this.props.isModerationOverriden) {
+    if (this.props.isModerationOverridden) {
       style = { color: RED };
     }
     return <Icon {...css(style)} />;

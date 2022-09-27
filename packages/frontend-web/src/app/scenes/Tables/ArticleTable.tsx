@@ -356,14 +356,14 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
   }
 
   @autobind
-  saveControls(isCommentingEnabled: boolean, isAutoModerated: boolean, isModerationOverriden: boolean, moderationRules: Array<IRuleModel>) {
+  saveControls(isCommentingEnabled: boolean, isAutoModerated: boolean, isModerationOverridden: boolean, moderationRules: Array<IRuleModel>) {
     const articleId = this.state.selectedArticle.id;
     this.setState({
       ...clearPopupsState,
       popupToShow: POPUP_SAVING,
     });
 
-    updateArticle(articleId, isCommentingEnabled, isAutoModerated, isModerationOverriden? moderationRules : [])
+    updateArticle(articleId, isCommentingEnabled, isAutoModerated, isModerationOverridden? moderationRules : [])
       .then(this.clearPopups);
   }
 

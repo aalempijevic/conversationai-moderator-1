@@ -1197,8 +1197,8 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   }
 
   @autobind
-  applyRules(isCommentingEnabled: boolean, isAutoModerated: boolean, isModerationOverriden: boolean = false, moderationRules: Array<IRuleModel> = []): void {
+  applyRules(isCommentingEnabled: boolean, isAutoModerated: boolean, isModerationOverridden: boolean = false, moderationRules: Array<IRuleModel> = []): void {
     this.closePopup();
-    updateArticle(this.props.article.id, isCommentingEnabled, isAutoModerated, isModerationOverriden?moderationRules: []);
+    updateArticle(this.props.article.id, isCommentingEnabled, isAutoModerated, isModerationOverridden?moderationRules: []);
   }
 }

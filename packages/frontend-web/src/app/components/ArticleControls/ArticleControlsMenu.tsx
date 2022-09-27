@@ -60,7 +60,7 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
       return;
     }
     this.props.setControlState({
-      isModerationOverriden: !this.props.controlState.isModerationOverriden,
+      isModerationOverridden: !this.props.controlState.isModerationOverridden,
     });
   }
 
@@ -175,7 +175,7 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
                 <td key="icon">
                   <ControlFlag
                     isCommentingEnabled={this.props.controlState.isCommentingEnabled}
-                    isModerationOverriden={this.props.controlState.isModerationOverriden}
+                    isModerationOverridden={this.props.controlState.isModerationOverridden}
                     isAutoModerated={this.props.controlState.isAutoModerated}
                   />
                 </td>
@@ -184,7 +184,7 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
                 </td>
                 <td key="toggle" {...css({ textAlign: "right" })}>
                   <Switch
-                    checked={this.props.controlState.isModerationOverriden}
+                    checked={this.props.controlState.isModerationOverridden}
                     color="primary"
                     disabled={!this.isModerationRuleEditingEnabled()}
                   />
@@ -198,7 +198,7 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
                 <td key="icon">
                   <ControlFlag
                     isCommentingEnabled={this.props.controlState.isCommentingEnabled}
-                    isModerationOverriden={this.props.controlState.isModerationOverriden}
+                    isModerationOverridden={this.props.controlState.isModerationOverridden}
                     isAutoModerated={this.props.controlState.isAutoModerated}
                   />
                 </td>
@@ -207,7 +207,7 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
                 </td>
                 <td key="toggle" {...css({ textAlign: "right" })}>
                   <Switch
-                    checked={this.props.controlState.isModerationOverriden}
+                    checked={this.props.controlState.isModerationOverridden}
                     color="primary"
                     disabled={!this.isModerationRuleEditingEnabled()}
                   />
@@ -234,7 +234,7 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
                         tags={tags}
                       />
                     ))}
-                  {this.isModerationRuleEditingEnabled() && this.props.controlState.isModerationOverriden && (
+                  {this.isModerationRuleEditingEnabled() && this.props.controlState.isModerationOverridden && (
                     <AddButton
                       width={44}
                       onClick={this.handleAddAutomatedRule}
