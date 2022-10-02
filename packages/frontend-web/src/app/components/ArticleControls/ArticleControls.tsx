@@ -56,7 +56,7 @@ interface IArticleControlIconProps {
     isModerationRuleOveridden: boolean,
     moderationRules: Array<IRuleModel>,
     isRestrictedTermsOverridden: boolean,
-    restrictedTerms: IRestrictedTermAttributes[]
+    restrictedTerms: Array<IRestrictedTermAttributes>
   ): void;
 }
 
