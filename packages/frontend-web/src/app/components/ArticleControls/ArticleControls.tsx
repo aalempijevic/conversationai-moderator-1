@@ -121,7 +121,7 @@ class LazyArticleControlIcon extends React.Component<IArticleControlIconProps, I
 
   render() {
     const { isAdmin, article, tags, open, whiteBackground, clearPopups } = this.props;
-
+    console.log(article);
     return (
       <div key="aci">
         <div

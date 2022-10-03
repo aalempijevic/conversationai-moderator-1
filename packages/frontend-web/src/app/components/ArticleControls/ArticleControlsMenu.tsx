@@ -7,7 +7,15 @@ import { ClickAwayListener, DialogTitle, Switch } from "@material-ui/core";
 import { IArticleControlIconState } from "./ArticleControls";
 import { ControlFlag } from "../ControlFlag";
 
-import { IArticleModel, IRuleModel, IServerAction, ITagModel, RuleModel, SERVER_ACTION_ACCEPT } from "../../../models";
+import {
+  IArticleAttributes,
+  IArticleModel,
+  IRuleModel,
+  IServerAction,
+  ITagModel,
+  RuleModel,
+  SERVER_ACTION_ACCEPT,
+} from "../../../models";
 import { GUTTER_DEFAULT_SPACING, NICE_CONTROL_BLUE, SCRIM_STYLE } from "../../styles";
 import { css } from "../../utilx";
 import { ArticleRuleRow } from "../../scenes/Settings/components/ArticleRuleRow";
@@ -28,7 +36,9 @@ interface IArticleControlMenuProps {
     isCommentingEnabled: boolean,
     isAutoModerated: boolean,
     isModerationRuleOveridden: boolean,
-    moderationRules: Array<IRuleModel>
+    moderationRules: Array<IRuleModel>,
+    isRestrictedTermsOverridden: boolean,
+    restrictedTerms: Array<IArticleAttributes>
   ): void;
 }
 
@@ -61,6 +71,20 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
     }
     this.props.setControlState({
       isModerationOverridden: !this.props.controlState.isModerationOverridden,
+    });
+  }
+
+  @autobind
+  handleRestrictedTermsOverride() {
+    if (
+      !this.props.controlState.isCommentingEnabled ||
+      !this.props.controlState.isAutoModerated ||
+      !this.props.isAdmin
+    ) {
+      return;
+    }
+    this.props.setControlState({
+      isRestrictedTermsOverriden: !this.props.controlState.isRestrictedTermsOverridden,
     });
   }
 
@@ -190,16 +214,13 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
                   />
                 </td>
               </tr>
-              <tr
-                key="restrictedTerms"
-                onClick={this.handleModerationRulesOverride}
-                {...css(this.isModerationRuleEditingEnabled() ? {} : { opacity: 0.5 })}
-              >
+              <tr key="restrictedTerms" onClick={this.handleRestrictedTermsOverride}>
                 <td key="icon">
                   <ControlFlag
                     isCommentingEnabled={this.props.controlState.isCommentingEnabled}
                     isModerationOverridden={this.props.controlState.isModerationOverridden}
                     isAutoModerated={this.props.controlState.isAutoModerated}
+                    isRestrictedTermsOverridden={this.props.controlState.isRestrictedTermsOverridden}
                   />
                 </td>
                 <td key="text" {...css({ textAlign: "left", padding: "15px 4px" })}>
