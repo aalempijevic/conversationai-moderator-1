@@ -210,6 +210,7 @@ export class ArticleRuleRow extends React.Component<IArticleRuleRowProps> {
               disabled={disabled}
               darkOnLight
               hideLabel
+              hideHighlight={true}
               activeButtons={List<IModerationAction>().push(convertServerAction(selectedAction))}
               containerSize={36}
               onClick={this.notifyWrapperOfActionChange}

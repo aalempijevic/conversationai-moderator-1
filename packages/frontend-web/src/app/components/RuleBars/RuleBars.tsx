@@ -83,6 +83,7 @@ function differentiateRules(rules: List<IRuleModel>): Array<IRuleModel> {
 
 export interface IRuleBarsProps {
   rules?: List<IRuleModel>;
+  articleRules?: List<IRuleModel>;
   automatedRuleToast?(rule: IRuleModel): void;
 }
 
@@ -90,9 +91,11 @@ export class RuleBars extends React.Component<IRuleBarsProps> {
   render() {
     const {
       rules,
+      articleRules
     } = this.props;
 
-    const rulesToDisplay = rules && differentiateRules(rules);
+    const activeRules = articleRules && articleRules.size > 0 ? articleRules : rules;
+    const rulesToDisplay = activeRules && differentiateRules(activeRules);
 
     return (
       <div {...css(STYLES.wrapper)}>
