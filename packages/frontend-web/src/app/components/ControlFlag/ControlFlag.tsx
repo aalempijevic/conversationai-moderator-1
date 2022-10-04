@@ -8,6 +8,7 @@ interface IIControlFlagProps {
   isCommentingEnabled?: boolean;
   isAutoModerated?: boolean;
   isModerationOverridden?: boolean;
+  isRestrictedTermsOverridden?: boolean;
 }
 
 export class ControlFlag extends React.Component<IIControlFlagProps> {
@@ -32,6 +33,9 @@ export class ControlFlag extends React.Component<IIControlFlagProps> {
     }
     if (this.props.isModerationOverridden) {
       style = { color: RED };
+    }
+    if (this.props.isRestrictedTermsOverridden) {
+      Icon = icons.SpeechBubbleMessageCross;
     }
     return <Icon {...css(style)} />;
   }
