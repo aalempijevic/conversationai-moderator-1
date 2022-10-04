@@ -6,6 +6,7 @@ import { ClickAwayListener, DialogTitle, Switch } from "@material-ui/core";
 
 import { IArticleControlIconState } from "./ArticleControls";
 import { ControlFlag } from "../ControlFlag";
+import { ArticleRestrictedTerms } from "./ArticleRestrictedTerms";
 
 import {
   IArticleAttributes,
@@ -129,7 +130,11 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
       createdBy: null,
       articleId: this.props.article.id,
       // Find the id for summary score tag to use as default or otherwise fallback to current prod ID value
-      tagId: `${this.props.tags.find((tag) => { return tag.label==="Summary Score"}).id || 16}`,
+      tagId: `${
+        this.props.tags.find((tag) => {
+          return tag.label === "Summary Score";
+        }).id || 16
+      }`,
       lowerThreshold: 0,
       upperThreshold: 0.2,
       action: SERVER_ACTION_ACCEPT,
@@ -145,7 +150,7 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
   }
 
   render() {
-    const { isAdmin, tags, clearPopups, saveControls } = this.props;
+    const { article, isAdmin, tags, clearPopups, saveControls } = this.props;
 
     return (
       <ClickAwayListener onClickAway={clearPopups}>
@@ -229,7 +234,7 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
                 </td>
                 <td key="toggle" {...css({ textAlign: "right" })}>
                   <Switch
-                    checked={this.props.controlState.isModerationOverridden}
+                    checked={this.props.controlState.isRestrictedTermsOverridden}
                     color="primary"
                     disabled={!this.isModerationRuleEditingEnabled()}
                   />
@@ -266,6 +271,9 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
                       }}
                     />
                   )}
+                </td>
+                <td>
+                  <ArticleRestrictedTerms restrictedTerms={article.restrictedTerms} />
                 </td>
               </tr>
             </tbody>
