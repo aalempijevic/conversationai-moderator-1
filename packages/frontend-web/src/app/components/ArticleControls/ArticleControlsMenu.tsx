@@ -43,6 +43,13 @@ interface IArticleControlMenuProps {
   ): void;
 }
 
+const STYLE = {
+  settingsHeader: {
+    fontFamily: "LibreFranklin-Medium, sans-serif",
+    fontSize: "14px",
+  },
+};
+
 export class ArticleControlMenu extends React.Component<IArticleControlMenuProps> {
   @autobind
   handleCommentingEnabledClicked() {
@@ -151,7 +158,7 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
 
   render() {
     const { article, isAdmin, tags, clearPopups, saveControls } = this.props;
-
+    console.log("control state moderation rules", this.props.controlState.moderationRules);
     return (
       <ClickAwayListener onClickAway={clearPopups}>
         <div tabIndex={0} {...css(SCRIM_STYLE.popupMenu, { padding: "20px" })}>
@@ -240,40 +247,50 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
                   />
                 </td>
               </tr>
+              {this.props.controlState.isModerationOverridden && (
+                <>
+                  <tr>
+                    <td>
+                      <h2 {...css(STYLE.settingsHeader)}>Moderation Rules</h2>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td key="editRulesSection">
+                      {this.props.controlState.moderationRules.map((rule, i) => (
+                        <ArticleRuleRow
+                          disabled={!this.isModerationRuleEditingEnabled()}
+                          key={i}
+                          onDelete={this.handleAutomatedRuleDelete}
+                          rule={rule}
+                          onTagChange={partial(this.handleAutomatedRuleChange, "tagId", rule)}
+                          onLowerThresholdChange={partial(this.handleAutomatedRuleChange, "lowerThreshold", rule)}
+                          onUpperThresholdChange={partial(this.handleAutomatedRuleChange, "upperThreshold", rule)}
+                          rangeBottom={Math.round(rule.lowerThreshold * 100)}
+                          rangeTop={Math.round(rule.upperThreshold * 100)}
+                          selectedTag={rule.tagId}
+                          selectedAction={rule.action}
+                          hasTagging
+                          onModerateButtonClick={this.handleModerateButtonClick}
+                          tags={tags}
+                        />
+                      ))}
+                      {this.isModerationRuleEditingEnabled() && this.props.controlState.isModerationOverridden && (
+                        <AddButton
+                          width={44}
+                          onClick={this.handleAddAutomatedRule}
+                          label="Add an automated rule"
+                          buttonStyles={{
+                            margin: `${GUTTER_DEFAULT_SPACING}px 0`,
+                          }}
+                        />
+                      )}
+                    </td>
+                  </tr>
+                </>
+              )}
               <tr>
-                <td key="editRulesSection">
-                  {this.props.controlState.moderationRules &&
-                    this.props.controlState.moderationRules.map((rule, i) => (
-                      <ArticleRuleRow
-                        disabled={!this.isModerationRuleEditingEnabled()}
-                        key={i}
-                        onDelete={this.handleAutomatedRuleDelete}
-                        rule={rule}
-                        onTagChange={partial(this.handleAutomatedRuleChange, "tagId", rule)}
-                        onLowerThresholdChange={partial(this.handleAutomatedRuleChange, "lowerThreshold", rule)}
-                        onUpperThresholdChange={partial(this.handleAutomatedRuleChange, "upperThreshold", rule)}
-                        rangeBottom={Math.round(rule.lowerThreshold * 100)}
-                        rangeTop={Math.round(rule.upperThreshold * 100)}
-                        selectedTag={rule.tagId}
-                        selectedAction={rule.action}
-                        hasTagging
-                        onModerateButtonClick={this.handleModerateButtonClick}
-                        tags={tags}
-                      />
-                    ))}
-                  {this.isModerationRuleEditingEnabled() && this.props.controlState.isModerationOverridden && (
-                    <AddButton
-                      width={44}
-                      onClick={this.handleAddAutomatedRule}
-                      label="Add an automated rule"
-                      buttonStyles={{
-                        margin: `${GUTTER_DEFAULT_SPACING}px 0`,
-                      }}
-                    />
-                  )}
-                </td>
                 <td>
-                  <ArticleRestrictedTerms restrictedTerms={article.restrictedTerms} />
+                  <ArticleRestrictedTerms restrictedTerms={article.restrictedTerms} style={STYLE} />
                 </td>
               </tr>
             </tbody>
