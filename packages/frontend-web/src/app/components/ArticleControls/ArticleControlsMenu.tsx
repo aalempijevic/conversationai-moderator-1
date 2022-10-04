@@ -128,9 +128,10 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
       id: (placeholderId--).toString(),
       createdBy: null,
       articleId: this.props.article.id,
-      tagId: "15",
-      lowerThreshold: 0.8,
-      upperThreshold: 1,
+      // Find the id for summary score tag to use as default or otherwise fallback to current prod ID value
+      tagId: `${this.props.tags.find((tag) => { return tag.label==="Summary Score"}).id || 16}`,
+      lowerThreshold: 0,
+      upperThreshold: 0.2,
       action: SERVER_ACTION_ACCEPT,
     });
     const updatedRules = this.props.controlState.moderationRules || [];

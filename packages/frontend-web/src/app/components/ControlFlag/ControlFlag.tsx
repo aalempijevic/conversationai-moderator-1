@@ -22,11 +22,15 @@ export class ControlFlag extends React.Component<IIControlFlagProps> {
     }
 
     if (this.props.isCommentingEnabled) {
-      style = { color: NICE_CONTROL_BLUE };
+      if (this.props.isModerationOverriden) {
+        style = { color: RED };
+      } else {
+        style = { color: NICE_CONTROL_BLUE };
+      }
     } else {
       style = { color: GREY_COLOR };
     }
-    if (this.props.isModerationOverridden) {
+    if (this.props.isModerationOverriden) {
       style = { color: RED };
     }
     return <Icon {...css(style)} />;

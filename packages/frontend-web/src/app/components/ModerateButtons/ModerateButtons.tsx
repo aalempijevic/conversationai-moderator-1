@@ -86,6 +86,7 @@ export interface IModerateButtonsProps {
   darkOnLight?: boolean;
   onClick?(action: IModerationAction): any;
   containerSize?: number;
+  hideHighlight?: boolean;
   activeButtons?: List<IModerationAction>;
   disabled?: boolean;
   requireReasonForReject?: boolean;
@@ -118,6 +119,7 @@ export class ModerateButtons
       hideLabel,
       containerSize,
       activeButtons,
+      hideHighlight,
       disabled,
       onClick,
     } = this.props;
@@ -192,7 +194,7 @@ export class ModerateButtons
           )}
           onClick={this.handleReject}
         />
-
+        {!hideHighlight &&
         <CommentActionButton
           label="Highlight"
           isActive={activeButtons && activeButtons.includes('highlight')}
@@ -222,7 +224,7 @@ export class ModerateButtons
           )}
           onClick={partial(maybeCallback(onClick), 'highlight')}
         />
-
+        }
         <CommentActionButton
           label="Defer"
           isActive={activeButtons && activeButtons.includes('defer')}

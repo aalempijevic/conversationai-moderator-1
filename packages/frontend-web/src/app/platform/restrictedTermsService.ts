@@ -1,7 +1,7 @@
 import axios from "axios";
 
 import { serviceURL } from "./dataService";
-import { IRestrictedTermModel, IRestrictedTermAttributes } from "../../models";
+import { IRestrictedTermModel } from "../../models";
 
 const RESTRICTED_TERMS_URL = serviceURL("simple", "/restrictedTerms");
 
