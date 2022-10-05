@@ -48,6 +48,9 @@ const STYLE = {
     fontFamily: "LibreFranklin-Medium, sans-serif",
     fontSize: "14px",
   },
+  restrictedTermsSection: {
+    margin: "24px",
+  },
 };
 
 export class ArticleControlMenu extends React.Component<IArticleControlMenuProps> {
@@ -292,13 +295,9 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
                   </tr>
                 </>
               )}
-              <tr>
-                <td>
-                  <ArticleRestrictedTerms restrictedTerms={article.restrictedTerms} style={STYLE} />
-                </td>
-              </tr>
             </tbody>
           </table>
+          <ArticleRestrictedTerms restrictedTerms={article.restrictedTerms} style={STYLE} />
           <div key="footer" {...css({ textAlign: "right", margin: "35px 25px 30px 25px" })}>
             <span onClick={clearPopups} {...css({ marginRight: "30px", opacity: "0.5" })}>
               Cancel

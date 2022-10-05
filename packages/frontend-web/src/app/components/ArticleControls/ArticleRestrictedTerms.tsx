@@ -14,7 +14,7 @@ export class ArticleRestrictedTerms extends Component<IArticleRestrictedTermsPro
   render() {
     const { style } = this.props;
     return (
-      <>
+      <div {...css(style.restrictedTermsSection)}>
         <h2 {...css(style.settingsHeader)}>Restricted Terms</h2>
         <table>
           <thead>
@@ -58,7 +58,7 @@ export class ArticleRestrictedTerms extends Component<IArticleRestrictedTermsPro
             ))}
           </tbody>
         </table>
-      </>
+      </div>
     );
   }
 }
