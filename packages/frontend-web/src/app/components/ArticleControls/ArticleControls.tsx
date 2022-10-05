@@ -135,7 +135,8 @@ class LazyArticleControlIcon extends React.Component<IArticleControlIconProps, I
             <ControlFlag
               isCommentingEnabled={article.isCommentingEnabled}
               isAutoModerated={article.isAutoModerated}
-              isModerationOverridden={article.moderationRules?.length > 0}
+              isModerationOverridden={this.state.isModerationOverridden}
+              isRestrictedTermsOverridden={this.state.isRestrictedTermsOverridden}
             />
           </div>
         </div>

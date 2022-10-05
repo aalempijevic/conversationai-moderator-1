@@ -227,7 +227,11 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
                   />
                 </td>
               </tr>
-              <tr key="restrictedTerms" onClick={this.handleRestrictedTermsOverride}>
+              <tr
+                key="restrictedTerms"
+                onClick={this.handleRestrictedTermsOverride}
+                {...css(this.isModerationRuleEditingEnabled() ? {} : { opacity: 0.5 })}
+              >
                 <td key="icon">
                   <ControlFlag
                     isCommentingEnabled={this.props.controlState.isCommentingEnabled}
