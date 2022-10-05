@@ -18,9 +18,7 @@ export async function addRestrictedTerm(newTerm: any) {
 }
 
 // /services/simple/restrictedTerms
-// Currently using type any while trying to figure out what the backend wants
 export async function updateRestrictedTerm(updatedTerm: any) {
-  console.log("updated term being sent", updatedTerm);
   const response: any = await axios.put(RESTRICTED_TERMS_URL, updatedTerm);
   return response.data;
 }

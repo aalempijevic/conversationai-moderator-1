@@ -41,7 +41,7 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
       const terms = await globalRestrictedTerms.get();
       this.setState({ terms: terms });
     } catch (err) {
-      console.log("error getting terms", err);
+      console.error("error getting terms", err);
     }
   }
 
@@ -52,7 +52,7 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
       await globalRestrictedTerms.delete(termId);
       await this.getTerms();
     } catch (err) {
-      console.log("error occurred deleting a term", err);
+      console.error("error occurred deleting a term", err);
     }
     this.toggleDisableMenu();
   }
@@ -68,7 +68,7 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
       await globalRestrictedTerms.update(updatedTerm);
       this.getTerms();
     } catch (error) {
-      console.log("error occurred updating a term", error);
+      console.error("error occurred updating a term", error);
     }
     this.toggleDisableMenu();
   }
@@ -86,14 +86,15 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
     const { styles } = this.props;
 
     return (
-      // Almost more jaring with the menu disabled. Not sure what is best to do.
       <div key="restrictedTermsSection" {...css(this.state.disableMenu && SETTINGS_STYLES.disableMenu)}>
         <div key="heading" {...css(styles.heading)}>
           <h2 {...css(styles.headingText)}>Restricted Terms</h2>
         </div>
         <div key="body" {...css(styles.section)}>
-          {/* Temporary wording. May need updating */}
-          <p>These terms are restricted and will cause a comment to be flagged.</p>
+          <p>
+            Comments containing these terms will receive Restricted Term tags with scoring corresponding to their
+            assigned level.
+          </p>
           <div {...css(SETTINGS_STYLES.row)}>
             <table>
               <thead>
