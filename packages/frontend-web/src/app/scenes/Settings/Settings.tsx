@@ -359,7 +359,6 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   @autobind
   handleAddServiceUser(event: React.FormEvent<any>) {
     event.preventDefault();
-    console.log("got here");
   }
 
   @autobind
@@ -1057,14 +1056,8 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
         <HeaderBar logout={logout} homeLink title="Settings" />
         <div {...css(STYLES.body)}>
           <h1 {...css(VISUALLY_HIDDEN)}>Open Source Moderator Settings</h1>
-          {/* TEMP COMMENTING OUT TO MAKE DEV EASIER */}
-          {/* {this.renderUsers()} */}
+          {this.renderUsers()}
           <form onSubmit={this.handleFormSubmit} {...css(STYLES.formContainer)}>
-            <RestrictedTermsSection
-              styles={STYLES}
-              settingsState={this.state}
-              setSettingsState={(state: any) => this.setState(state)}
-            />
             {this.renderTags(tagsNoSummary)}
             {this.renderRules(tags, categoriesWithAll)}
             {this.renderSensitivities(tagsWithAllNoSummary, categoriesWithAll)}
@@ -1074,6 +1067,11 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               <Button key="save" buttonStyles={STYLES.save} label="Save" onClick={this.onSavePress} />
             </div>
           </form>
+          <RestrictedTermsSection
+            styles={STYLES}
+            settingsState={this.state}
+            setSettingsState={(state: any) => this.setState(state)}
+          />
           <div key="serviceUsersHeader" {...css(STYLES.heading)}>
             <h2 {...css(STYLES.headingText)}>System accounts</h2>
           </div>

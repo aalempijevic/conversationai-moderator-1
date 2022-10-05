@@ -56,11 +56,10 @@ export class AddRestrictedTerm extends Component<IAddRestrictedTermProps, IRestr
       this.props.toggleDisplayAddTerm();
       this.setState({ errorMessage: "" });
     } catch (error) {
-      console.log("error occurred trying to add a new term", error.response);
+      console.error("error occurred trying to add a new term", error.response);
       this.setState({ errorMessage: error.response.data });
     }
     await this.props.getTerms();
-    console.log("After handle new term has an error");
   }
 
   @autobind
