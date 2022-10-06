@@ -22,7 +22,7 @@ import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { InjectedRouter, Link, WithRouterProps } from 'react-router';
 
-import { IArticleModel, ICategoryModel, IRuleModel, ITagModel, IUserModel, ModelId } from '../../../models';
+import { IArticleModel, ICategoryModel, IRestrictedTermAttributes, IRuleModel, ITagModel, IUserModel, ModelId } from '../../../models';
 import { ArticleControlIcon } from '../../components';
 import * as icons from '../../components/Icons';
 import { Scrim } from '../../components/Scrim';
@@ -356,14 +356,14 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
   }
 
   @autobind
-  saveControls(isCommentingEnabled: boolean, isAutoModerated: boolean, isModerationOverridden: boolean, moderationRules: Array<IRuleModel>) {
+  saveControls(isCommentingEnabled: boolean, isAutoModerated: boolean, isModerationOverridden: boolean, moderationRules: Array<IRuleModel>, isRestrictedTermsOverridden: boolean, restrictedTerms: Array<IRestrictedTermAttributes>) {
     const articleId = this.state.selectedArticle.id;
     this.setState({
       ...clearPopupsState,
       popupToShow: POPUP_SAVING,
     });
 
-    updateArticle(articleId, isCommentingEnabled, isAutoModerated, isModerationOverridden? moderationRules : [])
+    updateArticle(articleId, isCommentingEnabled, isAutoModerated, isModerationOverridden? moderationRules : [], isRestrictedTermsOverridden?restrictedTerms : [])
       .then(this.clearPopups);
   }
 

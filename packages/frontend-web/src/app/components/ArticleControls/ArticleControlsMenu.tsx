@@ -11,6 +11,7 @@ import { ArticleRestrictedTerms } from "./ArticleRestrictedTerms";
 import {
   IArticleAttributes,
   IArticleModel,
+  IRestrictedTermAttributes,
   IRuleModel,
   IServerAction,
   ITagModel,
@@ -39,7 +40,7 @@ interface IArticleControlMenuProps {
     isModerationRuleOveridden: boolean,
     moderationRules: Array<IRuleModel>,
     isRestrictedTermsOverridden: boolean,
-    restrictedTerms: Array<IArticleAttributes>
+    restrictedTerms: Array<IRestrictedTermAttributes>
   ): void;
 }
 
