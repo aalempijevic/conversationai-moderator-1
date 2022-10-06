@@ -165,7 +165,7 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
     console.log("control state moderation rules", this.props.controlState.moderationRules);
     return (
       <ClickAwayListener onClickAway={clearPopups}>
-        <div tabIndex={0} {...css(SCRIM_STYLE.popupMenu, { padding: "20px" })}>
+        <div tabIndex={0} {...css(SCRIM_STYLE.popupMenu, { padding: "20px", overflow: "scroll", maxHeight: "80vh" })}>
           <DialogTitle id="article-controls">Moderation settings</DialogTitle>
           <table
             key="main"
