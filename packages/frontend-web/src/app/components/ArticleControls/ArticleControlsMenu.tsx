@@ -297,7 +297,12 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
               )}
             </tbody>
           </table>
-          <ArticleRestrictedTerms restrictedTerms={article.restrictedTerms} style={STYLE} />
+          <ArticleRestrictedTerms
+            controlState={this.props.controlState}
+            restrictedTerms={article.restrictedTerms}
+            setControlState={this.props.setControlState}
+            style={STYLE}
+          />
           <div key="footer" {...css({ textAlign: "right", margin: "35px 25px 30px 25px" })}>
             <span onClick={clearPopups} {...css({ marginRight: "30px", opacity: "0.5" })}>
               Cancel
