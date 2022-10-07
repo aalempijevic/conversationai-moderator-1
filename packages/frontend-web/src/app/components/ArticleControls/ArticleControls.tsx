@@ -119,9 +119,24 @@ class LazyArticleControlIcon extends React.Component<IArticleControlIconProps, I
     );
   }
 
+  @autobind
+  closeMenu() {
+    const starterState = {
+      isCommentingEnabled: this.props.article.isCommentingEnabled,
+      isAutoModerated: this.props.article.isAutoModerated,
+      isModerationOverridden: this.props.article.moderationRules && this.props.article.moderationRules?.length > 0,
+      moderationRules: this.props.article.moderationRules,
+      isRestrictedTermsOverridden: this.props.article.restrictedTerms?.length > 0,
+      restrictedTerms: this.props.article.restrictedTerms,
+    };
+
+    this.props.clearPopups();
+    this.setState(starterState);
+  }
+
   render() {
-    const { isAdmin, article, tags, open, whiteBackground, clearPopups } = this.props;
-    console.log(article);
+    const { isAdmin, article, tags, open, whiteBackground } = this.props;
+
     return (
       <div key="aci">
         <div
@@ -158,7 +173,7 @@ class LazyArticleControlIcon extends React.Component<IArticleControlIconProps, I
             tags={tags}
             controlState={this.state}
             setControlState={(state: any) => this.setState(state)}
-            clearPopups={clearPopups}
+            clearPopups={this.closeMenu}
             saveControls={this.saveControls}
           />
         </Popper>
