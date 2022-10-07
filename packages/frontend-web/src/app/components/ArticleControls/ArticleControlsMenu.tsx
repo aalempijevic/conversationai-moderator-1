@@ -9,7 +9,6 @@ import { ControlFlag } from "../ControlFlag";
 import { ArticleRestrictedTerms } from "./ArticleRestrictedTerms";
 
 import {
-  IArticleAttributes,
   IArticleModel,
   IRestrictedTermAttributes,
   IRuleModel,
@@ -150,7 +149,7 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
       upperThreshold: 0.2,
       action: SERVER_ACTION_ACCEPT,
     });
-    const updatedRules = this.props.controlState.moderationRules || [];
+    const updatedRules = [...this.props.controlState.moderationRules] || [];
     updatedRules.push(newValue);
     this.props.setControlState({ moderationRules: updatedRules });
   }
@@ -162,7 +161,7 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
 
   render() {
     const { article, isAdmin, tags, clearPopups, saveControls } = this.props;
-    console.log("control state moderation rules", this.props.controlState.moderationRules);
+
     return (
       <ClickAwayListener onClickAway={clearPopups}>
         <div tabIndex={0} {...css(SCRIM_STYLE.popupMenu, { padding: "20px", overflow: "scroll", maxHeight: "80vh" })}>
