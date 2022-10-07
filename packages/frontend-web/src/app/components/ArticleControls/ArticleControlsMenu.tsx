@@ -164,7 +164,7 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
 
     return (
       <ClickAwayListener onClickAway={clearPopups}>
-        <div tabIndex={0} {...css(SCRIM_STYLE.popupMenu, { padding: "20px", overflow: "scroll", maxHeight: "80vh" })}>
+        <div tabIndex={0} {...css(SCRIM_STYLE.popupMenu, { padding: "20px", overflow: "auto", maxHeight: "80vh" })}>
           <DialogTitle id="article-controls">Moderation settings</DialogTitle>
           <table
             key="main"
