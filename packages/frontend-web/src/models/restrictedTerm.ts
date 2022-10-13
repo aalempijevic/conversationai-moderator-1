@@ -9,6 +9,11 @@ export interface IRestrictedTermAttributes {
   score: number;
 }
 
+export interface INewRestrictedTerm {
+  term: string;
+  score: number;
+}
+
 // Keeping code below until restricted term global and article level controls are complete
 export interface IRestrictedTermModel extends TypedRecord<IRestrictedTermModel>, IRestrictedTermAttributes {}
 
