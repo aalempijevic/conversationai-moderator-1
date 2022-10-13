@@ -51,6 +51,11 @@ const STYLE = {
   restrictedTermsSection: {
     margin: "24px",
   },
+  footerButton: {
+    border: "none",
+    background: "none",
+    cursor: "pointer",
+  },
 };
 
 export class ArticleControlMenu extends React.Component<IArticleControlMenuProps> {
@@ -304,16 +309,16 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
             style={STYLE}
           />
           <div key="footer" {...css({ textAlign: "right", margin: "35px 25px 30px 25px" })}>
-            <span onClick={clearPopups} {...css({ marginRight: "30px", opacity: "0.5" })}>
+            <button onClick={clearPopups} {...css({ ...STYLE.footerButton, marginRight: "30px", opacity: "0.5" })}>
               Cancel
-            </span>
-            <span
+            </button>
+            <button
               //@ts-ignore
               onClick={saveControls}
-              {...css({ color: NICE_CONTROL_BLUE })}
+              {...css({ ...STYLE.footerButton, color: NICE_CONTROL_BLUE })}
             >
               Save
-            </span>
+            </button>
           </div>
         </div>
       </ClickAwayListener>
