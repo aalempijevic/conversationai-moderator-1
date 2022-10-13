@@ -1,7 +1,10 @@
 import { ChangeEvent, Component } from "react";
 import { autobind } from "core-decorators";
 
-import { IRestrictedTermAttributes } from "../../../models";
+import { AddButton } from "../../scenes/Settings/components/AddButton";
+import { ArticleAddRestrictedTerm } from "./ArticleAddRestrictedTerm";
+
+import { INewRestrictedTerm, IRestrictedTermAttributes } from "../../../models";
 import { css } from "../../utilx";
 import { SETTINGS_STYLES } from "../../scenes/Settings/settingsStyles";
 import { RestrictedTermLevels } from "../../scenes/Settings/sections/AddRestrictedTerm";
@@ -14,7 +17,15 @@ export interface IArticleRestrictedTermsProps {
   style: any;
 }
 
-export class ArticleRestrictedTerms extends Component<IArticleRestrictedTermsProps, {}> {
+export interface IArticleRestrictedTermsState {
+  showAddTermControls: boolean;
+}
+
+export class ArticleRestrictedTerms extends Component<IArticleRestrictedTermsProps, IArticleRestrictedTermsState> {
+  state = {
+    showAddTermControls: false,
+  };
+
   @autobind
   updateTermHelper(term: IRestrictedTermAttributes) {
     const copiedTerms = [...this.props.restrictedTerms];
@@ -35,6 +46,16 @@ export class ArticleRestrictedTerms extends Component<IArticleRestrictedTermsPro
     const { copiedTerms, termIndex } = this.updateTermHelper(termToDelete);
     copiedTerms.splice(termIndex, 1);
     this.props.setControlState({ restrictedTerms: copiedTerms });
+  }
+
+  @autobind
+  addTerm(termToAdd: INewRestrictedTerm) {
+    this.props.setControlState({ restrictedTerms: [...this.props.restrictedTerms, termToAdd] });
+  }
+
+  @autobind
+  toggleDisplayAddTerm() {
+    this.setState({ showAddTermControls: !this.state.showAddTermControls });
   }
 
   render() {
@@ -81,6 +102,11 @@ export class ArticleRestrictedTerms extends Component<IArticleRestrictedTermsPro
             ))}
           </tbody>
         </table>
+        {this.state.showAddTermControls ? (
+          <ArticleAddRestrictedTerm toggleDisplayAddTerm={this.toggleDisplayAddTerm} addTerm={this.addTerm} />
+        ) : (
+          <AddButton width={44} label="add new term" onClick={() => this.toggleDisplayAddTerm()} />
+        )}
       </div>
     );
   }

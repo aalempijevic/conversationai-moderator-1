@@ -3,11 +3,8 @@ import { autobind } from "core-decorators";
 import { Button } from "../Button";
 import { css } from "../../utilx";
 import { SETTINGS_STYLES } from "../../scenes/Settings/settingsStyles";
-import {
-  IAddRestrictedTermProps,
-  IRestrictedTermsState,
-  RestrictedTermLevels,
-} from "../../scenes/Settings/sections/AddRestrictedTerm";
+import { RestrictedTermLevels } from "../../scenes/Settings/sections/AddRestrictedTerm";
+import { INewRestrictedTerm } from "../../../models";
 
 const STYLES = {
   label: {
@@ -15,11 +12,23 @@ const STYLES = {
   },
 };
 
-export class AddRestrictedTerm extends Component<IAddRestrictedTermProps, IRestrictedTermsState> {
+export interface IArticleAddRestrictedTermProps {
+  toggleDisplayAddTerm: () => void;
+  addTerm: (termToAdd: INewRestrictedTerm) => void;
+}
+
+export interface IArticleAddRestrictedTermState {
+  newTermScore: string;
+  newTerm: string;
+}
+
+export class ArticleAddRestrictedTerm extends Component<
+  IArticleAddRestrictedTermProps,
+  IArticleAddRestrictedTermState
+> {
   state = {
     newTermScore: RestrictedTermLevels.warn,
     newTerm: "",
-    errorMessage: "",
   };
 
   @autobind
@@ -33,12 +42,13 @@ export class AddRestrictedTerm extends Component<IAddRestrictedTermProps, IRestr
   }
 
   @autobind
-  async handleAddNewTerm() {}
+  async handleAddNewTerm() {
+    this.props.addTerm({ term: this.state.newTerm, score: parseFloat(this.state.newTermScore) });
+  }
 
   @autobind
   handleCloseMenu() {
     this.props.toggleDisplayAddTerm();
-    this.setState({ errorMessage: "" });
   }
 
   render() {
@@ -72,12 +82,11 @@ export class AddRestrictedTerm extends Component<IAddRestrictedTermProps, IRestr
           key="cancel"
           label="Cancel"
           buttonStyles={SETTINGS_STYLES.cancel}
-          // onClick={this.props.toggleDisplayAddTerm}
+          onClick={this.props.toggleDisplayAddTerm}
         />
-        <div>{this.state.errorMessage}</div>
       </div>
     );
   }
 }
 
-export default AddRestrictedTerm;
+export default ArticleAddRestrictedTerm;
