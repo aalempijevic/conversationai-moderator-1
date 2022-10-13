@@ -576,7 +576,7 @@ export async function updateModel<T>(
   };
 }
 
-export async function updateArticle(id: string, isCommentingEnabled: boolean, isAutoModerated: boolean, moderationRules: Array<IRuleModel>, restrictedTerms: Array<IRestrictedTermAttributes) {
+export async function updateArticle(id: string, isCommentingEnabled: boolean, isAutoModerated: boolean, moderationRules: Array<IRuleModel>, restrictedTerms: Array<IRestrictedTermAttributes>) {
   console.trace()
   const url = serviceURL('simple', `/article/update/${id}`);
   console.log(restrictedTerms)
