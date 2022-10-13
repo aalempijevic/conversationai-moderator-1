@@ -303,6 +303,7 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
             </tbody>
           </table>
           <ArticleRestrictedTerms
+            articleId={this.props.article.id}
             controlState={this.props.controlState}
             restrictedTerms={article.restrictedTerms}
             setControlState={this.props.setControlState}

@@ -9,9 +9,11 @@ export interface IRestrictedTermAttributes {
   score: number;
 }
 
-export interface INewRestrictedTerm {
-  term: string;
+export interface INewArticleRestrictedTerm {
+  id: "-1";
+  articleId: string;
   score: number;
+  term: string;
 }
 
 // Keeping code below until restricted term global and article level controls are complete

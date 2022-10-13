@@ -4,7 +4,7 @@ import { Button } from "../Button";
 import { css } from "../../utilx";
 import { SETTINGS_STYLES } from "../../scenes/Settings/settingsStyles";
 import { RestrictedTermLevels } from "../../scenes/Settings/sections/AddRestrictedTerm";
-import { INewRestrictedTerm } from "../../../models";
+import { INewArticleRestrictedTerm } from "../../../models";
 
 const STYLES = {
   label: {
@@ -13,8 +13,9 @@ const STYLES = {
 };
 
 export interface IArticleAddRestrictedTermProps {
+  addTerm: (termToAdd: INewArticleRestrictedTerm) => void;
+  articleId: string;
   toggleDisplayAddTerm: () => void;
-  addTerm: (termToAdd: INewRestrictedTerm) => void;
 }
 
 export interface IArticleAddRestrictedTermState {
@@ -43,7 +44,13 @@ export class ArticleAddRestrictedTerm extends Component<
 
   @autobind
   async handleAddNewTerm() {
-    this.props.addTerm({ term: this.state.newTerm, score: parseFloat(this.state.newTermScore) });
+    this.props.addTerm({
+      id: "-1",
+      term: this.state.newTerm,
+      score: parseFloat(this.state.newTermScore),
+      articleId: this.props.articleId,
+    });
+    this.props.toggleDisplayAddTerm();
   }
 
   @autobind

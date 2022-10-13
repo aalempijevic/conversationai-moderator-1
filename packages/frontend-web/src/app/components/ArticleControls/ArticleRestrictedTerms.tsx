@@ -4,13 +4,14 @@ import { autobind } from "core-decorators";
 import { AddButton } from "../../scenes/Settings/components/AddButton";
 import { ArticleAddRestrictedTerm } from "./ArticleAddRestrictedTerm";
 
-import { INewRestrictedTerm, IRestrictedTermAttributes } from "../../../models";
+import { INewArticleRestrictedTerm, IRestrictedTermAttributes } from "../../../models";
 import { css } from "../../utilx";
 import { SETTINGS_STYLES } from "../../scenes/Settings/settingsStyles";
 import { RestrictedTermLevels } from "../../scenes/Settings/sections/AddRestrictedTerm";
 import { IArticleControlIconState } from "./ArticleControls";
 
 export interface IArticleRestrictedTermsProps {
+  articleId: string;
   controlState: IArticleControlIconState;
   restrictedTerms: IRestrictedTermAttributes[];
   setControlState: any;
@@ -49,8 +50,8 @@ export class ArticleRestrictedTerms extends Component<IArticleRestrictedTermsPro
   }
 
   @autobind
-  addTerm(termToAdd: INewRestrictedTerm) {
-    this.props.setControlState({ restrictedTerms: [...this.props.restrictedTerms, termToAdd] });
+  addTerm(termToAdd: INewArticleRestrictedTerm) {
+    this.props.setControlState({ restrictedTerms: [...this.props.controlState.restrictedTerms, termToAdd] });
   }
 
   @autobind
@@ -60,6 +61,7 @@ export class ArticleRestrictedTerms extends Component<IArticleRestrictedTermsPro
 
   render() {
     const { controlState, style } = this.props;
+    console.table(controlState);
     return (
       <div {...css(style.restrictedTermsSection)}>
         <h2 {...css(style.settingsHeader)}>Restricted Terms</h2>
@@ -103,7 +105,11 @@ export class ArticleRestrictedTerms extends Component<IArticleRestrictedTermsPro
           </tbody>
         </table>
         {this.state.showAddTermControls ? (
-          <ArticleAddRestrictedTerm toggleDisplayAddTerm={this.toggleDisplayAddTerm} addTerm={this.addTerm} />
+          <ArticleAddRestrictedTerm
+            articleId={this.props.articleId}
+            toggleDisplayAddTerm={this.toggleDisplayAddTerm}
+            addTerm={this.addTerm}
+          />
         ) : (
           <AddButton width={44} label="add new term" onClick={() => this.toggleDisplayAddTerm()} />
         )}
