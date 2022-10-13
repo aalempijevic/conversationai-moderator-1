@@ -29,7 +29,7 @@ export class ArticleRestrictedTerms extends Component<IArticleRestrictedTermsPro
 
   @autobind
   updateTermHelper(term: IRestrictedTermAttributes) {
-    const copiedTerms = [...this.props.restrictedTerms];
+    const copiedTerms = [...this.props.controlState.restrictedTerms];
     const termIndex = copiedTerms.findIndex((copiedTerm) => copiedTerm.id === term.id);
 
     return { copiedTerms, termIndex };
