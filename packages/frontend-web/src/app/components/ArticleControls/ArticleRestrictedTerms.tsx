@@ -61,7 +61,7 @@ export class ArticleRestrictedTerms extends Component<IArticleRestrictedTermsPro
 
   render() {
     const { controlState, style } = this.props;
-    console.table(controlState);
+
     return (
       <div {...css(style.restrictedTermsSection)}>
         <h2 {...css(style.settingsHeader)}>Restricted Terms</h2>
