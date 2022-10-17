@@ -30,7 +30,7 @@ interface IArticleControlMenuProps {
   article: IArticleModel;
   tags: List<ITagModel>;
   controlState: IArticleControlIconState;
-  setControlState: any;
+  setControlState: (newState: IArticleControlIconState) => void;
 
   clearPopups(): void;
   saveControls(
@@ -100,7 +100,7 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
       return;
     }
     this.props.setControlState({
-      isRestrictedTermsOverriden: !this.props.controlState.isRestrictedTermsOverridden,
+      isRestrictedTermsOverridden: !this.props.controlState.isRestrictedTermsOverridden,
     });
   }
 

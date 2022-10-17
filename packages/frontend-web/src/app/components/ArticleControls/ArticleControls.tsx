@@ -31,12 +31,12 @@ import { ArticleControlMenu } from "./ArticleControlsMenu";
 import { ControlFlag } from "../ControlFlag";
 
 export interface IArticleControlIconState {
-  isCommentingEnabled: boolean;
-  isAutoModerated: boolean;
-  isModerationOverridden: boolean;
-  moderationRules: Array<IRuleModel>;
-  isRestrictedTermsOverridden: boolean;
-  restrictedTerms: IRestrictedTermAttributes[];
+  isCommentingEnabled?: boolean;
+  isAutoModerated?: boolean;
+  isModerationOverridden?: boolean;
+  moderationRules?: Array<IRuleModel>;
+  isRestrictedTermsOverridden?: boolean;
+  restrictedTerms?: IRestrictedTermAttributes[];
 }
 
 interface IArticleControlIconProps {
@@ -79,7 +79,7 @@ class LazyArticleControlIcon extends React.Component<IArticleControlIconProps, I
       isAutoModerated: this.props.article.isAutoModerated,
       isModerationOverridden: this.props.article.moderationRules && this.props.article.moderationRules?.length > 0,
       moderationRules: this.props.article.moderationRules,
-      isRestrictedTermsOverridden: this.props.article.restrictedTerms?.length > 0,
+      isRestrictedTermsOverridden: this.props.article.restrictedTerms && this.props.article.restrictedTerms?.length > 0,
       restrictedTerms: this.props.article.restrictedTerms,
     };
   }
@@ -121,12 +121,13 @@ class LazyArticleControlIcon extends React.Component<IArticleControlIconProps, I
 
   @autobind
   closeMenu() {
+    console.log("closeMenu occurred");
     const starterState = {
       isCommentingEnabled: this.props.article.isCommentingEnabled,
       isAutoModerated: this.props.article.isAutoModerated,
       isModerationOverridden: this.props.article.moderationRules && this.props.article.moderationRules?.length > 0,
       moderationRules: this.props.article.moderationRules,
-      isRestrictedTermsOverridden: this.props.article.restrictedTerms?.length > 0,
+      isRestrictedTermsOverridden: this.props.article.restrictedTerms && this.props.article.restrictedTerms?.length > 0,
       restrictedTerms: this.props.article.restrictedTerms,
     };
 
@@ -172,7 +173,7 @@ class LazyArticleControlIcon extends React.Component<IArticleControlIconProps, I
             article={article}
             tags={tags}
             controlState={this.state}
-            setControlState={(state: any) => this.setState(state)}
+            setControlState={(newState: IArticleControlIconState) => this.setState(newState)}
             clearPopups={this.closeMenu}
             saveControls={this.saveControls}
           />
