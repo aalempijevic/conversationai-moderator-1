@@ -26,7 +26,7 @@ const STYLES = {
 
 export class AddRestrictedTerm extends Component<IAddRestrictedTermProps, IRestrictedTermsState> {
   state = {
-    newTermScore: RestrictedTermLevels.warn,
+    newTermScore: RestrictedTermLevels.approve,
     newTerm: "",
     errorMessage: "",
   };
