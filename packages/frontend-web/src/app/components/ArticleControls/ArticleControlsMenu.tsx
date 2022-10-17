@@ -48,13 +48,16 @@ const STYLE = {
     fontFamily: "LibreFranklin-Medium, sans-serif",
     fontSize: "14px",
   },
-  restrictedTermsSection: {
+  overrideSection: {
     margin: "24px",
   },
   footerButton: {
     border: "none",
     background: "none",
     cursor: "pointer",
+  },
+  tableHeader: {
+    textAlign: "left",
   },
 };
 
@@ -169,12 +172,12 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
 
     return (
       <ClickAwayListener onClickAway={clearPopups}>
-        <div tabIndex={0} {...css(SCRIM_STYLE.popupMenu, { padding: "20px", overflow: "auto", maxHeight: "80vh" })}>
+        <div tabIndex={0} {...css(SCRIM_STYLE.popupMenu, { padding: "20px", overflow: "auto", maxHeight: "90vh" })}>
           <DialogTitle id="article-controls">Moderation settings</DialogTitle>
           <table
             key="main"
             {...css({
-              width: "compute(100% - 50px)",
+              width: "calc(100% - 50px)",
               margin: "4px 9px 4px 25px",
             })}
           >
@@ -249,7 +252,9 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
                   />
                 </td>
                 <td key="text" {...css({ textAlign: "left", padding: "15px 4px" })}>
-                  <label {...css(SCRIM_STYLE.popupContent)}>Restricted Terms {!isAdmin && "(read only)"}</label>
+                  <label {...css(SCRIM_STYLE.popupContent)}>
+                    Restricted Terms Override {!isAdmin && "(read only)"}
+                  </label>
                 </td>
                 <td key="toggle" {...css({ textAlign: "right" })}>
                   <Switch
@@ -259,13 +264,13 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
                   />
                 </td>
               </tr>
-              {this.props.controlState.isModerationOverridden && (
-                <>
-                  <tr>
-                    <td>
-                      <h2 {...css(STYLE.settingsHeader)}>Moderation Rules</h2>
-                    </td>
-                  </tr>
+            </tbody>
+          </table>
+          {this.props.controlState.isModerationOverridden && (
+            <div {...css(STYLE.overrideSection)}>
+              <h2 {...css(STYLE.settingsHeader)}>Moderation Rules</h2>
+              <table>
+                <tbody>
                   <tr>
                     <td key="editRulesSection">
                       {this.props.controlState.moderationRules.map((rule, i) => (
@@ -298,10 +303,10 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
                       )}
                     </td>
                   </tr>
-                </>
-              )}
-            </tbody>
-          </table>
+                </tbody>
+              </table>
+            </div>
+          )}
           {this.props.controlState.isRestrictedTermsOverridden && (
             <ArticleRestrictedTerms
               articleId={this.props.article.id}

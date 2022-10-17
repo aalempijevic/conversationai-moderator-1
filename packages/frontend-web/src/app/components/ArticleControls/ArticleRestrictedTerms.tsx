@@ -62,27 +62,14 @@ export class ArticleRestrictedTerms extends Component<IArticleRestrictedTermsPro
     const { controlState, style } = this.props;
 
     return (
-      <div {...css(style.restrictedTermsSection)}>
+      <div {...css(style.overrideSection)}>
         <h2 {...css(style.settingsHeader)}>Restricted Terms</h2>
         <table>
-          <thead>
-            <tr>
-              <th key="termWordColumn" {...css(SETTINGS_STYLES.userTableCell)}>
-                Term
-              </th>
-              <th key="termLevelColumn" {...css(SETTINGS_STYLES.userTableCell)}>
-                Level
-              </th>
-              <th key="termDeleteColumn" {...css(SETTINGS_STYLES.userTableCell)}>
-                Delete
-              </th>
-            </tr>
-          </thead>
           <tbody>
             {controlState.restrictedTerms.map((term) => (
-              <tr {...css(SETTINGS_STYLES.userTableCell)} key={`banned-term-${term.id}`}>
-                <td {...css(SETTINGS_STYLES.userTableCell, SETTINGS_STYLES.label)}>{term.term}</td>
-                <td {...css(SETTINGS_STYLES.userTableCell)}>
+              <tr key={`banned-term-${term.id}`}>
+                <td {...css(SETTINGS_STYLES.label)}>{term.term}</td>
+                <td>
                   <select
                     {...css({ ...SETTINGS_STYLES.selectBox, width: "90px" })}
                     name="new-restricted-term-score"
@@ -94,7 +81,7 @@ export class ArticleRestrictedTerms extends Component<IArticleRestrictedTermsPro
                     <option value={RestrictedTermLevels.reject}>Reject</option>
                   </select>
                 </td>
-                <td {...css(SETTINGS_STYLES.userTableCell)}>
+                <td>
                   <button {...css(SETTINGS_STYLES.deleteButton)} onClick={() => this.deleteTerm(term)}>
                     Delete
                   </button>
