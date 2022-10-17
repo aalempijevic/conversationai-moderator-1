@@ -1,5 +1,7 @@
 import React from "react";
 
+import { Badge } from "@material-ui/core";
+
 import { css } from "../../utilx";
 import { GREY_COLOR, NICE_CONTROL_BLUE, RED } from "../../styles";
 import * as icons from "../Icons";
@@ -34,9 +36,15 @@ export class ControlFlag extends React.Component<IIControlFlagProps> {
     if (this.props.isModerationOverridden) {
       style = { color: RED };
     }
-    if (this.props.isRestrictedTermsOverridden) {
-      Icon = icons.SpeechBubbleMessageCross;
-    }
-    return <Icon {...css(style)} />;
+    return (
+      <Badge
+        color="secondary"
+        invisible={!this.props.isRestrictedTermsOverridden}
+        badgeContent={"R"}
+        variant="standard"
+      >
+        <Icon {...css(style)} />
+      </Badge>
+    );
   }
 }
