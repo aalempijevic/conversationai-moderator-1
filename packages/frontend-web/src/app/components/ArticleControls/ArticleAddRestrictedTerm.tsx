@@ -3,7 +3,7 @@ import { autobind } from "core-decorators";
 import { Button } from "../Button";
 import { css } from "../../utilx";
 import { SETTINGS_STYLES } from "../../scenes/Settings/settingsStyles";
-import { INewArticleRestrictedTerm, RestrictedTermLevels } from "../../../models";
+import { INewArticleRestrictedTerm, IRestrictedTermAttributes, RestrictedTermLevels } from "../../../models";
 
 const STYLES = {
   label: {
@@ -14,6 +14,7 @@ const STYLES = {
 export interface IArticleAddRestrictedTermProps {
   addTerm: (termToAdd: INewArticleRestrictedTerm) => void;
   articleId: string;
+  globalRestrictedTerms: IRestrictedTermAttributes[];
   toggleDisplayAddTerm: () => void;
 }
 
@@ -58,6 +59,7 @@ export class ArticleAddRestrictedTerm extends Component<
   }
 
   render() {
+    console.table(this.props.globalRestrictedTerms);
     return (
       <div>
         <label htmlFor="new-restricted-term" {...css(STYLES.label)}>

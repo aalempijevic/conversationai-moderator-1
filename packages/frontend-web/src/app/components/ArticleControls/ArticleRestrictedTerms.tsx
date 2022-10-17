@@ -12,6 +12,7 @@ import { IArticleControlIconState } from "./ArticleControls";
 export interface IArticleRestrictedTermsProps {
   articleId: string;
   controlState: IArticleControlIconState;
+  globalRestrictedTerms: IRestrictedTermAttributes[];
   restrictedTerms: IRestrictedTermAttributes[];
   setControlState: any;
   style: any;
@@ -94,6 +95,7 @@ export class ArticleRestrictedTerms extends Component<IArticleRestrictedTermsPro
           <ArticleAddRestrictedTerm
             articleId={this.props.articleId}
             toggleDisplayAddTerm={this.toggleDisplayAddTerm}
+            globalRestrictedTerms={this.props.globalRestrictedTerms}
             addTerm={this.addTerm}
           />
         ) : (

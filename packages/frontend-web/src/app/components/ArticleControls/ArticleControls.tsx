@@ -40,6 +40,7 @@ export interface IArticleControlIconState {
 }
 
 interface IArticleControlIconProps {
+  globalRestrictedTerms: IRestrictedTermAttributes[];
   isAdmin?: boolean;
   article: IArticleModel;
   tags: List<ITagModel>;
@@ -121,7 +122,6 @@ class LazyArticleControlIcon extends React.Component<IArticleControlIconProps, I
 
   @autobind
   closeMenu() {
-    console.log("closeMenu occurred");
     const starterState = {
       isCommentingEnabled: this.props.article.isCommentingEnabled,
       isAutoModerated: this.props.article.isAutoModerated,
@@ -136,7 +136,7 @@ class LazyArticleControlIcon extends React.Component<IArticleControlIconProps, I
   }
 
   render() {
-    const { isAdmin, article, tags, open, whiteBackground } = this.props;
+    const { isAdmin, article, tags, open, whiteBackground, globalRestrictedTerms } = this.props;
 
     return (
       <div key="aci">
@@ -176,6 +176,7 @@ class LazyArticleControlIcon extends React.Component<IArticleControlIconProps, I
             setControlState={(newState: IArticleControlIconState) => this.setState(newState)}
             clearPopups={this.closeMenu}
             saveControls={this.saveControls}
+            globalRestrictedTerms={globalRestrictedTerms}
           />
         </Popper>
       </div>

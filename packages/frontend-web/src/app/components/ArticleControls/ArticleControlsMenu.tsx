@@ -26,6 +26,7 @@ import { AddButton } from "../../scenes/Settings/components/AddButton";
 let placeholderId = -1;
 
 interface IArticleControlMenuProps {
+  globalRestrictedTerms: Array<IRestrictedTermAttributes>;
   isAdmin?: boolean;
   article: IArticleModel;
   tags: List<ITagModel>;
@@ -311,6 +312,7 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
             <ArticleRestrictedTerms
               articleId={this.props.article.id}
               controlState={this.props.controlState}
+              globalRestrictedTerms={this.props.globalRestrictedTerms}
               restrictedTerms={article.restrictedTerms}
               setControlState={this.props.setControlState}
               style={STYLE}

@@ -31,6 +31,7 @@ import {
   updateArticleModerators,
   updateCategoryModerators,
 } from '../../platform/dataService';
+import { globalRestrictedTerms } from '../../platform/restrictedTermsService';
 import {
   flexCenter,
   HEADER_HEIGHT,
@@ -103,6 +104,7 @@ const POPUP_FILTERS = 'filters';
 const POPUP_SAVING = 'saving';
 
 export interface IIArticleTableState {
+  globalRestrictedTerms: Array<IRestrictedTermAttributes>;
   articlesContainerHeight: number;
   articlesTableHeight: number;
   numberToShow: number;
@@ -229,6 +231,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     this._numberOnScreen = Math.ceil((articlesContainerHeight - HEADER_HEIGHT) / CELL_HEIGHT);
 
     this.state = {
+      globalRestrictedTerms: [],
       filterString: props.routeParams ? props.routeParams.filter : NOT_SET,
       sortString: props.routeParams ? props.routeParams.sort : NOT_SET,
       filter,
@@ -326,6 +329,16 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
   @autobind
   clearPopups() {
     this.setState(clearPopupsState);
+  }
+
+@autobind async initializeGlobalRestrictedTerms() {
+  console.log("Requested global terms")
+  const terms = await globalRestrictedTerms.get();
+  this.setState({globalRestrictedTerms: terms})
+}
+
+ componentDidMount(): void {
+      this.initializeGlobalRestrictedTerms();
   }
 
   componentWillMount() {
@@ -546,6 +559,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
           <div {...css({display: 'inline-block'})}>
             {!isSummary &&
             <ArticleControlIcon
+              globalRestrictedTerms={this.state.globalRestrictedTerms}
               article={article}
               tags={tags}
               open={this.state.selectedArticle && this.state.selectedArticle.id === article.id}
