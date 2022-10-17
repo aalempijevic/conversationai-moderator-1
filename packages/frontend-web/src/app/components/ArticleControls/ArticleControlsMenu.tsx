@@ -302,13 +302,15 @@ export class ArticleControlMenu extends React.Component<IArticleControlMenuProps
               )}
             </tbody>
           </table>
-          <ArticleRestrictedTerms
-            articleId={this.props.article.id}
-            controlState={this.props.controlState}
-            restrictedTerms={article.restrictedTerms}
-            setControlState={this.props.setControlState}
-            style={STYLE}
-          />
+          {this.props.controlState.isRestrictedTermsOverridden && (
+            <ArticleRestrictedTerms
+              articleId={this.props.article.id}
+              controlState={this.props.controlState}
+              restrictedTerms={article.restrictedTerms}
+              setControlState={this.props.setControlState}
+              style={STYLE}
+            />
+          )}
           <div key="footer" {...css({ textAlign: "right", margin: "35px 25px 30px 25px" })}>
             <button onClick={clearPopups} {...css({ ...STYLE.footerButton, marginRight: "30px", opacity: "0.5" })}>
               Cancel
