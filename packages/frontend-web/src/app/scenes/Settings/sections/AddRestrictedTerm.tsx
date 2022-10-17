@@ -5,12 +5,7 @@ import { css } from "../../../utilx";
 import { SETTINGS_STYLES } from "../settingsStyles";
 
 import { globalRestrictedTerms } from "../../../platform/restrictedTermsService";
-
-export enum RestrictedTermLevels {
-  warn = "0.1",
-  defer = "0.5",
-  reject = "0.9",
-}
+import { RestrictedTermLevels } from "../../../../models";
 
 export interface IAddRestrictedTermProps {
   getTerms: () => Promise<void>;
@@ -90,8 +85,8 @@ export class AddRestrictedTerm extends Component<IAddRestrictedTermProps, IRestr
           onChange={this.handleNewTermScoreChange}
           value={this.state.newTermScore}
         >
-          <option value={RestrictedTermLevels.warn}>Warn</option>
-          <option value={RestrictedTermLevels.defer}>Defer</option>
+          <option value={RestrictedTermLevels.approve}>Approve</option>
+          <option value={RestrictedTermLevels.highlight}>Hightlight</option>
           <option value={RestrictedTermLevels.reject}>Reject</option>
         </select>
         <Button key="add" label="Add" buttonStyles={SETTINGS_STYLES.save} onClick={this.handleAddNewTerm} />

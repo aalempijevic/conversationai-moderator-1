@@ -3,8 +3,7 @@ import { autobind } from "core-decorators";
 import { Button } from "../Button";
 import { css } from "../../utilx";
 import { SETTINGS_STYLES } from "../../scenes/Settings/settingsStyles";
-import { RestrictedTermLevels } from "../../scenes/Settings/sections/AddRestrictedTerm";
-import { INewArticleRestrictedTerm } from "../../../models";
+import { INewArticleRestrictedTerm, RestrictedTermLevels } from "../../../models";
 
 const STYLES = {
   label: {
@@ -28,7 +27,7 @@ export class ArticleAddRestrictedTerm extends Component<
   IArticleAddRestrictedTermState
 > {
   state = {
-    newTermScore: RestrictedTermLevels.warn,
+    newTermScore: RestrictedTermLevels.approve,
     newTerm: "",
   };
 
@@ -80,8 +79,8 @@ export class ArticleAddRestrictedTerm extends Component<
           onChange={this.handleNewTermScoreChange}
           value={this.state.newTermScore}
         >
-          <option value={RestrictedTermLevels.warn}>Warn</option>
-          <option value={RestrictedTermLevels.defer}>Defer</option>
+          <option value={RestrictedTermLevels.approve}>Approve</option>
+          <option value={RestrictedTermLevels.highlight}>Hightlight</option>
           <option value={RestrictedTermLevels.reject}>Reject</option>
         </select>
         <Button key="add" label="Add" buttonStyles={SETTINGS_STYLES.save} onClick={this.handleAddNewTerm} />

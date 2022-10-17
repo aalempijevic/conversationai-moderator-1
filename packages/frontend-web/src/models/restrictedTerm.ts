@@ -16,6 +16,12 @@ export interface INewArticleRestrictedTerm {
   term: string;
 }
 
+export enum RestrictedTermLevels {
+  approve = "0.1",
+  highlight = "0.5",
+  reject = "0.9",
+}
+
 // Keeping code below until restricted term global and article level controls are complete
 export interface IRestrictedTermModel extends TypedRecord<IRestrictedTermModel>, IRestrictedTermAttributes {}
 

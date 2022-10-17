@@ -1,10 +1,10 @@
 import { ChangeEvent, Component } from "react";
 
-import AddRestrictedTerm, { RestrictedTermLevels } from "./AddRestrictedTerm";
+import AddRestrictedTerm from "./AddRestrictedTerm";
 import { AddButton } from "../components/AddButton";
 
 import { globalRestrictedTerms } from "../../../platform/restrictedTermsService";
-import { IRestrictedTermAttributes } from "../../../../models";
+import { IRestrictedTermAttributes, RestrictedTermLevels } from "../../../../models";
 
 import { css } from "../../../utilx";
 import { SETTINGS_STYLES } from "../settingsStyles";
@@ -36,7 +36,6 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
 
   @autobind
   async getTerms() {
-    // get rid of Try/Catch when done with dev
     try {
       const terms = await globalRestrictedTerms.get();
       this.setState({ terms: terms });
@@ -121,8 +120,8 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
                         onChange={(event) => this.updateTermScore(event, term)}
                         value={term.score}
                       >
-                        <option value={RestrictedTermLevels.warn}>Warn</option>
-                        <option value={RestrictedTermLevels.defer}>Defer</option>
+                        <option value={RestrictedTermLevels.approve}>Approve</option>
+                        <option value={RestrictedTermLevels.highlight}>Highlight</option>
                         <option value={RestrictedTermLevels.reject}>Reject</option>
                       </select>
                     </td>

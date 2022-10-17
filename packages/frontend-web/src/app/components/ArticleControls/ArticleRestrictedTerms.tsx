@@ -4,10 +4,9 @@ import { autobind } from "core-decorators";
 import { AddButton } from "../../scenes/Settings/components/AddButton";
 import { ArticleAddRestrictedTerm } from "./ArticleAddRestrictedTerm";
 
-import { INewArticleRestrictedTerm, IRestrictedTermAttributes } from "../../../models";
+import { INewArticleRestrictedTerm, IRestrictedTermAttributes, RestrictedTermLevels } from "../../../models";
 import { css } from "../../utilx";
 import { SETTINGS_STYLES } from "../../scenes/Settings/settingsStyles";
-import { RestrictedTermLevels } from "../../scenes/Settings/sections/AddRestrictedTerm";
 import { IArticleControlIconState } from "./ArticleControls";
 
 export interface IArticleRestrictedTermsProps {
@@ -90,8 +89,8 @@ export class ArticleRestrictedTerms extends Component<IArticleRestrictedTermsPro
                     onChange={(event) => this.updateTermScore(event, term)}
                     value={term.score}
                   >
-                    <option value={RestrictedTermLevels.warn}>Warn</option>
-                    <option value={RestrictedTermLevels.defer}>Defer</option>
+                    <option value={RestrictedTermLevels.approve}>Approve</option>
+                    <option value={RestrictedTermLevels.highlight}>Highlight</option>
                     <option value={RestrictedTermLevels.reject}>Reject</option>
                   </select>
                 </td>
