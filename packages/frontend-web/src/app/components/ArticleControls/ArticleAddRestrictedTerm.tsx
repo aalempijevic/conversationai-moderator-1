@@ -1,9 +1,11 @@
 import { Component, ChangeEvent } from "react";
+
 import { autobind } from "core-decorators";
+
 import { Button } from "../Button";
 import { css } from "../../utilx";
 import { SETTINGS_STYLES } from "../../scenes/Settings/settingsStyles";
-import { INewArticleRestrictedTerm, IRestrictedTermAttributes, RestrictedTermLevels } from "../../../models";
+import { INewArticleRestrictedTerm, RestrictedTermLevels } from "../../../models";
 
 const STYLES = {
   label: {
@@ -14,13 +16,15 @@ const STYLES = {
 export interface IArticleAddRestrictedTermProps {
   addTerm: (termToAdd: INewArticleRestrictedTerm) => void;
   articleId: string;
-  globalRestrictedTerms: IRestrictedTermAttributes[];
+  globalRestrictedTerms: Array<string>;
+  isGlobalTerm: (term: string) => boolean;
   toggleDisplayAddTerm: () => void;
 }
 
 export interface IArticleAddRestrictedTermState {
   newTermScore: string;
   newTerm: string;
+  isGlobalTerm: boolean;
 }
 
 export class ArticleAddRestrictedTerm extends Component<
@@ -28,6 +32,7 @@ export class ArticleAddRestrictedTerm extends Component<
   IArticleAddRestrictedTermState
 > {
   state = {
+    isGlobalTerm: false,
     newTermScore: RestrictedTermLevels.approve,
     newTerm: "",
   };
@@ -39,6 +44,12 @@ export class ArticleAddRestrictedTerm extends Component<
 
   @autobind
   handleNewTermChange(e: ChangeEvent<HTMLInputElement>) {
+    const isGlobalTerm = this.props.isGlobalTerm(e.target.value);
+    if (isGlobalTerm) {
+      this.setState({ isGlobalTerm: true });
+    } else {
+      this.setState({ isGlobalTerm: false });
+    }
     this.setState({ newTerm: e.target.value });
   }
 
@@ -59,7 +70,6 @@ export class ArticleAddRestrictedTerm extends Component<
   }
 
   render() {
-    console.table(this.props.globalRestrictedTerms);
     return (
       <div>
         <label htmlFor="new-restricted-term" {...css(STYLES.label)}>
@@ -92,6 +102,7 @@ export class ArticleAddRestrictedTerm extends Component<
           buttonStyles={SETTINGS_STYLES.cancel}
           onClick={this.props.toggleDisplayAddTerm}
         />
+        {this.state.isGlobalTerm && <div>This is a global term</div>}
       </div>
     );
   }

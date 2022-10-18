@@ -26,7 +26,7 @@ import { AddButton } from "../../scenes/Settings/components/AddButton";
 let placeholderId = -1;
 
 interface IArticleControlMenuProps {
-  globalRestrictedTerms: Array<IRestrictedTermAttributes>;
+  globalRestrictedTerms: Array<string>;
   isAdmin?: boolean;
   article: IArticleModel;
   tags: List<ITagModel>;
@@ -59,6 +59,9 @@ const STYLE = {
   },
   tableHeader: {
     textAlign: "left",
+  },
+  cell: {
+    paddingRight: "16px",
   },
 };
 

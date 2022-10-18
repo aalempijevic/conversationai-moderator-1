@@ -40,7 +40,7 @@ export interface IArticleControlIconState {
 }
 
 interface IArticleControlIconProps {
-  globalRestrictedTerms: IRestrictedTermAttributes[];
+  globalRestrictedTerms: Array<string>;
   isAdmin?: boolean;
   article: IArticleModel;
   tags: List<ITagModel>;

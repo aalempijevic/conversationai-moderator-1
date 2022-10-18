@@ -1,6 +1,8 @@
 import { ChangeEvent, Component } from "react";
 import { autobind } from "core-decorators";
 
+import { Chip } from "@material-ui/core";
+
 import { AddButton } from "../../scenes/Settings/components/AddButton";
 import { ArticleAddRestrictedTerm } from "./ArticleAddRestrictedTerm";
 
@@ -12,7 +14,7 @@ import { IArticleControlIconState } from "./ArticleControls";
 export interface IArticleRestrictedTermsProps {
   articleId: string;
   controlState: IArticleControlIconState;
-  globalRestrictedTerms: IRestrictedTermAttributes[];
+  globalRestrictedTerms: Array<string>;
   restrictedTerms: IRestrictedTermAttributes[];
   setControlState: any;
   style: any;
@@ -59,6 +61,12 @@ export class ArticleRestrictedTerms extends Component<IArticleRestrictedTermsPro
     this.setState({ showAddTermControls: !this.state.showAddTermControls });
   }
 
+  @autobind
+  isGlobalTerm(term: string): boolean {
+    const isGlobalTerm = 0 <= this.props.globalRestrictedTerms.findIndex((globalTerm) => globalTerm === term);
+    return isGlobalTerm;
+  }
+
   render() {
     const { controlState, style } = this.props;
 
@@ -69,8 +77,11 @@ export class ArticleRestrictedTerms extends Component<IArticleRestrictedTermsPro
           <tbody>
             {controlState.restrictedTerms.map((term) => (
               <tr key={`banned-term-${term.id}`}>
-                <td {...css(SETTINGS_STYLES.label)}>{term.term}</td>
-                <td>
+                <td {...css(style.cell)}>{term.term}</td>
+                <td {...css(style.cell)}>
+                  {this.isGlobalTerm(term.term) && <Chip color="secondary" label="Global" />}
+                </td>
+                <td {...css(style.cell)}>
                   <select
                     {...css({ ...SETTINGS_STYLES.selectBox, width: "90px" })}
                     name="new-restricted-term-score"
@@ -93,10 +104,11 @@ export class ArticleRestrictedTerms extends Component<IArticleRestrictedTermsPro
         </table>
         {this.state.showAddTermControls ? (
           <ArticleAddRestrictedTerm
-            articleId={this.props.articleId}
-            toggleDisplayAddTerm={this.toggleDisplayAddTerm}
-            globalRestrictedTerms={this.props.globalRestrictedTerms}
             addTerm={this.addTerm}
+            articleId={this.props.articleId}
+            globalRestrictedTerms={this.props.globalRestrictedTerms}
+            isGlobalTerm={this.isGlobalTerm}
+            toggleDisplayAddTerm={this.toggleDisplayAddTerm}
           />
         ) : (
           <AddButton width={44} label="add new term" onClick={() => this.toggleDisplayAddTerm()} />

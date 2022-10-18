@@ -104,7 +104,7 @@ const POPUP_FILTERS = 'filters';
 const POPUP_SAVING = 'saving';
 
 export interface IIArticleTableState {
-  globalRestrictedTerms: Array<IRestrictedTermAttributes>;
+  globalRestrictedTerms: Array<string>;
   articlesContainerHeight: number;
   articlesTableHeight: number;
   numberToShow: number;
@@ -334,7 +334,8 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
 @autobind async initializeGlobalRestrictedTerms() {
   console.log("Requested global terms")
   const terms = await globalRestrictedTerms.get();
-  this.setState({globalRestrictedTerms: terms})
+  const termsOnly = terms.map(term => term.term);
+  this.setState({globalRestrictedTerms: termsOnly})
 }
 
  componentDidMount(): void {
