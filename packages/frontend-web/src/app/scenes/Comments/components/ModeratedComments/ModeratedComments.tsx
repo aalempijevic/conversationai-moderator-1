@@ -38,6 +38,7 @@ import {
 } from '../../../../components';
 import { REQUIRE_REASON_TO_REJECT } from '../../../../config';
 import { updateArticle } from '../../../../platform/dataService';
+import { globalRestrictedTerms } from '../../../../platform/restrictedTermsService';
 import {
   BASE_Z_INDEX,
   BOX_DEFAULT_SPACING,
@@ -288,6 +289,7 @@ export interface IModeratedCommentsState {
   loadedArticleId?: string;
   loadedTag?: string;
   articleControlOpen: boolean;
+  globalRestrictedTerms: Array<string>;
 }
 
 export class ModeratedComments
@@ -321,10 +323,18 @@ export class ModeratedComments
     taggingTooltipVisible: false,
     moderateButtonsRef: null,
     articleControlOpen: false,
+    globalRestrictedTerms: [],
   };
+
+  @autobind async initializeGlobalRestrictedTerms() {
+    const terms = await globalRestrictedTerms.get();
+    const termsOnly = terms.map(term => term.term);
+    this.setState({globalRestrictedTerms: termsOnly})
+  }
 
   componentDidMount() {
     keyboardJS.bind('escape', this.onPressEscape);
+    this.initializeGlobalRestrictedTerms();
   }
 
   componentWillUnmount() {
@@ -420,6 +430,7 @@ export class ModeratedComments
             clearPopups={this.closePopup}
             openControls={this.openPopup}
             saveControls={this.applyRules}
+            globalRestrictedTerms={this.state.globalRestrictedTerms}
             whiteBackground
           />
         )}

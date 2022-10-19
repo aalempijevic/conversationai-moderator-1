@@ -1,12 +1,12 @@
 import axios from "axios";
 
 import { serviceURL } from "./dataService";
-import { IRestrictedTermModel } from "../../models";
+import { IRestrictedTermAttributes } from "../../models";
 
 const RESTRICTED_TERMS_URL = serviceURL("simple", "/restrictedTerms");
 
 // /services/simple/restrictedTerms
-export async function getRestrictedTerms(): Promise<Array<IRestrictedTermModel>> {
+export async function getRestrictedTerms(): Promise<Array<IRestrictedTermAttributes>> {
   const response: any = await axios.get(RESTRICTED_TERMS_URL);
   return response.data;
 }

@@ -332,7 +332,6 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
   }
 
 @autobind async initializeGlobalRestrictedTerms() {
-  console.log("Requested global terms")
   const terms = await globalRestrictedTerms.get();
   const termsOnly = terms.map(term => term.term);
   this.setState({globalRestrictedTerms: termsOnly})
