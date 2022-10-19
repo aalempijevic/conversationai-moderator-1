@@ -53,6 +53,7 @@ export type IValidModelNames =
     'moderation_rules' |
     'moderator_assignments' |
     'preselects' |
+    'restricted_terms' |
     'tagging_sensitivities' |
     'tags' |
     'users' |
@@ -69,6 +70,7 @@ const VALID_MODEL_NAMES_LOOKUP: {
   moderation_rules: true,
   moderator_assignments: true,
   preselects: true,
+  restrictedTerms: true,
   tagging_sensitivities: true,
   tags: true,
   users: true,

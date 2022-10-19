@@ -27,3 +27,4 @@ export * from './rule';
 export * from './tag';
 export * from './taggingSensitivity';
 export * from './user';
+export * from './restrictedTerm';

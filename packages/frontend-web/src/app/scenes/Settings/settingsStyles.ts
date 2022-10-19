@@ -23,26 +23,30 @@ import {
   INPUT_DROP_SHADOW,
   MEDIUM_COLOR,
   PALE_COLOR,
-} from '../../styles';
+  WHITE_COLOR,
+  DARK_COLOR,
+  DARK_PRIMARY_TEXT_COLOR,
+  DIVIDER_COLOR,
+} from "../../styles";
 
 const ARROW_SIZE = 6;
 const ROW_HEIGHT = 42;
 
 export const SETTINGS_STYLES = {
   row: {
-    position: 'relative',
-    display: 'flex',
-    alignItems: 'center',
-    maxWidth: '100%',
-    overflow: 'hidden',
+    position: "relative",
+    display: "flex",
+    alignItems: "center",
+    maxWidth: "100%",
+    overflow: "hidden",
   },
 
   label: {
     ...ARTICLE_CATEGORY_TYPE,
-    marginRight: '24px',
-    minWidth: '120px',
-    display: 'flex',
-    alignItems: 'center',
+    marginRight: "24px",
+    minWidth: "120px",
+    display: "flex",
+    alignItems: "center",
     height: ROW_HEIGHT,
   },
 
@@ -50,42 +54,55 @@ export const SETTINGS_STYLES = {
     borderRadius: 2,
     boxShadow: INPUT_DROP_SHADOW,
     borderWidth: 0,
-    fontSize: '16px',
+    fontSize: "16px",
     marginRight: GUTTER_DEFAULT_SPACING,
     paddingLeft: 10,
     backgroundColor: PALE_COLOR,
     height: ROW_HEIGHT,
-    boxSizing: 'border-box',
+    boxSizing: "border-box",
   },
 
   selectBox: {
     width: 280,
     height: ROW_HEIGHT,
     paddingLeft: 10,
-    appearance: 'none',
-    WebkitAppearance: 'none', // Not getting prefixed either
-    border: 'none',
+    appearance: "none",
+    WebkitAppearance: "none", // Not getting prefixed either
+    border: "none",
     borderRadius: 2,
     boxShadow: INPUT_DROP_SHADOW,
     backgroundColor: PALE_COLOR,
-    fontSize: '16px',
-    boxSizing: 'border-box',
+    fontSize: "16px",
+    boxSizing: "border-box",
   },
 
   selectBoxRow: {
-    position: 'relative',
+    position: "relative",
   },
 
   button: {
-    alignSelf: 'flex-end',
-    backgroundColor: 'transparent',
-    border: 'none',
+    alignSelf: "flex-end",
+    backgroundColor: "transparent",
+    border: "none",
     color: MEDIUM_COLOR,
-    cursor: 'pointer',
+    cursor: "pointer",
     height: ROW_HEIGHT,
-    ':focus': {
+    ":focus": {
       outline: 0,
-      textDecoration: 'underline',
+      textDecoration: "underline",
+    },
+  },
+
+  deleteButton: {
+    height: ROW_HEIGHT,
+    marginLeft: 0,
+    backgroundColor: "transparent",
+    border: "none",
+    color: MEDIUM_COLOR,
+    cursor: "pointer",
+    ":focus": {
+      outline: 0,
+      textDecoration: "underline",
     },
   },
 
@@ -94,23 +111,53 @@ export const SETTINGS_STYLES = {
   },
 
   arrow: {
-    position: 'absolute',
+    position: "absolute",
     zIndex: BASE_Z_INDEX,
     right: 28,
     top: 15,
     borderLeft: `${ARROW_SIZE}px solid transparent`,
     borderRight: `${ARROW_SIZE}px solid transparent`,
     borderTop: `${ARROW_SIZE}px solid ${DARK_SECONDARY_TEXT_COLOR}`,
-    display: 'block',
+    display: "block",
     height: 0,
     width: 0,
     marginLeft: `${BOX_DEFAULT_SPACING}px`,
     marginRight: `${BOX_DEFAULT_SPACING}px`,
-    pointerEvents: 'none',
+    pointerEvents: "none",
   },
 
   userTableCell: {
-    textAlign: 'left',
-    padding: '5px 30px',
+    textAlign: "left",
+    padding: "5px 30px",
+  },
+
+  buttonGroup: {
+    display: "flex",
+    flexDirection: "row",
+    backgroundColor: WHITE_COLOR,
+    padding: `${GUTTER_DEFAULT_SPACING}px`,
+  },
+  cancel: {
+    margin: "0 4px",
+    backgroundColor: WHITE_COLOR,
+    color: DARK_PRIMARY_TEXT_COLOR,
+    border: `1px solid ${DIVIDER_COLOR}`,
+    marginRight: `${GUTTER_DEFAULT_SPACING}px`,
+    ":focus": {
+      backgroundColor: PALE_COLOR,
+    },
+  },
+  save: {
+    margin: "0 4px",
+    backgroundColor: MEDIUM_COLOR,
+    color: WHITE_COLOR,
+    ":focus": {
+      backgroundColor: DARK_COLOR,
+    },
+  },
+  disableMenu: {
+    opacity: "20%",
+    pointerEvents: "none",
+    transition: "opacity 0.5s",
   },
 };
