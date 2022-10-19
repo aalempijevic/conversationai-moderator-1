@@ -58,6 +58,7 @@ import {
   REQUIRE_REASON_TO_REJECT,
 } from '../../../../config';
 import { updateArticle } from '../../../../platform/dataService';
+import { globalRestrictedTerms } from '../../../../platform/restrictedTermsService';
 import {
   ARTICLE_CATEGORY_TYPE,
   BASE_Z_INDEX,
@@ -337,6 +338,7 @@ export interface INewCommentsState {
   taggingCommentId?: string;
   articleControlOpen: boolean;
   rulesInCategory?: List<IRuleModel>;
+  globalRestrictedTerms?: Array<string>
 }
 
 export class NewComments extends React.Component<INewCommentsProps, INewCommentsState> {
@@ -373,6 +375,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     taggingCommentId: null,
     moderateButtonsRef: null,
     articleControlOpen: false,
+    globalRestrictedTerms: [],
   };
 
   static getDerivedStateFromProps(props: INewCommentsProps, state: INewCommentsState) {
@@ -476,6 +479,12 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       this.setState({ selectedRow: row });
       clearReturnSavedCommentRow();
     }
+  }
+
+  @autobind async initializeGlobalRestrictedTerms() {
+    const terms = await globalRestrictedTerms.get();
+    const termsOnly = terms.map(term => term.term);
+    this.setState({globalRestrictedTerms: termsOnly})
   }
 
   componentDidMount() {
@@ -714,6 +723,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
                 clearPopups={this.closePopup}
                 openControls={this.openPopup}
                 saveControls={this.applyRules}
+                globalRestrictedTerms={this.state.globalRestrictedTerms}
                 whiteBackground
               />
             )}
