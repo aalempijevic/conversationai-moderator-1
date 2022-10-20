@@ -33,7 +33,7 @@ export class ArticleAddRestrictedTerm extends Component<
 > {
   state = {
     isGlobalTerm: false,
-    newTermScore: RestrictedTermLevels.approve,
+    newTermScore: RestrictedTermLevels.allow,
     newTerm: "",
   };
 
@@ -91,7 +91,7 @@ export class ArticleAddRestrictedTerm extends Component<
           onChange={this.handleNewTermScoreChange}
           value={this.state.newTermScore}
         >
-          <option value={RestrictedTermLevels.approve}>Approve</option>
+          <option value={RestrictedTermLevels.allow}>Allow</option>
           <option value={RestrictedTermLevels.highlight}>Hightlight</option>
           <option value={RestrictedTermLevels.reject}>Reject</option>
         </select>

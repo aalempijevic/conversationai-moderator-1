@@ -26,7 +26,7 @@ const STYLES = {
 
 export class AddRestrictedTerm extends Component<IAddRestrictedTermProps, IRestrictedTermsState> {
   state = {
-    newTermScore: RestrictedTermLevels.approve,
+    newTermScore: RestrictedTermLevels.allow,
     newTerm: "",
     errorMessage: "",
   };
@@ -85,7 +85,7 @@ export class AddRestrictedTerm extends Component<IAddRestrictedTermProps, IRestr
           onChange={this.handleNewTermScoreChange}
           value={this.state.newTermScore}
         >
-          <option value={RestrictedTermLevels.approve}>Approve</option>
+          <option value={RestrictedTermLevels.allow}>Allow</option>
           <option value={RestrictedTermLevels.highlight}>Hightlight</option>
           <option value={RestrictedTermLevels.reject}>Reject</option>
         </select>

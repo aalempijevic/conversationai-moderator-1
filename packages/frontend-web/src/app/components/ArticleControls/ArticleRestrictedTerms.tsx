@@ -88,7 +88,7 @@ export class ArticleRestrictedTerms extends Component<IArticleRestrictedTermsPro
                     onChange={(event) => this.updateTermScore(event, term)}
                     value={term.score}
                   >
-                    <option value={RestrictedTermLevels.approve}>Approve</option>
+                    <option value={RestrictedTermLevels.allow}>Allow</option>
                     <option value={RestrictedTermLevels.highlight}>Highlight</option>
                     <option value={RestrictedTermLevels.reject}>Reject</option>
                   </select>

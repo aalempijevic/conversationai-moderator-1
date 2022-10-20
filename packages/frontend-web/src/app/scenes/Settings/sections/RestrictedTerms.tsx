@@ -120,7 +120,7 @@ export class RestrictedTerms extends Component<ISectionProps, IRestrictedTermsSt
                         onChange={(event) => this.updateTermScore(event, term)}
                         value={term.score}
                       >
-                        <option value={RestrictedTermLevels.approve}>Approve</option>
+                        <option value={RestrictedTermLevels.allow}>Allow</option>
                         <option value={RestrictedTermLevels.highlight}>Highlight</option>
                         <option value={RestrictedTermLevels.reject}>Reject</option>
                       </select>

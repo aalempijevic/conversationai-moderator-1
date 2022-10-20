@@ -15,7 +15,7 @@ export interface INewArticleRestrictedTerm {
 }
 
 export enum RestrictedTermLevels {
-  approve = "0.1",
-  highlight = "0.5",
+  allow = "0.0",
+  highlight = "0.6",
   reject = "0.9",
 }
