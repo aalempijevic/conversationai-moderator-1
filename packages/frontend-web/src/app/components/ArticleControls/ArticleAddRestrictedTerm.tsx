@@ -1,22 +1,11 @@
 import { Component, ChangeEvent } from "react";
+
 import { autobind } from "core-decorators";
-import { Button } from "../../../components";
-import { css } from "../../../utilx";
-import { SETTINGS_STYLES } from "../settingsStyles";
 
-import { globalRestrictedTerms } from "../../../platform/restrictedTermsService";
-import { RestrictedTermLevels } from "../../../../models";
-
-export interface IAddRestrictedTermProps {
-  getTerms: () => Promise<void>;
-  toggleDisplayAddTerm: () => void;
-}
-
-export interface IRestrictedTermsState {
-  newTerm: string;
-  newTermScore: string;
-  errorMessage: string;
-}
+import { Button } from "../Button";
+import { css } from "../../utilx";
+import { SETTINGS_STYLES } from "../../scenes/Settings/settingsStyles";
+import { INewArticleRestrictedTerm, RestrictedTermLevels } from "../../../models";
 
 const STYLES = {
   label: {
@@ -24,11 +13,28 @@ const STYLES = {
   },
 };
 
-export class AddRestrictedTerm extends Component<IAddRestrictedTermProps, IRestrictedTermsState> {
+export interface IArticleAddRestrictedTermProps {
+  addTerm: (termToAdd: INewArticleRestrictedTerm) => void;
+  articleId: string;
+  globalRestrictedTerms: Array<string>;
+  isGlobalTerm: (term: string) => boolean;
+  toggleDisplayAddTerm: () => void;
+}
+
+export interface IArticleAddRestrictedTermState {
+  newTermScore: string;
+  newTerm: string;
+  isGlobalTerm: boolean;
+}
+
+export class ArticleAddRestrictedTerm extends Component<
+  IArticleAddRestrictedTermProps,
+  IArticleAddRestrictedTermState
+> {
   state = {
+    isGlobalTerm: false,
     newTermScore: RestrictedTermLevels.allow,
     newTerm: "",
-    errorMessage: "",
   };
 
   @autobind
@@ -38,29 +44,29 @@ export class AddRestrictedTerm extends Component<IAddRestrictedTermProps, IRestr
 
   @autobind
   handleNewTermChange(e: ChangeEvent<HTMLInputElement>) {
+    const isGlobalTerm = this.props.isGlobalTerm(e.target.value);
+    if (isGlobalTerm) {
+      this.setState({ isGlobalTerm: true });
+    } else {
+      this.setState({ isGlobalTerm: false });
+    }
     this.setState({ newTerm: e.target.value });
   }
 
   @autobind
   async handleAddNewTerm() {
-    try {
-      await globalRestrictedTerms.add({
-        term: this.state.newTerm,
-        score: parseFloat(this.state.newTermScore),
-      });
-      this.props.toggleDisplayAddTerm();
-      this.setState({ errorMessage: "" });
-    } catch (error) {
-      console.error("error occurred trying to add a new term", error.response);
-      this.setState({ errorMessage: error.response.data });
-    }
-    await this.props.getTerms();
+    this.props.addTerm({
+      id: "-1",
+      term: this.state.newTerm,
+      score: parseFloat(this.state.newTermScore),
+      articleId: this.props.articleId,
+    });
+    this.props.toggleDisplayAddTerm();
   }
 
   @autobind
   handleCloseMenu() {
     this.props.toggleDisplayAddTerm();
-    this.setState({ errorMessage: "" });
   }
 
   render() {
@@ -96,10 +102,10 @@ export class AddRestrictedTerm extends Component<IAddRestrictedTermProps, IRestr
           buttonStyles={SETTINGS_STYLES.cancel}
           onClick={this.props.toggleDisplayAddTerm}
         />
-        <div>{this.state.errorMessage}</div>
+        {this.state.isGlobalTerm && <div>This is a global term</div>}
       </div>
     );
   }
 }
 
-export default AddRestrictedTerm;
+export default ArticleAddRestrictedTerm;

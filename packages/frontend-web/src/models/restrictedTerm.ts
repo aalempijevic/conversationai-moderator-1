@@ -1,5 +1,3 @@
-import { Record } from "immutable";
-import { TypedRecord } from "typed-immutable-record";
 import { ModelId } from "./common";
 
 export interface IRestrictedTermAttributes {
@@ -9,15 +7,15 @@ export interface IRestrictedTermAttributes {
   score: number;
 }
 
-// Keeping code below until restricted term global and article level controls are complete
-export interface IRestrictedTermModel extends TypedRecord<IRestrictedTermModel>, IRestrictedTermAttributes {}
+export interface INewArticleRestrictedTerm {
+  id: "-1";
+  articleId: string;
+  score: number;
+  term: string;
+}
 
-const RestrictedTermModelRecord = Record({
-  id: null,
-  term: null,
-  score: null,
-});
-
-export function RestrictedTermModel(keyValuePairs?: IRestrictedTermAttributes): IRestrictedTermModel {
-  return new RestrictedTermModelRecord(keyValuePairs) as IRestrictedTermModel;
+export enum RestrictedTermLevels {
+  allow = "0.0",
+  highlight = "0.6",
+  reject = "0.9",
 }

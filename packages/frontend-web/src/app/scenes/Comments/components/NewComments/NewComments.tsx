@@ -28,6 +28,7 @@ import {
   ICommentModel,
   ICommentScoredModel,
   IPreselectModel,
+  IRestrictedTermAttributes,
   IRuleModel,
   ITagModel,
   ModelId,
@@ -57,6 +58,7 @@ import {
   REQUIRE_REASON_TO_REJECT,
 } from '../../../../config';
 import { updateArticle } from '../../../../platform/dataService';
+import { globalRestrictedTerms } from '../../../../platform/restrictedTermsService';
 import {
   ARTICLE_CATEGORY_TYPE,
   BASE_Z_INDEX,
@@ -336,6 +338,7 @@ export interface INewCommentsState {
   taggingCommentId?: string;
   articleControlOpen: boolean;
   rulesInCategory?: List<IRuleModel>;
+  globalRestrictedTerms?: Array<string>
 }
 
 export class NewComments extends React.Component<INewCommentsProps, INewCommentsState> {
@@ -372,6 +375,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     taggingCommentId: null,
     moderateButtonsRef: null,
     articleControlOpen: false,
+    globalRestrictedTerms: [],
   };
 
   static getDerivedStateFromProps(props: INewCommentsProps, state: INewCommentsState) {
@@ -475,6 +479,12 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       this.setState({ selectedRow: row });
       clearReturnSavedCommentRow();
     }
+  }
+
+  @autobind async initializeGlobalRestrictedTerms() {
+    const terms = await globalRestrictedTerms.get();
+    const termsOnly = terms.map(term => term.term);
+    this.setState({globalRestrictedTerms: termsOnly})
   }
 
   componentDidMount() {
@@ -713,6 +723,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
                 clearPopups={this.closePopup}
                 openControls={this.openPopup}
                 saveControls={this.applyRules}
+                globalRestrictedTerms={this.state.globalRestrictedTerms}
                 whiteBackground
               />
             )}
@@ -1202,8 +1213,8 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   }
 
   @autobind
-  applyRules(isCommentingEnabled: boolean, isAutoModerated: boolean, isModerationOverriden: boolean = false, moderationRules: Array<IRuleModel> = []): void {
+  applyRules(isCommentingEnabled: boolean, isAutoModerated: boolean, isModerationOverridden: boolean = false, moderationRules: Array<IRuleModel> = [], isRestrictedTermsOverridden: boolean = false, restrictedTerms: Array<IRestrictedTermAttributes> = []): void {
     this.closePopup();
-    updateArticle(this.props.article.id, isCommentingEnabled, isAutoModerated, isModerationOverriden?moderationRules: []);
+    updateArticle(this.props.article.id, isCommentingEnabled, isAutoModerated, isModerationOverridden?moderationRules: [], isRestrictedTermsOverridden?restrictedTerms: []);
   }
 }

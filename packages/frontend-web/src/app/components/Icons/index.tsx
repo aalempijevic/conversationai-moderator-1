@@ -107,6 +107,7 @@ export const SettingsIcon = makeIcon(<g><path d="M 11.46875 0.96875 L 10.90625 4
 
 export const SpeechBubbleIcon = makeIcon(<g><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z"/></g>);
 export const SpeechBubbleIconCircle = makeIcon(<g><path d="M 4 2 C 2.9 2 2 2.9 2 4 L 2 16 C 2 17.1 2.9 18 4 18 L 18 18 L 22 22 L 22 4 C 22 2.9 21.1 2 20 2 L 4 2 z M 12 7 A 3 3 0 0 1 15 10 A 3 3 0 0 1 12 13 A 3 3 0 0 1 9 10 A 3 3 0 0 1 12 7 z "/></g>);
+export const SpeechBubbleMessageCross = makeIcon(<g><path d="m21.3 22.3-5.6-5.6H4.8q-.65 0-1.075-.425Q3.3 15.85 3.3 15.2V4.8q0-.125.012-.225.013-.1.038-.225l-1.1-1.1.5-.5L21.8 21.8Zm-.6-4.4-4.55-4.55h1.2v-.7h-1.9l-2.3-2.3h4.2v-.7h-4.9l-2.3-2.3h7.2v-.7h-7.9L6.1 3.3h13.1q.65 0 1.075.425.425.425.425 1.075ZM6.65 13.35h5.7l-.7-.7h-5Zm0-3h2.7l-.7-.7h-2Z"/></g>);
 
 export const ThumbUpIcon = makeIcon(<g><path d="M0 0h24v24H0z" fill="none"/><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-1.91l-.01-.01L23 10z"/></g>);
 

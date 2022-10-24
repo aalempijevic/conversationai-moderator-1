@@ -22,7 +22,7 @@ import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { InjectedRouter, Link, WithRouterProps } from 'react-router';
 
-import { IArticleModel, ICategoryModel, IRuleModel, ITagModel, IUserModel, ModelId } from '../../../models';
+import { IArticleModel, ICategoryModel, IRestrictedTermAttributes, IRuleModel, ITagModel, IUserModel, ModelId } from '../../../models';
 import { ArticleControlIcon } from '../../components';
 import * as icons from '../../components/Icons';
 import { Scrim } from '../../components/Scrim';
@@ -31,6 +31,7 @@ import {
   updateArticleModerators,
   updateCategoryModerators,
 } from '../../platform/dataService';
+import { globalRestrictedTerms } from '../../platform/restrictedTermsService';
 import {
   flexCenter,
   HEADER_HEIGHT,
@@ -103,6 +104,7 @@ const POPUP_FILTERS = 'filters';
 const POPUP_SAVING = 'saving';
 
 export interface IIArticleTableState {
+  globalRestrictedTerms: Array<string>;
   articlesContainerHeight: number;
   articlesTableHeight: number;
   numberToShow: number;
@@ -229,6 +231,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     this._numberOnScreen = Math.ceil((articlesContainerHeight - HEADER_HEIGHT) / CELL_HEIGHT);
 
     this.state = {
+      globalRestrictedTerms: [],
       filterString: props.routeParams ? props.routeParams.filter : NOT_SET,
       sortString: props.routeParams ? props.routeParams.sort : NOT_SET,
       filter,
@@ -328,6 +331,16 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     this.setState(clearPopupsState);
   }
 
+@autobind async initializeGlobalRestrictedTerms() {
+  const terms = await globalRestrictedTerms.get();
+  const termsOnly = terms.map(term => term.term);
+  this.setState({globalRestrictedTerms: termsOnly})
+}
+
+ componentDidMount(): void {
+      this.initializeGlobalRestrictedTerms();
+  }
+
   componentWillMount() {
     keyboardJS.bind('escape', this.clearPopups);
   }
@@ -356,14 +369,14 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
   }
 
   @autobind
-  saveControls(isCommentingEnabled: boolean, isAutoModerated: boolean, isModerationOverriden: boolean, moderationRules: Array<IRuleModel>) {
+  saveControls(isCommentingEnabled: boolean, isAutoModerated: boolean, isModerationOverridden: boolean, moderationRules: Array<IRuleModel>, isRestrictedTermsOverridden: boolean, restrictedTerms: Array<IRestrictedTermAttributes>) {
     const articleId = this.state.selectedArticle.id;
     this.setState({
       ...clearPopupsState,
       popupToShow: POPUP_SAVING,
     });
 
-    updateArticle(articleId, isCommentingEnabled, isAutoModerated, isModerationOverriden? moderationRules : [])
+    updateArticle(articleId, isCommentingEnabled, isAutoModerated, isModerationOverridden? moderationRules : [], isRestrictedTermsOverridden?restrictedTerms : [])
       .then(this.clearPopups);
   }
 
@@ -546,6 +559,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
           <div {...css({display: 'inline-block'})}>
             {!isSummary &&
             <ArticleControlIcon
+              globalRestrictedTerms={this.state.globalRestrictedTerms}
               article={article}
               tags={tags}
               open={this.state.selectedArticle && this.state.selectedArticle.id === article.id}

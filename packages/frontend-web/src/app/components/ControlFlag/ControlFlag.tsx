@@ -1,5 +1,7 @@
 import React from "react";
 
+import { Badge } from "@material-ui/core";
+
 import { css } from "../../utilx";
 import { GREY_COLOR, NICE_CONTROL_BLUE, RED } from "../../styles";
 import * as icons from "../Icons";
@@ -7,7 +9,8 @@ import * as icons from "../Icons";
 interface IIControlFlagProps {
   isCommentingEnabled?: boolean;
   isAutoModerated?: boolean;
-  isModerationOverriden?: boolean;
+  isModerationOverridden?: boolean;
+  isRestrictedTermsOverridden?: boolean;
 }
 
 export class ControlFlag extends React.Component<IIControlFlagProps> {
@@ -22,7 +25,7 @@ export class ControlFlag extends React.Component<IIControlFlagProps> {
     }
 
     if (this.props.isCommentingEnabled) {
-      if(this.props.isModerationOverriden) {
+      if (this.props.isModerationOverridden) {
         style = { color: RED };
       } else {
         style = { color: NICE_CONTROL_BLUE };
@@ -30,7 +33,18 @@ export class ControlFlag extends React.Component<IIControlFlagProps> {
     } else {
       style = { color: GREY_COLOR };
     }
-    
-    return <Icon {...css(style)} />;
+    if (this.props.isModerationOverridden) {
+      style = { color: RED };
+    }
+    return (
+      <Badge
+        color="secondary"
+        invisible={!this.props.isRestrictedTermsOverridden}
+        badgeContent={"R"}
+        variant="standard"
+      >
+        <Icon {...css(style)} />
+      </Badge>
+    );
   }
 }
