@@ -1,0 +1,188 @@
+/*
+Copyright 2019 Google Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+import { connect } from "react-redux";
+import { autobind } from "core-decorators";
+import { getTags } from "../../stores/tags";
+import { getCurrentUserIsAdmin } from "../../stores/users";
+import React from "react";
+
+import { Popper } from "@material-ui/core";
+
+import { IArticleModel, IRuleModel, ITagModel, IRestrictedTermAttributes } from "../../../models";
+import { big, ICON_STYLES } from "../../stylesx";
+import { css } from "../../utilx";
+import { List } from "immutable";
+
+import { ArticleControlMenu } from "./ArticleControlsMenu";
+import { ControlFlag } from "../ControlFlag";
+
+export interface IArticleControlIconState {
+  isCommentingEnabled?: boolean;
+  isAutoModerated?: boolean;
+  isModerationOverridden?: boolean;
+  moderationRules?: Array<IRuleModel>;
+  isRestrictedTermsOverridden?: boolean;
+  restrictedTerms?: IRestrictedTermAttributes[];
+}
+
+interface IArticleControlIconProps {
+  globalRestrictedTerms: Array<string>;
+  isAdmin?: boolean;
+  article: IArticleModel;
+  tags: List<ITagModel>;
+  open: boolean;
+  whiteBackground?: boolean;
+
+  clearPopups(): void;
+
+  openControls(article: IArticleModel): void;
+
+  saveControls(
+    isCommentingEnabled: boolean,
+    isAutoModerated: boolean,
+    isModerationRuleOveridden: boolean,
+    moderationRules: Array<IRuleModel>,
+    isRestrictedTermsOverridden: boolean,
+    restrictedTerms: Array<IRestrictedTermAttributes>
+  ): void;
+}
+
+function mapStateToProps(state: any, ownProps: any): any {
+  const tags = getTags(state);
+  const isAdmin = getCurrentUserIsAdmin(state);
+  return {
+    ...ownProps,
+    tags,
+    isAdmin,
+  };
+}
+
+class LazyArticleControlIcon extends React.Component<IArticleControlIconProps, IArticleControlIconState> {
+  anchorElement: any;
+  constructor(props: Readonly<IArticleControlIconProps>) {
+    super(props);
+    this.state = {
+      isCommentingEnabled: this.props.article.isCommentingEnabled,
+      isAutoModerated: this.props.article.isAutoModerated,
+      isModerationOverridden: this.props.article.moderationRules && this.props.article.moderationRules?.length > 0,
+      moderationRules: this.props.article.moderationRules,
+      isRestrictedTermsOverridden: this.props.article.restrictedTerms && this.props.article.restrictedTerms?.length > 0,
+      restrictedTerms: this.props.article.restrictedTerms,
+    };
+  }
+
+  @autobind
+  setOpen() {
+    const { article, open, clearPopups, openControls } = this.props;
+    if (open) {
+      clearPopups();
+    } else {
+      openControls(article);
+    }
+  }
+
+  @autobind
+  handleCommentingEnabledClicked() {
+    this.setState({ isCommentingEnabled: !this.state.isCommentingEnabled });
+  }
+
+  @autobind
+  handleAutoModeratedClicked() {
+    if (!this.state.isCommentingEnabled) {
+      return;
+    }
+    this.setState({ isAutoModerated: !this.state.isAutoModerated });
+  }
+
+  @autobind
+  saveControls() {
+    this.props.saveControls(
+      this.state.isCommentingEnabled,
+      this.state.isAutoModerated,
+      this.state.isModerationOverridden,
+      this.state.moderationRules,
+      this.state.isRestrictedTermsOverridden,
+      this.state.restrictedTerms
+    );
+  }
+
+  @autobind
+  closeMenu() {
+    const starterState = {
+      isCommentingEnabled: this.props.article.isCommentingEnabled,
+      isAutoModerated: this.props.article.isAutoModerated,
+      isModerationOverridden: this.props.article.moderationRules && this.props.article.moderationRules?.length > 0,
+      moderationRules: this.props.article.moderationRules,
+      isRestrictedTermsOverridden: this.props.article.restrictedTerms && this.props.article.restrictedTerms?.length > 0,
+      restrictedTerms: this.props.article.restrictedTerms,
+    };
+
+    this.props.clearPopups();
+    this.setState(starterState);
+  }
+
+  render() {
+    const { isAdmin, article, tags, open, whiteBackground, globalRestrictedTerms } = this.props;
+
+    return (
+      <div key="aci">
+        <div
+          key="icon"
+          {...css(open || whiteBackground ? ICON_STYLES.iconBackgroundCircle : big)}
+          ref={(node) => {
+            this.anchorElement = node;
+          }}
+        >
+          <div onClick={this.setOpen} {...css(ICON_STYLES.iconCenter)}>
+            <ControlFlag
+              isCommentingEnabled={article.isCommentingEnabled}
+              isAutoModerated={article.isAutoModerated}
+              isModerationOverridden={this.state.isModerationOverridden}
+              isRestrictedTermsOverridden={this.state.isRestrictedTermsOverridden}
+            />
+          </div>
+        </div>
+        <Popper
+          key="popper"
+          open={open}
+          anchorEl={this.anchorElement}
+          placement="left"
+          modifiers={{
+            preventOverflow: {
+              enabled: true,
+              boundariesElement: "viewport",
+            },
+          }}
+        >
+          <ArticleControlMenu
+            isAdmin={isAdmin}
+            article={article}
+            tags={tags}
+            controlState={this.state}
+            setControlState={(newState: IArticleControlIconState) => this.setState(newState)}
+            clearPopups={this.closeMenu}
+            saveControls={this.saveControls}
+            globalRestrictedTerms={globalRestrictedTerms}
+          />
+        </Popper>
+      </div>
+    );
+  }
+}
+
+export const ArticleControlIcon: React.ComponentClass<IArticleControlIconProps> =
+  connect(mapStateToProps)(LazyArticleControlIcon);

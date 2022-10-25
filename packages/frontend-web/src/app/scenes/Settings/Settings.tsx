@@ -14,16 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as copyToClipboard from 'copy-to-clipboard';
-import { autobind } from 'core-decorators';
-import FocusTrap from 'focus-trap-react';
-import { Iterable, List, Seq } from 'immutable';
-import { generate } from 'randomstring';
-import React from 'react';
-import { WithRouterProps } from 'react-router';
+import * as copyToClipboard from "copy-to-clipboard";
+import { autobind } from "core-decorators";
+import FocusTrap from "focus-trap-react";
+import { Iterable, List, Seq } from "immutable";
+import { generate } from "randomstring";
+import React from "react";
+import { WithRouterProps } from "react-router";
 
-import IconButton from '@material-ui/core/IconButton';
-import FileCopyIcon from '@material-ui/icons/FileCopy';
+import IconButton from "@material-ui/core/IconButton";
+import FileCopyIcon from "@material-ui/icons/FileCopy";
 
 import {
   CategoryModel,
@@ -39,28 +39,22 @@ import {
   SERVER_ACTION_ACCEPT,
   TaggingSensitivityModel,
   TagModel,
-} from '../../../models';
-import {
-  Button,
-  HeaderBar,
-  Scrim,
-} from '../../components';
-import { API_URL } from '../../config';
-import { getToken } from '../../platform/localStore';
-import { IAppDispatch } from '../../stores';
-import {
-  USER_GROUP_ADMIN,
-  USER_GROUP_GENERAL,
-  USER_GROUP_SERVICE,
-  USER_GROUP_YOUTUBE,
-} from '../../stores/users';
-import { partial, setCSRF } from '../../util';
-import { css, stylesheet } from '../../utilx';
-import { AddButton, EditButton } from './components/AddButton';
-import { AddUsers } from './components/AddUsers';
-import { EditUsers } from './components/EditUsers';
-import { LabelSettings } from './components/LabelSettings';
-import { RuleRow } from './components/RuleRow';
+} from "../../../models";
+import { Button, HeaderBar, Scrim } from "../../components";
+import { API_URL } from "../../config";
+import { getToken } from "../../platform/localStore";
+import { IAppDispatch } from "../../stores";
+import { USER_GROUP_ADMIN, USER_GROUP_GENERAL, USER_GROUP_SERVICE, USER_GROUP_YOUTUBE } from "../../stores/users";
+import { partial, setCSRF } from "../../util";
+import { css, stylesheet } from "../../utilx";
+
+import RestrictedTermsSection from "./sections/RestrictedTerms";
+
+import { AddButton, EditButton } from "./components/AddButton";
+import { AddUsers } from "./components/AddUsers";
+import { EditUsers } from "./components/EditUsers";
+import { LabelSettings } from "./components/LabelSettings";
+import { RuleRow } from "./components/RuleRow";
 
 import {
   ARTICLE_CATEGORY_TYPE,
@@ -73,15 +67,15 @@ import {
   SCRIM_STYLE,
   VISUALLY_HIDDEN,
   WHITE_COLOR,
-} from '../../styles';
-import { SETTINGS_STYLES } from './settingsStyles';
+} from "../../styles";
+import { SETTINGS_STYLES } from "./settingsStyles";
 
 function validateColor(color: string): boolean {
-  const div = document.createElement('div') as HTMLDivElement;
+  const div = document.createElement("div") as HTMLDivElement;
 
   div.style.backgroundColor = color;
 
-  return div.style.backgroundColor !== '';
+  return div.style.backgroundColor !== "";
 }
 
 let placeholderId = -1;
@@ -90,14 +84,14 @@ const STYLES: any = stylesheet({
   base: {
     ...ARTICLE_CATEGORY_TYPE,
     color: DARK_PRIMARY_TEXT_COLOR,
-    position: 'relative',
-    height: '100%',
-    boxSizing: 'border-box',
+    position: "relative",
+    height: "100%",
+    boxSizing: "border-box",
   },
   body: {
-    height: '100%',
-    overflowY: 'auto',
-    WebkitOverflowScrolling: 'touch',
+    height: "100%",
+    overflowY: "auto",
+    WebkitOverflowScrolling: "touch",
   },
   formContainer: {
     background: WHITE_COLOR,
@@ -127,16 +121,16 @@ const STYLES: any = stylesheet({
     marginRight: `${GUTTER_DEFAULT_SPACING}px`,
   },
   colorTitle: {
-    width: '125px',
+    width: "125px",
     marginRight: `24px`,
   },
   summaryTitle: {
-    width: '100px',
+    width: "100px",
     marginRight: `${GUTTER_DEFAULT_SPACING}px`,
   },
   buttonGroup: {
-    display: 'flex',
-    flexDirection: 'row',
+    display: "flex",
+    flexDirection: "row",
     backgroundColor: WHITE_COLOR,
     padding: `${GUTTER_DEFAULT_SPACING}px`,
   },
@@ -145,19 +139,19 @@ const STYLES: any = stylesheet({
     color: DARK_PRIMARY_TEXT_COLOR,
     border: `1px solid ${DIVIDER_COLOR}`,
     marginRight: `${GUTTER_DEFAULT_SPACING}px`,
-    ':focus': {
+    ":focus": {
       backgroundColor: PALE_COLOR,
     },
   },
   save: {
     backgroundColor: MEDIUM_COLOR,
     color: WHITE_COLOR,
-    ':focus': {
+    ":focus": {
       backgroundColor: DARK_COLOR,
     },
   },
   pluginLink: {
-    display: 'inline-block',
+    display: "inline-block",
     color: MEDIUM_COLOR,
   },
 });
@@ -169,7 +163,7 @@ export interface ISettingsProps extends WithRouterProps {
   youtubeUsers?: List<IUserModel>;
   tags?: List<ITagModel>;
   rules?: List<IRuleModel>;
-  taggingSensitivities?:  List<ITaggingSensitivityModel>;
+  taggingSensitivities?: List<ITaggingSensitivityModel>;
   preselects?: List<IPreselectModel>;
   categories: Iterable.Indexed<ICategoryModel>;
   dispatch: IAppDispatch;
@@ -179,7 +173,10 @@ export interface ISettingsProps extends WithRouterProps {
   reloadYoutubeUsers?(): Promise<void>;
   updatePreselects?(oldPreselects: List<IPreselectModel>, newPreselects: List<IPreselectModel>): void;
   updateRules?(oldRules: List<IRuleModel>, newRules: List<IRuleModel>): void;
-  updateTaggingSensitivities?(oldTaggingSensitivities: List<ITaggingSensitivityModel>, newTaggingSensitivities: List<ITaggingSensitivityModel>): void;
+  updateTaggingSensitivities?(
+    oldTaggingSensitivities: List<ITaggingSensitivityModel>,
+    newTaggingSensitivities: List<ITaggingSensitivityModel>
+  ): void;
   updateTags?(oldTags: List<ITagModel>, newTags: List<ITagModel>): void;
   addUser?(user: IUserModel): Promise<void>;
   modifyUser?(user: IUserModel): Promise<void>;
@@ -187,20 +184,20 @@ export interface ISettingsProps extends WithRouterProps {
     newPreselects: List<IPreselectModel>,
     newRules: List<IRuleModel>,
     newTaggingSensitivities: List<ITaggingSensitivityModel>,
-    newTags: List<ITagModel>,
+    newTags: List<ITagModel>
   ): Error;
-  logout (): void;
+  logout(): void;
 }
 
 export interface ISettingsState {
   tags?: List<ITagModel>;
   rules?: List<IRuleModel>;
-  taggingSensitivities?:  List<ITaggingSensitivityModel>;
-  preselects?:  List<IPreselectModel>;
+  taggingSensitivities?: List<ITaggingSensitivityModel>;
+  preselects?: List<IPreselectModel>;
   baseTags?: List<ITagModel>;
   baseRules?: List<IRuleModel>;
-  baseTaggingSensitivities?:  List<ITaggingSensitivityModel>;
-  basePreselects?:  List<IPreselectModel>;
+  baseTaggingSensitivities?: List<ITaggingSensitivityModel>;
+  basePreselects?: List<IPreselectModel>;
   isStatusScrimVisible?: boolean;
   isAddUserScrimVisible?: boolean;
   addUserType?: string;
@@ -214,12 +211,12 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   state: ISettingsState = {
     tags: this.props.tags,
     rules: this.props.rules,
-    taggingSensitivities:  this.props.taggingSensitivities,
-    preselects:  this.props.preselects,
+    taggingSensitivities: this.props.taggingSensitivities,
+    preselects: this.props.preselects,
     baseTags: this.props.tags,
     baseRules: this.props.rules,
-    baseTaggingSensitivities:  this.props.taggingSensitivities,
-    basePreselects:  this.props.preselects,
+    baseTaggingSensitivities: this.props.taggingSensitivities,
+    basePreselects: this.props.preselects,
     isStatusScrimVisible: false,
     isAddUserScrimVisible: false,
     isEditUserScrimVisible: false,
@@ -292,15 +289,13 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   @autobind
   handleAddTag(event: React.FormEvent<any>) {
     event.preventDefault();
-    const newValue = TagModel(
-      {
-        id: (placeholderId--).toString(),
-        key: null,
-        label: 'Add Label',
-        description: 'Add Description',
-        color: '#999999',
-      },
-    );
+    const newValue = TagModel({
+      id: (placeholderId--).toString(),
+      key: null,
+      label: "Add Label",
+      description: "Add Description",
+      color: "#999999",
+    });
 
     const updatedTags = this.state.tags.set(this.state.tags.size, newValue);
 
@@ -310,21 +305,17 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   @autobind
   handleAddAutomatedRule(event: React.FormEvent<any>) {
     event.preventDefault();
-    const newValue = RuleModel(
-      {
-        id: (placeholderId--).toString(),
-        createdBy: null,
-        categoryId: null,
-        tagId: '1',
-        lowerThreshold: .8,
-        upperThreshold: 1,
-        action: SERVER_ACTION_ACCEPT,
-      },
-    );
+    const newValue = RuleModel({
+      id: (placeholderId--).toString(),
+      createdBy: null,
+      categoryId: null,
+      tagId: "1",
+      lowerThreshold: 0.8,
+      upperThreshold: 1,
+      action: SERVER_ACTION_ACCEPT,
+    });
 
-    const updatedRules = this.state.rules ?
-        this.state.rules.set(this.state.rules.size, newValue) :
-        List([newValue]);
+    const updatedRules = this.state.rules ? this.state.rules.set(this.state.rules.size, newValue) : List([newValue]);
 
     this.setState({ rules: updatedRules });
   }
@@ -332,19 +323,17 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   @autobind
   handleAddTaggingSensitivity(event: React.FormEvent<any>) {
     event.preventDefault();
-    const newValue = TaggingSensitivityModel(
-      {
-        id: (placeholderId--).toString(),
-        categoryId: null,
-        tagId: null,
-        lowerThreshold: .65,
-        upperThreshold: 1,
-      },
-    );
+    const newValue = TaggingSensitivityModel({
+      id: (placeholderId--).toString(),
+      categoryId: null,
+      tagId: null,
+      lowerThreshold: 0.65,
+      upperThreshold: 1,
+    });
 
-    const updatedTS = this.state.taggingSensitivities ?
-        this.state.taggingSensitivities.set(this.state.taggingSensitivities.size, newValue) :
-        List([newValue]);
+    const updatedTS = this.state.taggingSensitivities
+      ? this.state.taggingSensitivities.set(this.state.taggingSensitivities.size, newValue)
+      : List([newValue]);
 
     this.setState({ taggingSensitivities: updatedTS });
   }
@@ -352,19 +341,17 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   @autobind
   handleAddPreselect(event: React.FormEvent<any>) {
     event.preventDefault();
-    const newValue = PreselectModel(
-      {
-        id: (placeholderId--).toString(),
-        categoryId: null,
-        tagId: null,
-        lowerThreshold: .8,
-        upperThreshold: 1,
-      },
-    );
+    const newValue = PreselectModel({
+      id: (placeholderId--).toString(),
+      categoryId: null,
+      tagId: null,
+      lowerThreshold: 0.8,
+      upperThreshold: 1,
+    });
 
-    const updatedPreselects = this.state.preselects ?
-        this.state.preselects.set(this.state.preselects.size, newValue) :
-        List([newValue]);
+    const updatedPreselects = this.state.preselects
+      ? this.state.preselects.set(this.state.preselects.size, newValue)
+      : List([newValue]);
 
     this.setState({ preselects: updatedPreselects });
   }
@@ -372,7 +359,6 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   @autobind
   handleAddServiceUser(event: React.FormEvent<any>) {
     event.preventDefault();
-    console.log('got here');
   }
 
   @autobind
@@ -386,12 +372,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       taggingSensitivities: taggingSensitivitiesNew,
     } = this.state;
 
-    const submitErrorStatus = await this.props.submitForm(
-      preselectsNew,
-      rulesNew,
-      taggingSensitivitiesNew,
-      tagsNew,
-    );
+    const submitErrorStatus = await this.props.submitForm(preselectsNew, rulesNew, taggingSensitivitiesNew, tagsNew);
 
     if (submitErrorStatus) {
       this.setState({
@@ -414,14 +395,11 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
 
   closeStatusScrim() {
     // Add some delay so that users know that saving action was taken
-    setTimeout(
-      () => {
-        this.setState({
-          isStatusScrimVisible: false,
-        });
-      },
-      600,
-    );
+    setTimeout(() => {
+      this.setState({
+        isStatusScrimVisible: false,
+      });
+    }, 600);
   }
 
   @autobind
@@ -429,7 +407,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     this.setState({
       tags: this.state.tags.update(
         this.state.tags.findIndex((t) => t.equals(tag)),
-        (t) => t.set('label', value),
+        (t) => t.set("label", value)
       ),
     });
   }
@@ -439,7 +417,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     this.setState({
       tags: this.state.tags.update(
         this.state.tags.findIndex((t) => t.equals(tag)),
-        (t) => t.set('description', value),
+        (t) => t.set("description", value)
       ),
     });
   }
@@ -447,13 +425,13 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   @autobind
   handleColorChange(tag: ITagModel, color: string) {
     if (!validateColor(color)) {
-      console.log('invalid color: ', color);
+      console.log("invalid color: ", color);
     }
 
     this.setState({
       tags: this.state.tags.update(
         this.state.tags.findIndex((t) => t.equals(tag)),
-        (t) => t.set('color', color),
+        (t) => t.set("color", color)
       ),
     });
   }
@@ -467,17 +445,12 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   @autobind
-  handleTagChange(
-    tag: ITagModel,
-    key: string,
-    value: boolean,
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) {
+  handleTagChange(tag: ITagModel, key: string, value: boolean, e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
     this.setState({
       tags: this.state.tags.update(
         this.state.tags.findIndex((t) => t.equals(tag)),
-        (t) => t.set(key, value),
+        (t) => t.set(key, value)
       ),
     });
   }
@@ -487,7 +460,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     this.setState({
       rules: this.state.rules.update(
         this.state.rules.findIndex((r) => r.equals(rule)),
-        (r) => r.set(category, value),
+        (r) => r.set(category, value)
       ),
     });
   }
@@ -502,8 +475,9 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   @autobind
   handleModerateButtonClick(rule: IRuleModel, action: IServerAction) {
     const updatedRules = this.state.rules.update(
-        this.state.rules.findIndex(((r) => r.equals(rule))),
-        (r) => r.set('action', action));
+      this.state.rules.findIndex((r) => r.equals(rule)),
+      (r) => r.set("action", action)
+    );
     this.setState({
       rules: updatedRules,
     });
@@ -514,7 +488,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     this.setState({
       taggingSensitivities: this.state.taggingSensitivities.update(
         this.state.taggingSensitivities.findIndex((r) => r.equals(ts)),
-        (r) => r.set(category, value),
+        (r) => r.set(category, value)
       ),
     });
   }
@@ -523,7 +497,8 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   handleTaggingSensitivityDelete(ts: ITaggingSensitivityModel) {
     this.setState({
       taggingSensitivities: this.state.taggingSensitivities.delete(
-          this.state.taggingSensitivities.findIndex((r) => r.equals(ts))),
+        this.state.taggingSensitivities.findIndex((r) => r.equals(ts))
+      ),
     });
   }
 
@@ -532,7 +507,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     this.setState({
       preselects: this.state.preselects.update(
         this.state.preselects.findIndex((r) => r.equals(preselect)),
-        (r) => r.set(category, value),
+        (r) => r.set(category, value)
       ),
     });
   }
@@ -554,7 +529,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   onSavePress() {
     this.setState({
       isStatusScrimVisible: true,
-      submitStatus: 'Saving changes...',
+      submitStatus: "Saving changes...",
     });
   }
 
@@ -572,22 +547,20 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     await this.setState({
       isAddUserScrimVisible: false,
       isStatusScrimVisible: true,
-      submitStatus: 'Saving changes...',
+      submitStatus: "Saving changes...",
     });
 
     try {
       await this.props.addUser(user);
       if (user.group === USER_GROUP_SERVICE) {
         await this.props.reloadServiceUsers();
-      }
-      else if (user.group === USER_GROUP_YOUTUBE) {
+      } else if (user.group === USER_GROUP_YOUTUBE) {
         await this.props.reloadYoutubeUsers();
       }
       this.setState({
-        submitStatus: 'Waiting for refresh...',
+        submitStatus: "Waiting for refresh...",
       });
-    }
-    catch (e) {
+    } catch (e) {
       this.setState({
         submitStatus: `There was an error saving your changes. Please reload and try again. Error: ${e.message}`,
       });
@@ -599,23 +572,21 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     await this.setState({
       isEditUserScrimVisible: false,
       isStatusScrimVisible: true,
-      submitStatus: 'Saving changes...',
+      submitStatus: "Saving changes...",
     });
 
     try {
       await this.props.modifyUser(user);
       if (user.group === USER_GROUP_SERVICE) {
         await this.props.reloadServiceUsers();
-      }
-      else if (user.group === USER_GROUP_YOUTUBE) {
+      } else if (user.group === USER_GROUP_YOUTUBE) {
         await this.props.reloadYoutubeUsers();
       }
 
       this.setState({
-        submitStatus: 'Waiting for refresh...',
+        submitStatus: "Waiting for refresh...",
       });
-    }
-    catch (e) {
+    } catch (e) {
       this.setState({
         submitStatus: `There was an error saving your changes. Please reload and try again. Error: ${e.message}`,
       });
@@ -645,96 +616,80 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
           <div {...css(SETTINGS_STYLES.row)}>
             <table>
               <thead>
-              <tr>
-                <th key="1" {...css(SETTINGS_STYLES.userTableCell)}>
-                  Name
-                </th>
-                <th key="2" {...css(SETTINGS_STYLES.userTableCell)}>
-                  Email
-                </th>
-                <th key="3" {...css(SETTINGS_STYLES.userTableCell)}>
-                  Role
-                </th>
-                <th key="4" {...css(SETTINGS_STYLES.userTableCell)}>
-                  Is Active
-                </th>
-                <th key="5" {...css(SETTINGS_STYLES.userTableCell)}/>
-              </tr>
+                <tr>
+                  <th key="1" {...css(SETTINGS_STYLES.userTableCell)}>
+                    Name
+                  </th>
+                  <th key="2" {...css(SETTINGS_STYLES.userTableCell)}>
+                    Email
+                  </th>
+                  <th key="3" {...css(SETTINGS_STYLES.userTableCell)}>
+                    Role
+                  </th>
+                  <th key="4" {...css(SETTINGS_STYLES.userTableCell)}>
+                    Is Active
+                  </th>
+                  <th key="5" {...css(SETTINGS_STYLES.userTableCell)} />
+                </tr>
               </thead>
               <tbody>
-              {sortedUsers.map((u) => (
-                <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
-                  <td {...css(SETTINGS_STYLES.userTableCell)}>
-                    {u.name}
-                  </td>
-                  <td {...css(SETTINGS_STYLES.userTableCell)}>
-                    {u.email}
-                  </td>
-                  <td {...css(SETTINGS_STYLES.userTableCell)}>
-                    {u.group === USER_GROUP_ADMIN ? 'Administrator' : 'Moderator'}
-                  </td>
-                  <td {...css(SETTINGS_STYLES.userTableCell)}>
-                    {u.isActive ? 'Active' : ''}
-                  </td>
-                  <td {...css(SETTINGS_STYLES.userTableCell)}>
-                    <EditButton width={44} onClick={this.handleEditUser} label="Edit user" value={u.id}/>
-                  </td>
-                </tr>
-              ))}
+                {sortedUsers.map((u) => (
+                  <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
+                    <td {...css(SETTINGS_STYLES.userTableCell)}>{u.name}</td>
+                    <td {...css(SETTINGS_STYLES.userTableCell)}>{u.email}</td>
+                    <td {...css(SETTINGS_STYLES.userTableCell)}>
+                      {u.group === USER_GROUP_ADMIN ? "Administrator" : "Moderator"}
+                    </td>
+                    <td {...css(SETTINGS_STYLES.userTableCell)}>{u.isActive ? "Active" : ""}</td>
+                    <td {...css(SETTINGS_STYLES.userTableCell)}>
+                      <EditButton width={44} onClick={this.handleEditUser} label="Edit user" value={u.id} />
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
-          <AddButton width={44} onClick={partial(this.handleAddUser, USER_GROUP_GENERAL)} label="Add a user"/>
+          <AddButton width={44} onClick={partial(this.handleAddUser, USER_GROUP_GENERAL)} label="Add a user" />
         </div>
       </div>
     );
   }
 
   renderModeratorUsers() {
-    const {
-      moderatorUsers,
-    } = this.props;
+    const { moderatorUsers } = this.props;
 
     if (!moderatorUsers || moderatorUsers.count() === 0) {
-      return (<p>None configured</p>);
+      return <p>None configured</p>;
     }
     return (
       <div key="moderatorUsersSection">
         <table>
           <thead>
-          <tr>
-            <th key="1" {...css(SETTINGS_STYLES.userTableCell)}>
-              Name
-            </th>
-            <th key="3" {...css(SETTINGS_STYLES.userTableCell)}>
-              Type
-            </th>
-            <th key="4" {...css(SETTINGS_STYLES.userTableCell)}>
-              Endpoint
-            </th>
-            <th key="5" {...css(SETTINGS_STYLES.userTableCell)}>
-              Is Active
-            </th>
-            <th key="6" {...css(SETTINGS_STYLES.userTableCell)}/>
-          </tr>
+            <tr>
+              <th key="1" {...css(SETTINGS_STYLES.userTableCell)}>
+                Name
+              </th>
+              <th key="3" {...css(SETTINGS_STYLES.userTableCell)}>
+                Type
+              </th>
+              <th key="4" {...css(SETTINGS_STYLES.userTableCell)}>
+                Endpoint
+              </th>
+              <th key="5" {...css(SETTINGS_STYLES.userTableCell)}>
+                Is Active
+              </th>
+              <th key="6" {...css(SETTINGS_STYLES.userTableCell)} />
+            </tr>
           </thead>
           <tbody>
-          {moderatorUsers.map((u) => (
-            <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
-              <td {...css(SETTINGS_STYLES.userTableCell)}>
-                {u.name}
-              </td>
-              <td {...css(SETTINGS_STYLES.userTableCell)}>
-                {u.extra.endpointType}
-              </td>
-              <td {...css(SETTINGS_STYLES.userTableCell)}>
-                {u.extra.endpoint}
-              </td>
-              <td {...css(SETTINGS_STYLES.userTableCell)}>
-                {u.isActive ? 'Active' : ''}
-              </td>
-            </tr>
-          ))}
+            {moderatorUsers.map((u) => (
+              <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
+                <td {...css(SETTINGS_STYLES.userTableCell)}>{u.name}</td>
+                <td {...css(SETTINGS_STYLES.userTableCell)}>{u.extra.endpointType}</td>
+                <td {...css(SETTINGS_STYLES.userTableCell)}>{u.extra.endpoint}</td>
+                <td {...css(SETTINGS_STYLES.userTableCell)}>{u.isActive ? "Active" : ""}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -742,56 +697,46 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   renderServiceUsers() {
-    const {
-      serviceUsers,
-    } = this.props;
+    const { serviceUsers } = this.props;
 
     if (!serviceUsers || serviceUsers.count() === 0) {
-      return (<p>None configured</p>);
+      return <p>None configured</p>;
     }
     return (
       <div key="serviceUsersSection">
         <table>
           <thead>
-          <tr>
-            <th key="1" {...css(SETTINGS_STYLES.userTableCell)}>
-              ID
-            </th>
-            <th key="2" {...css(SETTINGS_STYLES.userTableCell)}>
-              Name
-            </th>
-            <th key="3" {...css(SETTINGS_STYLES.userTableCell)}>
-              JWT Authentication token
-            </th>
-            <th/>
-            <th key="6" {...css(SETTINGS_STYLES.userTableCell)}/>
-          </tr>
+            <tr>
+              <th key="1" {...css(SETTINGS_STYLES.userTableCell)}>
+                ID
+              </th>
+              <th key="2" {...css(SETTINGS_STYLES.userTableCell)}>
+                Name
+              </th>
+              <th key="3" {...css(SETTINGS_STYLES.userTableCell)}>
+                JWT Authentication token
+              </th>
+              <th />
+              <th key="6" {...css(SETTINGS_STYLES.userTableCell)} />
+            </tr>
           </thead>
           <tbody>
-          {serviceUsers.map((u) => (
-            <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
-              <td {...css(SETTINGS_STYLES.userTableCell)}>
-                {u.id}
-              </td>
-              <td {...css(SETTINGS_STYLES.userTableCell)}>
-                {u.name}
-              </td>
-              <td {...css(SETTINGS_STYLES.userTableCell, {fontSize: '10px'})}>
-                {u.extra.jwt}
-              </td>
-              <td>
-                <IconButton aria-label="Copy to clipboard" onClick={partial(copyToClipboard, u.extra.jwt)}>
-                  <FileCopyIcon fontSize="small" />
-                </IconButton>
-              </td>
-              <td {...css(SETTINGS_STYLES.userTableCell)}>
-                {u.isActive ? 'Active' : ''}
-              </td>
-              <td {...css(SETTINGS_STYLES.userTableCell)}>
-                <EditButton width={44} onClick={this.handleEditUser} label="Edit user" value={u.id}/>
-              </td>
-            </tr>
-          ))}
+            {serviceUsers.map((u) => (
+              <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
+                <td {...css(SETTINGS_STYLES.userTableCell)}>{u.id}</td>
+                <td {...css(SETTINGS_STYLES.userTableCell)}>{u.name}</td>
+                <td {...css(SETTINGS_STYLES.userTableCell, { fontSize: "10px" })}>{u.extra.jwt}</td>
+                <td>
+                  <IconButton aria-label="Copy to clipboard" onClick={partial(copyToClipboard, u.extra.jwt)}>
+                    <FileCopyIcon fontSize="small" />
+                  </IconButton>
+                </td>
+                <td {...css(SETTINGS_STYLES.userTableCell)}>{u.isActive ? "Active" : ""}</td>
+                <td {...css(SETTINGS_STYLES.userTableCell)}>
+                  <EditButton width={44} onClick={this.handleEditUser} label="Edit user" value={u.id} />
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -799,43 +744,35 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   renderYoutubeUsers() {
-    const {
-      youtubeUsers,
-    } = this.props;
+    const { youtubeUsers } = this.props;
 
     if (!youtubeUsers || youtubeUsers.count() === 0) {
-      return (<p>None configured</p>);
+      return <p>None configured</p>;
     }
     return (
       <div key="youtubeUsersSection">
         <table>
           <thead>
-          <tr>
-            <th key="1" {...css(SETTINGS_STYLES.userTableCell)}>
-              Name
-            </th>
-            <th key="2" {...css(SETTINGS_STYLES.userTableCell)}>
-              Email
-            </th>
-            <th key="4" {...css(SETTINGS_STYLES.userTableCell)}>
-              Is Active
-            </th>
-          </tr>
+            <tr>
+              <th key="1" {...css(SETTINGS_STYLES.userTableCell)}>
+                Name
+              </th>
+              <th key="2" {...css(SETTINGS_STYLES.userTableCell)}>
+                Email
+              </th>
+              <th key="4" {...css(SETTINGS_STYLES.userTableCell)}>
+                Is Active
+              </th>
+            </tr>
           </thead>
           <tbody>
-          {youtubeUsers.map((u) => (
-            <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
-              <td {...css(SETTINGS_STYLES.userTableCell)}>
-                {u.name}
-              </td>
-              <td {...css(SETTINGS_STYLES.userTableCell)}>
-                {u.email}
-              </td>
-              <td {...css(SETTINGS_STYLES.userTableCell)}>
-                {u.isActive ? 'Active' : ''}
-              </td>
-            </tr>
-          ))}
+            {youtubeUsers.map((u) => (
+              <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
+                <td {...css(SETTINGS_STYLES.userTableCell)}>{u.name}</td>
+                <td {...css(SETTINGS_STYLES.userTableCell)}>{u.email}</td>
+                <td {...css(SETTINGS_STYLES.userTableCell)}>{u.isActive ? "Active" : ""}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -849,30 +786,37 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
           <h2 {...css(STYLES.headingText)}>Tags</h2>
         </div>
         <div key="body" {...css(STYLES.section)}>
-          <div {...css(SETTINGS_STYLES.row, {padding: 0})}>
-            <p {...css(STYLES.labelTitle, SMALLER_SCREEN && {width: '184px', marginRight: '20px'})}>Label</p>
+          <div {...css(SETTINGS_STYLES.row, { padding: 0 })}>
+            <p {...css(STYLES.labelTitle, SMALLER_SCREEN && { width: "184px", marginRight: "20px" })}>Label</p>
             <p {...css(STYLES.descriptionTitle)}>Description</p>
-            <p {...css(STYLES.colorTitle, SMALLER_SCREEN && {marginRight: '20px'})}>Color</p>
-            <p {...css(STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px', marginRight: '20px'})}>In Batch View</p>
-            <p {...css(STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px', marginRight: '20px'})}>Is Taggable</p>
-            <p {...css(STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px', marginRight: '20px'}, { marginRight: '98px'})}>In Summary Score</p>
+            <p {...css(STYLES.colorTitle, SMALLER_SCREEN && { marginRight: "20px" })}>Color</p>
+            <p {...css(STYLES.summaryTitle, SMALLER_SCREEN && { width: "90px", marginRight: "20px" })}>In Batch View</p>
+            <p {...css(STYLES.summaryTitle, SMALLER_SCREEN && { width: "90px", marginRight: "20px" })}>Is Taggable</p>
+            <p
+              {...css(STYLES.summaryTitle, SMALLER_SCREEN && { width: "90px", marginRight: "20px" }, {
+                marginRight: "98px",
+              })}
+            >
+              In Summary Score
+            </p>
           </div>
-          {tags && tags.map((tag, i) => (
-            <LabelSettings
-              tag={tag}
-              key={i}
-              onLabelChange={this.handleLabelChange}
-              onDescriptionChange={this.handleDescriptionChange}
-              onColorChange={this.handleColorChange}
-              onDeletePress={this.handleTagDeletePress}
-              onTagChange={this.handleTagChange}
-            />
-          ))}
+          {tags &&
+            tags.map((tag, i) => (
+              <LabelSettings
+                tag={tag}
+                key={i}
+                onLabelChange={this.handleLabelChange}
+                onDescriptionChange={this.handleDescriptionChange}
+                onColorChange={this.handleColorChange}
+                onDeletePress={this.handleTagDeletePress}
+                onTagChange={this.handleTagChange}
+              />
+            ))}
           <AddButton
             width={44}
             onClick={this.handleAddTag}
             label="Add a tag"
-            buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
+            buttonStyles={{ margin: `${GUTTER_DEFAULT_SPACING}px 0` }}
           />
         </div>
       </div>
@@ -880,9 +824,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   renderRules(tags: List<ITagModel>, categories: List<ICategoryModel>) {
-    const {
-      rules,
-    } = this.state;
+    const { rules } = this.state;
 
     return (
       <div key="editRulesSection">
@@ -890,31 +832,32 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
           <h2 {...css(STYLES.headingText)}>Automated Rules</h2>
         </div>
         <div key="body" {...css(STYLES.section)}>
-          {rules && rules.map((rule, i) => (
-            <RuleRow
-              key={i}
-              onDelete={this.handleAutomatedRuleDelete}
-              rule={rule}
-              onCategoryChange={partial(this.handleAutomatedRuleChange, 'categoryId', rule)}
-              onTagChange={partial(this.handleAutomatedRuleChange, 'tagId', rule)}
-              onLowerThresholdChange={partial(this.handleAutomatedRuleChange, 'lowerThreshold', rule)}
-              onUpperThresholdChange={partial(this.handleAutomatedRuleChange, 'upperThreshold', rule)}
-              rangeBottom={Math.round(rule.lowerThreshold * 100)}
-              rangeTop={Math.round(rule.upperThreshold * 100)}
-              selectedTag={rule.tagId}
-              selectedCategory={rule.categoryId}
-              selectedAction={rule.action}
-              hasTagging
-              onModerateButtonClick={this.handleModerateButtonClick}
-              categories={categories}
-              tags={tags}
-            />
-          ))}
+          {rules &&
+            rules.map((rule, i) => (
+              <RuleRow
+                key={i}
+                onDelete={this.handleAutomatedRuleDelete}
+                rule={rule}
+                onCategoryChange={partial(this.handleAutomatedRuleChange, "categoryId", rule)}
+                onTagChange={partial(this.handleAutomatedRuleChange, "tagId", rule)}
+                onLowerThresholdChange={partial(this.handleAutomatedRuleChange, "lowerThreshold", rule)}
+                onUpperThresholdChange={partial(this.handleAutomatedRuleChange, "upperThreshold", rule)}
+                rangeBottom={Math.round(rule.lowerThreshold * 100)}
+                rangeTop={Math.round(rule.upperThreshold * 100)}
+                selectedTag={rule.tagId}
+                selectedCategory={rule.categoryId}
+                selectedAction={rule.action}
+                hasTagging
+                onModerateButtonClick={this.handleModerateButtonClick}
+                categories={categories}
+                tags={tags}
+              />
+            ))}
           <AddButton
             width={44}
             onClick={this.handleAddAutomatedRule}
             label="Add an automated rule"
-            buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
+            buttonStyles={{ margin: `${GUTTER_DEFAULT_SPACING}px 0` }}
           />
         </div>
       </div>
@@ -922,37 +865,38 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   renderSensitivities(tags: List<ITagModel>, categories: List<ICategoryModel>) {
-    const {
-      taggingSensitivities,
-    } = this.state;
+    const { taggingSensitivities } = this.state;
     return (
       <div key="editSensitivitiesSection">
         <div key="heading" {...css(STYLES.heading)}>
-          <h2 {...css(STYLES.headingText)}>Tagging Sensitivity (determines at what score range a tag will appear in the UI)</h2>
+          <h2 {...css(STYLES.headingText)}>
+            Tagging Sensitivity (determines at what score range a tag will appear in the UI)
+          </h2>
         </div>
         <div key="body" {...css(STYLES.section)}>
-          {taggingSensitivities && taggingSensitivities.map((ts, i) => (
-            <RuleRow
-              key={i}
-              onDelete={this.handleTaggingSensitivityDelete}
-              rule={ts}
-              onCategoryChange={partial(this.handleTaggingSensitivityChange, 'categoryId', ts)}
-              onTagChange={partial(this.handleTaggingSensitivityChange, 'tagId', ts)}
-              onLowerThresholdChange={partial(this.handleTaggingSensitivityChange, 'lowerThreshold', ts)}
-              onUpperThresholdChange={partial(this.handleTaggingSensitivityChange, 'upperThreshold', ts)}
-              rangeBottom={Math.round(ts.lowerThreshold * 100)}
-              rangeTop={Math.round(ts.upperThreshold * 100)}
-              selectedTag={ts.tagId}
-              selectedCategory={ts.categoryId}
-              categories={categories}
-              tags={tags}
-            />
-          ))}
+          {taggingSensitivities &&
+            taggingSensitivities.map((ts, i) => (
+              <RuleRow
+                key={i}
+                onDelete={this.handleTaggingSensitivityDelete}
+                rule={ts}
+                onCategoryChange={partial(this.handleTaggingSensitivityChange, "categoryId", ts)}
+                onTagChange={partial(this.handleTaggingSensitivityChange, "tagId", ts)}
+                onLowerThresholdChange={partial(this.handleTaggingSensitivityChange, "lowerThreshold", ts)}
+                onUpperThresholdChange={partial(this.handleTaggingSensitivityChange, "upperThreshold", ts)}
+                rangeBottom={Math.round(ts.lowerThreshold * 100)}
+                rangeTop={Math.round(ts.upperThreshold * 100)}
+                selectedTag={ts.tagId}
+                selectedCategory={ts.categoryId}
+                categories={categories}
+                tags={tags}
+              />
+            ))}
           <AddButton
             width={44}
             onClick={this.handleAddTaggingSensitivity}
             label="Add a tagging sensitivity rule"
-            buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
+            buttonStyles={{ margin: `${GUTTER_DEFAULT_SPACING}px 0` }}
           />
         </div>
       </div>
@@ -960,39 +904,39 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   renderPreselects(tags: List<ITagModel>, categories: List<ICategoryModel>) {
-    const {
-      preselects,
-    } = this.state;
+    const { preselects } = this.state;
     return (
       <div key="editRangesSection">
         <div key="heading" {...css(STYLES.heading)}>
           <h2 {...css(STYLES.headingText)}>
-            Preselected Batch Ranges (sets the default score range on a per category basis for tags in the batch selection view)
+            Preselected Batch Ranges (sets the default score range on a per category basis for tags in the batch
+            selection view)
           </h2>
         </div>
         <div key="body" {...css(STYLES.section)}>
-          {preselects && preselects.map((preselect, i) => (
-            <RuleRow
-              key={i}
-              onDelete={this.handlePreselectDelete}
-              rule={preselect}
-              onCategoryChange={partial(this.handlePreselectChange, 'categoryId', preselect)}
-              onTagChange={partial(this.handlePreselectChange, 'tagId', preselect)}
-              onLowerThresholdChange={partial(this.handlePreselectChange, 'lowerThreshold', preselect)}
-              onUpperThresholdChange={partial(this.handlePreselectChange, 'upperThreshold', preselect)}
-              rangeBottom={Math.round(preselect.lowerThreshold * 100)}
-              rangeTop={Math.round(preselect.upperThreshold * 100)}
-              selectedTag={preselect.tagId}
-              selectedCategory={preselect.categoryId}
-              categories={categories}
-              tags={tags}
-            />
-          ))}
+          {preselects &&
+            preselects.map((preselect, i) => (
+              <RuleRow
+                key={i}
+                onDelete={this.handlePreselectDelete}
+                rule={preselect}
+                onCategoryChange={partial(this.handlePreselectChange, "categoryId", preselect)}
+                onTagChange={partial(this.handlePreselectChange, "tagId", preselect)}
+                onLowerThresholdChange={partial(this.handlePreselectChange, "lowerThreshold", preselect)}
+                onUpperThresholdChange={partial(this.handlePreselectChange, "upperThreshold", preselect)}
+                rangeBottom={Math.round(preselect.lowerThreshold * 100)}
+                rangeTop={Math.round(preselect.upperThreshold * 100)}
+                selectedTag={preselect.tagId}
+                selectedCategory={preselect.categoryId}
+                categories={categories}
+                tags={tags}
+              />
+            ))}
           <AddButton
             width={44}
             onClick={this.handleAddPreselect}
             label="Add a preselect"
-            buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
+            buttonStyles={{ margin: `${GUTTER_DEFAULT_SPACING}px 0` }}
           />
         </div>
       </div>
@@ -1015,7 +959,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
           <div
             key="addUserContainer"
             tabIndex={0}
-            {...css(SCRIM_STYLE.popup, {position: 'relative', paddingRight: 0, width: 450})}
+            {...css(SCRIM_STYLE.popup, { position: "relative", paddingRight: 0, width: 450 })}
           >
             <AddUsers
               userType={this.state.addUserType}
@@ -1044,7 +988,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
           <div
             key="editUserContainer"
             tabIndex={0}
-            {...css(SCRIM_STYLE.popup, {position: 'relative', paddingRight: 0, width: 450})}
+            {...css(SCRIM_STYLE.popup, { position: "relative", paddingRight: 0, width: 450 })}
           >
             <EditUsers
               userToEdit={this.state.selectedUser}
@@ -1059,17 +1003,13 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
 
   renderStatusScrim() {
     return (
-      <Scrim
-        key="statusScrim"
-        scrimStyles={SCRIM_STYLE.scrim}
-        isVisible={this.state.isStatusScrimVisible}
-      >
+      <Scrim key="statusScrim" scrimStyles={SCRIM_STYLE.scrim} isVisible={this.state.isStatusScrimVisible}>
         <FocusTrap
           focusTrapOptions={{
             clickOutsideDeactivates: true,
           }}
         >
-          <div {...css(SCRIM_STYLE.popup, {position: 'relative', width: 450})} tabIndex={0}>
+          <div {...css(SCRIM_STYLE.popup, { position: "relative", width: 450 })} tabIndex={0}>
             <p>{this.state.submitStatus}</p>
           </div>
         </FocusTrap>
@@ -1078,24 +1018,19 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   render() {
-    const {
-      categories,
-      logout,
-    } = this.props;
+    const { categories, logout } = this.props;
 
-    const {
-      tags,
-    } = this.state;
+    const { tags } = this.state;
 
-    const summaryScoreTag = tags.find((tag) => tag.key === 'SUMMARY_SCORE');
+    const summaryScoreTag = tags.find((tag) => tag.key === "SUMMARY_SCORE");
     const summaryScoreTagId = summaryScoreTag && summaryScoreTag.id;
     const tagsNoSummary = tags.filter((tag) => tag.id !== summaryScoreTagId).toList();
 
     const tagsWithAll = List([
       TagModel({
         id: null,
-        key: 'ALL',
-        label: 'All',
+        key: "ALL",
+        label: "All",
         color: null,
       }),
     ]).concat(tags) as List<ITagModel>;
@@ -1104,7 +1039,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     const categoriesWithAll = List([
       CategoryModel({
         id: null,
-        label: 'All',
+        label: "All",
         unprocessedCount: 0,
         unmoderatedCount: 0,
         moderatedCount: 0,
@@ -1118,7 +1053,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
 
     return (
       <div {...css(STYLES.base)}>
-        <HeaderBar logout={logout} homeLink title="Settings"/>
+        <HeaderBar logout={logout} homeLink title="Settings" />
         <div {...css(STYLES.body)}>
           <h1 {...css(VISUALLY_HIDDEN)}>Open Source Moderator Settings</h1>
           {this.renderUsers()}
@@ -1128,14 +1063,17 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
             {this.renderSensitivities(tagsWithAllNoSummary, categoriesWithAll)}
             {this.renderPreselects(tagsWithAll, categoriesWithAll)}
             <div key="submitSection" {...css(STYLES.buttonGroup)}>
-              <Button key="cancel" buttonStyles={STYLES.cancel} label="Cancel" onClick={this.onCancelPress}/>
-              <Button key="save" buttonStyles={STYLES.save} label="Save" onClick={this.onSavePress}/>
+              <Button key="cancel" buttonStyles={STYLES.cancel} label="Cancel" onClick={this.onCancelPress} />
+              <Button key="save" buttonStyles={STYLES.save} label="Save" onClick={this.onSavePress} />
             </div>
           </form>
+          <RestrictedTermsSection
+            styles={STYLES}
+            settingsState={this.state}
+            setSettingsState={(state: any) => this.setState(state)}
+          />
           <div key="serviceUsersHeader" {...css(STYLES.heading)}>
-            <h2 {...css(STYLES.headingText)}>
-              System accounts
-            </h2>
+            <h2 {...css(STYLES.headingText)}>System accounts</h2>
           </div>
           <div key="serviceUsers" {...css(STYLES.section)}>
             <h3>Service accounts</h3>
@@ -1145,7 +1083,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               width={44}
               onClick={partial(this.handleAddUser, USER_GROUP_SERVICE)}
               label="Add a service account"
-              buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
+              buttonStyles={{ margin: `${GUTTER_DEFAULT_SPACING}px 0` }}
             />
           </div>
           <div key="moderatorUsers" {...css(STYLES.section)}>
@@ -1155,33 +1093,44 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
           </div>
           <div>
             <div key="pluginsHeader" {...css(STYLES.heading)}>
-              <h2 {...css(STYLES.headingText)}>
-                Plugins
-              </h2>
+              <h2 {...css(STYLES.headingText)}>Plugins</h2>
             </div>
             <div key="pluginsContent" {...css(STYLES.section)}>
               <h3>YouTube accounts</h3>
               {this.renderYoutubeUsers()}
-              <p><a href={youtubeUrl} {...css(STYLES.pluginLink)}>Connect a YouTube Account</a></p>
+              <p>
+                <a href={youtubeUrl} {...css(STYLES.pluginLink)}>
+                  Connect a YouTube Account
+                </a>
+              </p>
               <p>Click the link above, and select a Google user and one of that user's YouTube accounts.</p>
               <p>We'll then start syncing comments with the channels and videos in that account.</p>
               <p>&nbsp;</p>
               <h3>Wordpress</h3>
               <p>Install the Wordpress plugin to use Moderator with your Wordpress blog.</p>
               <p>
-                <a href="https://github.com/Jigsaw-Code/osmod-wordpress" {...css(STYLES.pluginLink)}>Get started →</a>
+                <a href="https://github.com/Jigsaw-Code/osmod-wordpress" {...css(STYLES.pluginLink)}>
+                  Get started →
+                </a>
               </p>
               <p>&nbsp;</p>
               <h3>Discourse</h3>
               <p>Install the Discourse plugin to use Moderator with your Discourse community.</p>
               <p>
-                <a href="https://github.com/Jigsaw-Code/moderator-discourse" {...css(STYLES.pluginLink)}>Get started →</a>
+                <a href="https://github.com/Jigsaw-Code/moderator-discourse" {...css(STYLES.pluginLink)}>
+                  Get started →
+                </a>
               </p>
               <p>&nbsp;</p>
               <h3>Reddit</h3>
-              <p>A server running a cron job every minute that reads all comments copies them to on your subreddit and syncs their status. Requires owner rights on subreddit.</p>
               <p>
-                <a href="https://github.com/Jigsaw-Code/moderator-reddit" {...css(STYLES.pluginLink)}>Get started →</a>
+                A server running a cron job every minute that reads all comments copies them to on your subreddit and
+                syncs their status. Requires owner rights on subreddit.
+              </p>
+              <p>
+                <a href="https://github.com/Jigsaw-Code/moderator-reddit" {...css(STYLES.pluginLink)}>
+                  Get started →
+                </a>
               </p>
               <p>&nbsp;</p>
             </div>

@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { AddIcon, EditIcon } from '../../../components';
+import { AddIcon, EditIcon } from '../../../components/Icons';
 import {
   DARK_PRIMARY_TEXT_COLOR,
   INPUT_DROP_SHADOW,

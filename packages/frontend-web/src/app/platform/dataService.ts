@@ -30,6 +30,8 @@ import {
   ICommentModel,
   ICommentScoredModel,
   ICommentSummaryScoreModel,
+  IRestrictedTermAttributes,
+  IRuleModel,
   IUserModel,
   ModelId,
 } from '../../models';
@@ -52,6 +54,7 @@ export type IValidModelNames =
     'moderation_rules' |
     'moderator_assignments' |
     'preselects' |
+    'restricted_terms' |
     'tagging_sensitivities' |
     'tags' |
     'users' |
@@ -68,6 +71,7 @@ const VALID_MODEL_NAMES_LOOKUP: {
   moderation_rules: true,
   moderator_assignments: true,
   preselects: true,
+  restrictedTerms: true,
   tagging_sensitivities: true,
   tags: true,
   users: true,
@@ -572,9 +576,10 @@ export async function updateModel<T>(
   };
 }
 
-export async function updateArticle(id: string, isCommentingEnabled: boolean, isAutoModerated: boolean) {
+export async function updateArticle(id: string, isCommentingEnabled: boolean, isAutoModerated: boolean, moderationRules: Array<IRuleModel>, restrictedTerms: Array<IRestrictedTermAttributes>) {
   const url = serviceURL('simple', `/article/update/${id}`);
-  await axios.post(url, {isCommentingEnabled, isAutoModerated});
+
+  await axios.post(url, {isCommentingEnabled, isAutoModerated, moderationRules, restrictedTerms});
 }
 
 /**

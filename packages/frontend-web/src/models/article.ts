@@ -14,11 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Record } from 'immutable';
-import { TypedRecord } from 'typed-immutable-record';
+import { Record } from "immutable";
+import { TypedRecord } from "typed-immutable-record";
 
-import { ModelId } from './common';
-
+import { ModelId } from "./common";
+import { IRestrictedTermAttributes } from "./restrictedTerm";
+import { IRuleModel } from "./rule";
 export interface IArticleAttributes {
   id: ModelId;
   sourceCreatedAt: string;
@@ -42,6 +43,8 @@ export interface IArticleAttributes {
   assignedModerators: Array<ModelId>;
   isCommentingEnabled: boolean;
   isAutoModerated: boolean;
+  moderationRules: Array<IRuleModel>;
+  restrictedTerms: Array<IRestrictedTermAttributes>;
 }
 
 export interface IArticleModel extends TypedRecord<IArticleModel>, IArticleAttributes {}
@@ -68,6 +71,8 @@ const ArticleModelRecord = Record({
   assignedModerators: null,
   isCommentingEnabled: null,
   isAutoModerated: null,
+  moderationRules: null,
+  restrictedTerms: null,
 });
 
 export function ArticleModel(keyValuePairs?: IArticleAttributes): IArticleModel {
@@ -75,8 +80,8 @@ export function ArticleModel(keyValuePairs?: IArticleAttributes): IArticleModel 
 
   // Sanitize URLs for security.
   if (article.url) {
-    article = article.update('url', (url) => {
-      if (url.startsWith('http://') || url.startsWith('https://')) {
+    article = article.update("url", (url) => {
+      if (url.startsWith("http://") || url.startsWith("https://")) {
         return url;
       }
 

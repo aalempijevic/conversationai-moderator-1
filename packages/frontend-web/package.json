@@ -41,6 +41,8 @@
     "express-ws": "^5.0.2",
     "faker": "4.1.0",
     "immutable": "3.8.1",
+    "net": "^1.0.2",
+    "tls": "0.0.1",
     "typed-immutable-record": "0.0.6"
   },
   "devDependencies": {
@@ -60,7 +62,7 @@
     "@types/aphrodite": "0.5.13",
     "@types/check-types": "7.3.0",
     "@types/enzyme": "3.1.15",
-    "@types/express-serve-static-core": "^4.17.28",
+    "@types/express-serve-static-core": "4.17.28",
     "@types/jwt-decode": "2.2.1",
     "@types/keyboardjs": "2.4.1",
     "@types/lodash": "4.14.120",

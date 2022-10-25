@@ -18,7 +18,7 @@ import { List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
-import { IArticleModel, ModelId, ArticleModel } from '../../models';
+import { IArticleModel, ModelId, ArticleModel, IRuleModel, IRestrictedTermAttributes } from '../../models';
 import { IAppStateRecord } from './index';
 import { requestArticle } from '../platform/websocketService';
 
@@ -59,7 +59,9 @@ export function getArticle(state: IAppStateRecord, articleId: ModelId): IArticle
       lastModeratedAt: "",
       assignedModerators: new Array<ModelId>(),
       isCommentingEnabled: true,
-      isAutoModerated: true
+      isAutoModerated: true,
+      moderationRules: Array<IRuleModel>(),
+      restrictedTerms: Array<IRestrictedTermAttributes>(),
     });
   }
   return article;

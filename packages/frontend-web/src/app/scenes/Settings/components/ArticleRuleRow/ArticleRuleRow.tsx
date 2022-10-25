@@ -14,21 +14,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { autobind } from "core-decorators";
-import { List } from "immutable";
-import React from "react";
+import { autobind } from 'core-decorators';
+import { List } from 'immutable';
+import React from 'react';
 import {
   convertClientAction,
   convertServerAction,
-  ICategoryModel,
   IPreselectModel,
   IRuleModel,
   IServerAction,
   ITaggingSensitivityModel,
   ITagModel,
-} from "../../../../../models";
-import { IModerationAction } from "../../../../../types";
-import { ModerateButtons } from "../../../../components";
+} from '../../../../../models';
+import { IModerationAction } from '../../../../../types';
+import { ModerateButtons } from '../../../../components';
 import {
   ARTICLE_CATEGORY_TYPE,
   DARK_PRIMARY_TEXT_COLOR,
@@ -37,36 +36,36 @@ import {
   MEDIUM_COLOR,
   OFFSCREEN,
   PALE_COLOR,
-} from "../../../../styles";
-import { maybeCallback, partial } from "../../../../util";
-import { sortByLabel } from "../../../../util";
-import { css, stylesheet } from "../../../../utilx";
-import { SETTINGS_STYLES } from "../../settingsStyles";
+} from '../../../../styles';
+import { maybeCallback, partial } from '../../../../util';
+import { sortByLabel } from '../../../../util';
+import { css, stylesheet } from '../../../../utilx';
+import { SETTINGS_STYLES } from '../../settingsStyles';
 
 const INPUT_HEIGHT = 36;
-export const STYLES = stylesheet({
+const STYLES = stylesheet({
   base: {
     ...ARTICLE_CATEGORY_TYPE,
     color: DARK_PRIMARY_TEXT_COLOR,
   },
 
   selectContainer: {
-    position: "relative",
+    position: 'relative',
   },
 
   select: {
-    width: "auto",
+    width: 'auto',
     height: INPUT_HEIGHT,
     marginRight: GUTTER_DEFAULT_SPACING,
     paddingLeft: `${GUTTER_DEFAULT_SPACING / 2}px`,
     paddingRight: `${GUTTER_DEFAULT_SPACING}px`,
-    appearance: "none",
-    WebkitAppearance: "none", // Not getting prefixed either
-    border: "none",
+    appearance: 'none',
+    WebkitAppearance: 'none', // Not getting prefixed either
+    border: 'none',
     borderRadius: 2,
     boxShadow: INPUT_DROP_SHADOW,
     backgroundColor: PALE_COLOR,
-    fontSize: "16px",
+    fontSize: '16px',
   },
 
   input: {
@@ -76,36 +75,39 @@ export const STYLES = stylesheet({
   },
 
   button: {
-    position: "absolute",
+    position: 'absolute',
     right: GUTTER_DEFAULT_SPACING,
     height: INPUT_HEIGHT,
     marginLeft: 180,
-    backgroundColor: "transparent",
-    border: "none",
+    backgroundColor: 'transparent',
+    border: 'none',
     color: MEDIUM_COLOR,
-    cursor: "pointer",
-    ":focus": {
+    cursor: 'pointer',
+    ':focus': {
       outline: 0,
-      textDecoration: "underline",
+      textDecoration: 'underline',
     },
   },
 
   deleteButton: {
+    position: 'inherit',
     right: 0,
     marginLeft: 0,
   },
 });
 
-export interface IRuleRowProps {
-  categories: List<ICategoryModel>;
+export interface IArticleRuleRowProps {
+  disabled?: boolean;
   tags: List<ITagModel>;
   rangeBottom: number;
   rangeTop: number;
   selectedAction?: IServerAction;
   hasTagging?: boolean;
-  onModerateButtonClick?(rule: IRuleModel, action: IServerAction): any;
+  onModerateButtonClick?(
+    rule: IRuleModel,
+    action: IServerAction,
+  ): any;
   buttons?: JSX.Element;
-  selectedCategory: string;
   selectedTag?: string;
   onDelete?(rule: IRuleModel | ITaggingSensitivityModel | IPreselectModel): any;
   onCategoryChange?(value: string): any;
@@ -115,22 +117,26 @@ export interface IRuleRowProps {
   rule: IRuleModel | ITaggingSensitivityModel | IPreselectModel;
 }
 
-export class RuleRow extends React.Component<IRuleRowProps> {
+export class ArticleRuleRow extends React.Component<IArticleRuleRowProps> {
+
   @autobind
-  onNumberFieldChange(callback: (value: number) => any, e: React.ChangeEvent<HTMLInputElement>) {
+  onNumberFieldChange(callback: ((value: number) => any), e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
     callback(parseInt(e.target.value, 10) / 100);
   }
 
   @autobind
-  onCategoryFieldChange(callback: (value: string) => any, e: React.ChangeEvent<HTMLSelectElement>) {
+  onCategoryFieldChange(callback: ((value: string) => any), e: React.ChangeEvent<HTMLSelectElement>) {
     e.preventDefault();
     callback(e.target.value);
   }
 
   @autobind
   notifyWrapperOfActionChange(action: IModerationAction) {
-    const { onModerateButtonClick, rule } = this.props;
+    const {
+      onModerateButtonClick,
+      rule,
+    } = this.props;
     const saction = convertClientAction(action);
 
     if (onModerateButtonClick) {
@@ -139,102 +145,79 @@ export class RuleRow extends React.Component<IRuleRowProps> {
   }
   render() {
     const {
-      categories,
+      disabled,
       tags,
       rangeBottom,
       rangeTop,
       hasTagging,
-      selectedCategory,
       selectedTag,
       selectedAction,
-      onCategoryChange,
       onTagChange,
       onLowerThresholdChange,
       onUpperThresholdChange,
       onDelete,
       rule,
     } = this.props;
-
-    const sortedCategories = sortByLabel(categories);
-    const sortedTags = sortByLabel(tags);
+    const sortedTags = tags && sortByLabel(tags);
 
     return (
       <div {...css(STYLES.base, SETTINGS_STYLES.row)}>
         <div {...css(STYLES.selectContainer)}>
-          <label {...css(OFFSCREEN)} htmlFor={`categories-${rule.id}`}>
-            Select a section
-          </label>
-          <select
-            {...css(STYLES.select)}
-            id={`categories-${rule.id}`}
-            name={`categories-${rule.id}`}
-            value={selectedCategory ? selectedCategory : ""}
-            onChange={partial(this.onCategoryFieldChange, maybeCallback(onCategoryChange))}
-          >
-            {sortedCategories &&
-              sortedCategories.map((category, i) => (
-                <option value={category.id ? category.id.toString() : ""} key={i}>
-                  {category.label}
-                </option>
-              ))}
-          </select>
+          <label {...css(OFFSCREEN)} htmlFor={`categories-${rule.id}`}>Select a section</label>
           <span aria-hidden="true" {...css(SETTINGS_STYLES.arrow)} />
         </div>
         <div {...css(STYLES.selectContainer)}>
-          <label {...css(OFFSCREEN)} htmlFor={`tags-${rule.id}`}>
-            Select a tag
-          </label>
+          <label {...css(OFFSCREEN)} htmlFor={`tags-${rule.id}`}>Select a tag</label>
           <select
+            disabled={disabled}
             {...css(STYLES.select)}
             id={`tags-${rule.id}`}
             name={`tags-${rule.id}`}
-            value={selectedTag ? selectedTag : ""}
+            value={selectedTag ? selectedTag : ''}
             onChange={partial(this.onCategoryFieldChange, maybeCallback(onTagChange))}
           >
-            {sortedTags &&
-              sortedTags.map((tag, i) => (
-                <option value={tag.id ? tag.id.toString() : ""} key={i}>
-                  {tag.label}
-                </option>
-              ))}
+            {sortedTags && sortedTags.map((tag, i) => (
+              <option value={tag.id ? tag.id.toString() : ''} key={i}>{tag.label}</option>
+            ))}
           </select>
           <span aria-hidden="true" {...css(SETTINGS_STYLES.arrow)} />
         </div>
-        <label {...css(OFFSCREEN)} htmlFor={`rangeBottom-${rule.id}`}>
-          Bottom of range
-        </label>
+        <label {...css(OFFSCREEN)} htmlFor={`rangeBottom-${rule.id}`}>Bottom of range</label>
         <input
-          {...css(STYLES.input, { marginRight: 10 })}
+          disabled={disabled}
+          {...css(STYLES.input, {marginRight: 10})}
           type="number"
           min="0"
           max="100"
           id={`rangeBottom-${rule.id}`}
-          value={rangeBottom ? rangeBottom.toString() : "0"}
+          value={rangeBottom ? rangeBottom.toString() : '0'}
           onChange={partial(this.onNumberFieldChange, maybeCallback(onLowerThresholdChange))}
         />
-        <label {...css(OFFSCREEN)} htmlFor={`rangeTop-${rule.id}`}>
-          Top of range
-        </label>
-        <span {...css({ fontSize: 14 })}>–</span>
+        <label {...css(OFFSCREEN)} htmlFor={`rangeTop-${rule.id}`}>Top of range</label>
+        <span {...css({fontSize: 14})}>–</span>
         <input
-          {...css(STYLES.input, { marginLeft: 10 })}
+          disabled={disabled}
+          {...css(STYLES.input, {marginLeft: 10})}
           type="number"
           min="0"
           max="100"
           id={`rangeTop-${rule.id}`}
-          value={rangeTop ? rangeTop.toString() : ""}
+          value={rangeTop ? rangeTop.toString() : ''}
           onChange={partial(this.onNumberFieldChange, maybeCallback(onUpperThresholdChange))}
         />
-        {hasTagging && (
-          <ModerateButtons
-            darkOnLight
-            hideLabel
-            activeButtons={List<IModerationAction>().push(convertServerAction(selectedAction))}
-            containerSize={36}
-            onClick={this.notifyWrapperOfActionChange}
-          />
-        )}
+          { hasTagging && (
+            <ModerateButtons
+              disabled={disabled}
+              darkOnLight
+              hideLabel
+              hideHighlight={true}
+              activeButtons={List<IModerationAction>().push(convertServerAction(selectedAction))}
+              containerSize={36}
+              onClick={this.notifyWrapperOfActionChange}
+            />
+          )}
         <button
+          disabled={disabled}
           {...css(STYLES.button, STYLES.deleteButton)}
           type="button"
           onClick={partial(maybeCallback(onDelete), rule)}

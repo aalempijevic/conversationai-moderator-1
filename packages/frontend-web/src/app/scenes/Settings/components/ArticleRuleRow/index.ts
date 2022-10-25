@@ -14,17 +14,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export * from './article';
-export * from './category';
-export * from './comment';
-export * from './commentDated';
-export * from './commentFlag';
-export * from './commentScore';
-export * from './commentSummaryScore';
-export * from './common';
-export * from './preselect';
-export * from './rule';
-export * from './tag';
-export * from './taggingSensitivity';
-export * from './user';
-export * from './restrictedTerm';
+export { ArticleRuleRow } from './ArticleRuleRow';

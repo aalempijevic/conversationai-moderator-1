@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 export * from './Arrow';
+export * from './ArticleControls';
 export * from './AspectRatio';
 export * from './AssignTagsForm';
 export * from './Avatar';
@@ -25,8 +26,10 @@ export * from './CheckboxRow';
 export * from './CommentActionButton';
 export * from './CommentList';
 export * from './ConfirmationCircle';
+export * from './ControlFlag';
 export * from './DotChart';
 export * from './Header';
+export * from './HeaderBar';
 export * from './Icons';
 export * from './LazyCommentList';
 export * from './LazyLoadComment';
@@ -45,5 +48,3 @@ export * from './TagLabelRow';
 export * from './Toast';
 export * from './Toggle';
 export * from './ToolTip';
-export * from './article_controls';
-export * from './HeaderBar';
