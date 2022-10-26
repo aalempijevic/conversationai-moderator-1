@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-const { makeServer } = require('./core');
+const { makeServer } = require('./core/server');
 const { mountWebFrontend } = require('../dist-commonjs/index');
 
 // Start up the app
