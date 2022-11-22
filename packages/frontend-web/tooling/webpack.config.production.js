@@ -23,7 +23,7 @@ module.exports = {
 
   target: 'web',
 
-  entry: {moderator: ['@babel/polyfill', './dist/app/main']},
+  entry: {moderator: ['@babel/polyfill', './dist/src/app/main']},
 
   output: {
     path: path.join(__dirname, "..", "build"),

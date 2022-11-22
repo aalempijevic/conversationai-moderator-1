@@ -27,7 +27,7 @@ module.exports = {
       `webpack-dev-server/client?http://0.0.0.0:${port}`,
       'webpack/hot/only-dev-server',
       '@babel/polyfill',
-      './dist/app/main'
+      './dist/src/app/main'
     ]
   },
 
